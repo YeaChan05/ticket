@@ -1,0 +1,10 @@
+spring:
+  application:
+    name: application
+  profiles:
+    active: local
+    include:
+      - domain-${spring.profiles.active}
+      - common
+      - external-${spring.profiles.active}
+      - internal-${spring.profiles.active}

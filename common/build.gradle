@@ -1,0 +1,9 @@
+bootJar {
+    enabled = false
+}
+jar {
+    enabled = true
+}
+dependencies {
+    // 순수성 유지!
+}

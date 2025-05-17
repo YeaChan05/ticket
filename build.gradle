@@ -1,0 +1,136 @@
+buildscript {
+    ext {
+        dependencyManagementVersion = '1.1.0'
+        springBootVersion = '3.4.1'
+        jacocoVersion = '0.8.12'
+    }
+
+    repositories {
+        mavenCentral()
+    }
+
+    dependencies {
+        classpath("io.spring.gradle:dependency-management-plugin:${dependencyManagementVersion}")
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+        classpath("org.jacoco:org.jacoco.core:${jacocoVersion}")
+    }
+}
+
+plugins {
+    id 'base'
+}
+
+clean {
+    delete rootProject.buildDir
+}
+
+subprojects {
+    apply plugin: 'java'
+    apply plugin: 'org.springframework.boot'
+    apply plugin: 'io.spring.dependency-management'
+    apply plugin: 'java-test-fixtures'
+    apply plugin: 'jacoco'
+
+    group = 'org.yechan'
+    version = '1.0-SNAPSHOT'
+    sourceCompatibility = '21'
+
+    configurations {
+        developmentOnly
+        runtimeClasspath {
+            extendsFrom developmentOnly
+        }
+        compileOnly {
+            extendsFrom annotationProcessor
+        }
+    }
+
+    if (project.name != 'application') {
+        bootJar {
+            enabled = false
+        }
+        jar {
+            enabled = true
+        }
+    }
+
+    if (project.name != 'common') {
+        dependencies {
+            implementation project(":common")
+            implementation 'org.springframework:spring-context'
+            testImplementation 'io.rest-assured:rest-assured:5.3.2'
+        }
+    }
+
+    dependencies {
+        compileOnly 'org.projectlombok:lombok'
+        annotationProcessor 'org.projectlombok:lombok'
+        implementation 'org.slf4j:slf4j-api'
+        testImplementation 'com.tngtech.archunit:archunit-junit5:1.3.0'
+        testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    }
+
+    repositories {
+        mavenCentral()
+    }
+
+    test {
+        useJUnitPlatform()
+        finalizedBy 'jacocoTestReport'
+    }
+
+    tasks.register('testCoverage', Test) {
+        group 'verification'
+        description 'Runs the unit tests with coverage'
+
+        dependsOn(':test',
+                ':jacocoTestReport',
+                ':jacocoTestCoverageVerification')
+
+        tasks['jacocoTestReport'].mustRunAfter(tasks['test'])
+        tasks['jacocoTestCoverageVerification'].mustRunAfter(tasks['jacocoTestReport'])
+    }
+
+    jacocoTestCoverageVerification {
+        violationRules {
+            rule {
+                limit {
+                    minimum = 0.30
+                }
+            }
+
+            rule {
+                enabled = true
+                element = 'CLASS'
+
+                // branch coverage ratio
+                limit {
+                    counter = 'BRANCH'
+                    value = 'COVEREDRATIO'
+                    minimum = 0.90
+                }
+
+                // line coverage ratio
+                limit {
+                    counter = 'LINE'
+                    value = 'COVEREDRATIO'
+                    minimum = 0.80
+                }
+
+                // line count
+                limit {
+                    counter = 'LINE'
+                    value = 'TOTALCOUNT'
+                    maximum = 200
+                }
+
+                excludes = [
+                        'org.yechan.entity.Q*',
+                        'org.yechan.dto.*',
+                        'org.yechan.exception.*',
+                ]
+            }
+        }
+    }
+}
+

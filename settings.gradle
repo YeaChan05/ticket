@@ -1,0 +1,16 @@
+rootProject.name = 'ticket'
+
+// 공통 모듈
+include 'common'
+
+// 도메인 모듈
+include 'domain'
+
+// 인프라 내부 모듈
+include 'internal'
+
+// 외부 연동 모듈
+include 'external'
+
+// 애플리케이션 모듈
+include 'app-api'

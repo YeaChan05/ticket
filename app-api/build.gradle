@@ -1,0 +1,13 @@
+bootJar {
+    enabled = true
+}
+jar {
+    enabled = true
+}
+dependencies {
+    implementation project(':domain')
+    implementation project(':external')
+    implementation project(':internal')
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+}

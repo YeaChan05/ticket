@@ -1,0 +1,6 @@
+common:
+  properties:
+    cache-enabled: true
+    cache-ttl: 3600
+  logging:
+    level: INFO

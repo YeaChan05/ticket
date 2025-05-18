@@ -11,7 +11,7 @@ dependencies {
     implementation 'mysql:mysql-connector-java:8.0.33'
 }
 
-def querydslDir = "$buildDir/generated/querydsl"
+def querydslDir = layout.buildDirectory.get().asFile.absolutePath + "/generated/querydsl"
 sourceSets {
     main.java.srcDir querydslDir
 }
@@ -19,7 +19,7 @@ tasks.withType(JavaCompile).configureEach {
     options.annotationProcessorPath = configurations.annotationProcessor
 }
 
-allprojects{
+allprojects {
     dependencies {
         implementation 'com.querydsl:querydsl-jpa:5.0.0:jakarta'
         annotationProcessor 'com.querydsl:querydsl-apt:5.0.0:jakarta'
@@ -42,13 +42,12 @@ subprojects {
         // 도메인 계층간의 분리가 영속화 계층까지 분리가 되어야 할 경우 제거(ex. rdb의 관계가 제거되면 아래 의존 제거)
         if (project.name == 'domain-order') {
             implementation project(':domain:domain-show')
-        }
-        else if (project.name == 'domain-payment') {
+        } else if (project.name == 'domain-payment') {
             implementation project(':domain:domain-order')
         }
     }
 
-    def subquerydslDir = "$buildDir/generated/querydsl"
+    def subquerydslDir = layout.buildDirectory.get().asFile.absolutePath + "/generated/querydsl"
     sourceSets {
         main.java.srcDir subquerydslDir
     }

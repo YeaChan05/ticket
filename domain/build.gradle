@@ -43,6 +43,9 @@ subprojects {
         if (project.name == 'domain-order') {
             implementation project(':domain:domain-show')
         }
+        else if (project.name == 'domain-payment') {
+            implementation project(':domain:domain-order')
+        }
     }
 
     def subquerydslDir = '$buildDir/generated/querydsl'

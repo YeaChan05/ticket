@@ -5,10 +5,13 @@ jar {
     enabled = true
 }
 dependencies {
-    implementation project(':domain')
+    implementation project(':domain:domain-show')
+    implementation project(':domain:domain-payment')
+    implementation project(':domain:domain-user')
+    implementation project(':domain:domain-order')
     implementation project(':external')
     implementation project(':internal')
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-validation'
-    implementation 'org.springframework.boot:spring-boot-docker-compose'
+    developmentOnly 'org.springframework.boot:spring-boot-docker-compose'
 }

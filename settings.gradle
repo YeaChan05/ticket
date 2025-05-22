@@ -12,9 +12,14 @@ include 'domain:domain-order'
 
 // 인프라 내부 모듈
 include 'internal'
+include 'internal:internal-core'
+include 'internal:internal-client'
+include 'internal:internal-log'
+include 'internal:internal-security'
 
 // 외부 연동 모듈
 include 'external'
 
 // 애플리케이션 모듈
 include 'app-api'
+

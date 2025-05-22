@@ -1,0 +1,9 @@
+spring:
+  docker:
+    compose:
+      file: docker-compose.yml
+  datasource:
+    url: jdbc:mysql://mysql_db:3306/ticket?useSSL=false&serverTimezone=UTC
+    username: root
+    password: qweasd123
+    driver-class-name: com.mysql.cj.jdbc.Driver

@@ -39,3 +39,4 @@ out/
 
 ### secret files ###
 **/src/main/resources/application-**-prod.yml
+logs

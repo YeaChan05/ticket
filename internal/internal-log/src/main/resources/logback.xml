@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <!-- 변수 정의: 날짜 패턴 -->
+    <timestamp key="byDay" datePattern="yyyy-MM-dd"/>
+
+    <!-- 콘솔 출력 설정 -->
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+            <charset>UTF-8</charset>
+        </encoder>
+    </appender>
+
+    <!-- 애플리케이션 로그 경로 설정 -->
+    <property name="APP_LOG_PATH" value="logs/application"/>
+    
+    <!-- 에러 로그 경로 설정 -->
+    <property name="ERROR_LOG_PATH" value="logs/error"/>
+
+    <!-- 파일 출력 설정 -->
+    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${APP_LOG_PATH}/application.${byDay}.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!-- 일별 로그 파일 생성 -->
+            <fileNamePattern>${APP_LOG_PATH}/archive/application.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <!-- 30일 이상된 로그 파일 삭제 -->
+            <maxHistory>30</maxHistory>
+            <totalSizeCap>3GB</totalSizeCap>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+            <charset>UTF-8</charset>
+        </encoder>
+    </appender>
+
+    <!-- 오류 로그만 별도 파일로 저장 -->
+    <appender name="ERROR_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${ERROR_LOG_PATH}/error.${byDay}.log</file>
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>ERROR</level>
+        </filter>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${ERROR_LOG_PATH}/archive/error.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <maxHistory>30</maxHistory>
+            <totalSizeCap>1GB</totalSizeCap>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+            <charset>UTF-8</charset>
+        </encoder>
+    </appender>
+
+    <!-- 원격 Syslog 서버로 로그 전송 설정 -->
+    <appender name="SYSLOG" class="ch.qos.logback.classic.net.SyslogAppender">
+        <syslogHost>로그_서버_호스트</syslogHost>
+        <port>514</port>
+        <facility>LOCAL0</facility>
+        <suffixPattern>[%thread] %logger %msg</suffixPattern>
+    </appender>
+
+    <!-- 특정 패키지의 로그 레벨 설정 -->
+    <logger name="org.springframework" level="INFO" />
+    <logger name="org.hibernate" level="WARN" />
+    <logger name="com.zaxxer.hikari" level="INFO" />
+    <logger name="org.apache" level="WARN" />
+
+    <!-- 애플리케이션 패키지의 로그 레벨 설정 (프로젝트에 맞게 수정 필요) -->
+    <logger name="org.yechan" level="INFO" />
+    
+    <root level="INFO">
+        <appender-ref ref="CONSOLE" />
+        <appender-ref ref="FILE" />
+        <appender-ref ref="ERROR_FILE" />
+        <!-- <appender-ref ref="SYSLOG" /> -->
+    </root>
+</configuration>

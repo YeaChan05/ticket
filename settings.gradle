@@ -12,7 +12,7 @@ include 'domain:domain-order'
 
 // 인프라 내부 모듈
 include 'internal'
-include 'internal:internal-core'
+include 'internal:internal-web'
 include 'internal:internal-client'
 include 'internal:internal-log'
 include 'internal:internal-security'

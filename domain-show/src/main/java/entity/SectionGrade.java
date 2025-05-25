@@ -17,33 +17,28 @@ import lombok.NoArgsConstructor;
 import org.yechan.entity.BaseEntity;
 
 @Entity
-@Table(name = "sections")
+@Table(name = "section_grades")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Builder
-public class Section extends BaseEntity {
+public class SectionGrade extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "section_id")
+    @Column(name = "section_grade_id")
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "hall_id", nullable = false)
-    private Hall hall;
+    @JoinColumn(name = "show_id", nullable = false)
+    private Show show;
 
-    @Column(name = "name", nullable = false, length = 50)
-    private String name;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "section_id", nullable = false)
+    private Section section;
 
-    @Column(name = "capacity", nullable = false)
-    private Integer capacity;
+    @Column(name = "grade", nullable = false, columnDefinition = "VARCHAR(20)")
+    private String grade;
 
-    @Column(name = "floor", nullable = false)
-    private String floor;
-
-    @Column(name = "is_accessible")
-    private Boolean isAccessible;
-
-    @Column(name = "display_order")
-    private Integer displayOrder;
+    @Column(name = "price", nullable = false)
+    private Integer price;
 }

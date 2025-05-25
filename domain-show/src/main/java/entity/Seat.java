@@ -31,8 +31,8 @@ public class Seat extends BaseEntity {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "show_id")
-    private Show show;
+    @JoinColumn(name = "show_schedule_id")
+    private ShowSchedule showSchedule;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "section_id")
@@ -47,15 +47,13 @@ public class Seat extends BaseEntity {
     @Column(name = "name", nullable = false, length = 20)
     private String name; // 좌석 이름 (예: A-12, VIP-1)
 
-    @Column(name = "price", nullable = false)
-    private Integer price;
-
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)
     private SeatStatus status;
 
     public enum SeatStatus {
         AVAILABLE,
+        WAITING,
         RESERVED,
         SOLD_OUT,
         BLOCKED

@@ -46,4 +46,6 @@ public class Payment extends BaseEntity {
     @Column(name = "canceled_at")
     private LocalDateTime canceledAt;
 
+    @Column(name = "amount", nullable = false)
+    private Integer amount; // 결제 금액
 }

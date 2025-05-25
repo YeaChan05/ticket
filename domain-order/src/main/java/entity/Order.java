@@ -2,6 +2,8 @@ package entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -32,12 +34,22 @@ public class Order extends BaseEntity {
     private User user; // 주문한 사용자
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "show_id", nullable = false)
-    private Show show;
+    @JoinColumn(name = "show_schedule_id", nullable = false)
+    private ShowSchedule showSchedule;
 
     @Column(name = "total_price", nullable = false)
     private Integer totalPrice; // 총 결제 금액
 
     @Column(name = "cancel_date")
     private LocalDateTime cancelDate; // 취소 일시
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status", nullable = false, columnDefinition = "VARCHAR(20)")
+    private OrderStatus status;
+
+    public enum OrderStatus {
+        PENDING,
+        COMPLETED,
+        CANCELED
+    }
 }

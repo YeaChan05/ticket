@@ -1,7 +1,6 @@
 package entity;
 
 import jakarta.persistence.Column;
-import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -11,9 +10,9 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import java.time.LocalDateTime;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.yechan.entity.BaseEntity;
@@ -22,35 +21,33 @@ import org.yechan.entity.BaseEntity;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
+@Builder
 public class Show extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "show_id")
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "hall_id")
-    private Hall hall;
+    @Column(name = "title", nullable = false, length = 100)
+    private String title;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "host_id")
     private Host host;
-    
-    @Embedded
-    private ShowInfo showInfo;
 
-    @Column(name = "runtime")
-    private Integer runtime;
-
-    @Column(name = "start_time", nullable = false)
-    private LocalDateTime startTime;
-
-    @Column(name = "end_time", nullable = false)
-    private LocalDateTime endTime;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "hall_id")
+    private Hall hall;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "category", nullable = false,columnDefinition = "VARCHAR(20)")
     private Category category;
+
+    @Column(name = "thumbnail_url")
+    private String thumbnailUrl;
+
+    @Column(name = "contact_phone")
+    private String contactPhone;
 
 
     @Getter

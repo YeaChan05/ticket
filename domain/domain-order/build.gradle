@@ -1,4 +1,0 @@
-dependencies {
-    implementation project(':domain:domain-show')
-    implementation project(':domain:domain-user')
-}

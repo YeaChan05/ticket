@@ -5,10 +5,10 @@ jar {
     enabled = true
 }
 dependencies {
-    implementation project(':domain:domain-show')
-    implementation project(':domain:domain-payment')
-    implementation project(':domain:domain-user')
-    implementation project(':domain:domain-order')
+    implementation project(':domain-show')
+    implementation project(':domain-payment')
+    implementation project(':domain-user')
+    implementation project(':domain-order')
     implementation project(':external')
     implementation project(':internal:internal-log')
     implementation project(':internal:internal-security')

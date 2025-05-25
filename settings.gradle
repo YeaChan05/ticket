@@ -4,11 +4,11 @@ rootProject.name = 'ticket'
 include 'common'
 
 // 도메인 모듈
-include 'domain'
-include 'domain:domain-show'
-include 'domain:domain-payment'
-include 'domain:domain-user'
-include 'domain:domain-order'
+include 'domain-core'
+include 'domain-show'
+include 'domain-payment'
+include 'domain-user'
+include 'domain-order'
 
 // 인프라 내부 모듈
 include 'internal'

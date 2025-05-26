@@ -14,7 +14,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.yechan.entity.BaseEntity;
 
 @Entity
 @Table(name = "section_grades")

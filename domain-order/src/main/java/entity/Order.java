@@ -16,7 +16,6 @@ import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.yechan.entity.BaseEntity;
 
 @Entity
 @Table(name = "orders") // 'order'는 SQL 예약어이므로 'orders'로 테이블명 지정

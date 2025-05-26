@@ -1,4 +1,4 @@
-package org.yechan.config;
+package config;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
@@ -10,7 +10,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 @Configuration
 @EnableJpaAuditing
-@EnableJpaRepositories(basePackages = {"org.yechan.repository"})
+@EnableJpaRepositories(basePackages = {"repository"})
 public class JpaConfig {
     @PersistenceContext
     private EntityManager entityManager;

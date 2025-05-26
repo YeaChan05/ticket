@@ -12,7 +12,7 @@ dependencies {
     api 'com.h2database:h2'
 }
 
-def querydslDir = "$buildDir/generated/querydsl"
+def querydslDir = layout.buildDirectory.dir("generated/querydsl").get().asFile
 sourceSets {
     main.java.srcDir querydslDir
 }

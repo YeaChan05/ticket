@@ -19,12 +19,16 @@ dependencies {
     developmentOnly 'org.springframework.boot:spring-boot-docker-compose'
 }
 
+test {
+    systemProperty 'spring.profiles.active', 'test'
+}
+
 jacocoTestCoverageVerification {
     afterEvaluate {
         classDirectories.setFrom(files(classDirectories.files.collect {
             fileTree(dir: it, exclude: [
-                'org/yechan/Application.class',
-                'org/yechan/config/**'
+                    'org/yechan/Application.class',
+                    'org/yechan/config/**'
             ])
         }))
     }

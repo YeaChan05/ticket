@@ -1,5 +1,5 @@
 dependencies {
-    implementation project(':domain-core')
+    api project(':domain-core')
     implementation 'org.hibernate.validator:hibernate-validator:9.0.0.Final'
 
     annotationProcessor 'com.querydsl:querydsl-apt:5.0.0:jakarta'

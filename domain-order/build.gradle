@@ -4,7 +4,6 @@ dependencies {
     implementation project(':domain-user')
 
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-    implementation 'mysql:mysql-connector-java:8.0.33'
 
     annotationProcessor 'com.querydsl:querydsl-apt:5.0.0:jakarta'
     annotationProcessor 'jakarta.annotation:jakarta.annotation-api'

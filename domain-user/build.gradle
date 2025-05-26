@@ -1,6 +1,5 @@
 dependencies {
     implementation project(':domain-core')
-    implementation 'mysql:mysql-connector-java:8.0.33'// 얘도 따지자면 기술 종속적 개념 아닌가?
 
     annotationProcessor 'com.querydsl:querydsl-apt:5.0.0:jakarta'
     annotationProcessor 'jakarta.annotation:jakarta.annotation-api'

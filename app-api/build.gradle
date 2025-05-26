@@ -14,6 +14,18 @@ dependencies {
     implementation project(':internal:internal-security')
     implementation project(':internal:internal-web')
     implementation project(':internal:internal-client')
+    implementation project(':internal:internal-mysql')
     implementation 'org.springframework.boot:spring-boot-starter'
     developmentOnly 'org.springframework.boot:spring-boot-docker-compose'
+}
+
+jacocoTestCoverageVerification {
+    afterEvaluate {
+        classDirectories.setFrom(files(classDirectories.files.collect {
+            fileTree(dir: it, exclude: [
+                'org/yechan/Application.class',
+                'org/yechan/config/**'
+            ])
+        }))
+    }
 }

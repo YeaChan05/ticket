@@ -1,0 +1,18 @@
+spring:
+  security:
+    user:
+      name: user
+      password: 1234
+
+security:
+  extensible:
+    enabled: true
+  public-endpoints:
+    - "/test/**"
+
+logging:
+  level:
+    config: DEBUG
+    org.yechan.config: DEBUG
+    org.springframework.security: DEBUG
+    org.springframework.boot.autoconfigure.security: DEBUG

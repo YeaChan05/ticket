@@ -9,8 +9,10 @@ import org.springframework.util.AntPathMatcher;
 @ConfigurationProperties(prefix = "security")
 @Slf4j
 public record SecurityConfigurationProperties(
+        @DefaultValue
         List<String> publicEndpoints,
-
+        
+        @DefaultValue
         List<String> userEndpoints,
 
         @DefaultValue("false")
@@ -31,6 +33,10 @@ public record SecurityConfigurationProperties(
     }
 
     private void validateDuplicateEndpoints(final List<String> paths) {
+        if (paths == null || paths.isEmpty()) {
+            log.debug("No endpoints provided, skipping validation.");
+            return;
+        }
         AntPathMatcher antPathMatcher = new AntPathMatcher();
         for (String path : paths) {
             if (paths.stream().filter(s -> !s.equals(path)).anyMatch(p -> antPathMatcher.match(p, path))) {

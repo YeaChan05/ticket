@@ -5,14 +5,19 @@ spring:
       password: 1234
 
 security:
-  extensible:
-    enabled: true
+  extensible-enabled: true
+  cors-enabled: false
+  csrf-enabled: false
   public-endpoints:
     - "/test/**"
+  user-endpoints:
+    - "/user/**"
 
 logging:
   level:
+    root: INFO
     config: DEBUG
-    org.yechan.config: DEBUG
-    org.springframework.security: DEBUG
-    org.springframework.boot.autoconfigure.security: DEBUG
+    org.yechan: DEBUG
+    org.springframework.boot.autoconfigure: DEBUG
+    org.springframework.boot.context.properties: DEBUG
+    org.springframework.context.annotation: DEBUG

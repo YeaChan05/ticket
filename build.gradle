@@ -129,6 +129,7 @@ subprojects {
                         'org.yechan.entity.Q*',
                         'org.yechan.dto.*',
                         'org.yechan.exception.*',
+                        'org.yechan.config.*',
                 ]
             }
         }

@@ -1,4 +1,4 @@
-package architecture;
+package org.yechan.architecture;
 
 import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.noClasses;
 
@@ -25,7 +25,7 @@ public class ModularArchitectureTest {
     @DisplayName("도메인 모듈 간 순환 의존성 금지")
     public void domainModulesShouldBeFreeOfCycles() {
         SlicesRuleDefinition.slices()
-                .matching("org.yechan.(*)..")
+                .matching("org.yechan.(*)..") 
                 .should().beFreeOfCycles()
                 .check(classes);
     }

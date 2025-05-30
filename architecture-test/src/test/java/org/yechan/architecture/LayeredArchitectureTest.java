@@ -1,4 +1,4 @@
-package architecture;
+package org.yechan.architecture;
 
 import com.tngtech.archunit.core.domain.JavaClasses;
 import com.tngtech.archunit.core.importer.ClassFileImporter;
@@ -26,8 +26,6 @@ public class LayeredArchitectureTest {
                 .optionalLayer("Config").definedBy("org.yechan.config..");
 
         layeredArchitecture
-//                .whereLayer("Controller").mayNotBeAccessedByAnyLayer()
-
                 .whereLayer("Repository").mayOnlyBeAccessedByLayers("Service")
                 .whereLayer("Entity").mayOnlyBeAccessedByLayers("Service", "Repository", "DTO")
                 .whereLayer("DTO").mayOnlyBeAccessedByLayers("Controller", "Service", "Repository")

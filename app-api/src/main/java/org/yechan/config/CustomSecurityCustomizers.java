@@ -10,6 +10,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.CorsConfigurer;
 import org.springframework.security.config.annotation.web.configurers.CsrfConfigurer;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
+import org.springframework.security.web.csrf.XorCsrfTokenRequestAttributeHandler;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -24,7 +25,7 @@ public class CustomSecurityCustomizers {
     @Profile("local")
     @ConditionalOnProperty(name = "security.cors-enabled", havingValue = "true")
     static class DevelopmentCorsConfig {
-        
+
         @Bean
         public Customizer<CorsConfigurer<HttpSecurity>> corsCustomizer() {
             return cors -> cors.configurationSource(corsConfigurationSource());
@@ -37,7 +38,7 @@ public class CustomSecurityCustomizers {
             configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
             configuration.setAllowedHeaders(Arrays.asList("*"));
             configuration.setAllowCredentials(true);
-            
+
             UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
             source.registerCorsConfiguration("/**", configuration);
             return source;
@@ -50,11 +51,12 @@ public class CustomSecurityCustomizers {
     @Configuration
     @ConditionalOnProperty(name = "security.csrf-enabled", havingValue = "true")
     static class CsrfEnabledConfig {
-        
+
         @Bean
         public Customizer<CsrfConfigurer<HttpSecurity>> csrfCustomizer() {
             return csrf -> csrf
-                .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse());
+                    .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
+                    .csrfTokenRequestHandler(new XorCsrfTokenRequestAttributeHandler());
         }
     }
 }

@@ -11,7 +11,7 @@ public class LayeredArchitectureTest {
 
     private final JavaClasses classes = new ClassFileImporter()
             .withImportOption(ImportOption.Predefined.DO_NOT_INCLUDE_TESTS)
-            .importPackages("org.yechan", "repository", "entity", "config");
+            .importPackages("org.yechan");
 
     @Test
     @DisplayName("계층 아키텍처 테스트")
@@ -21,8 +21,8 @@ public class LayeredArchitectureTest {
                 .optionalLayer("Controller").definedBy("org.yechan.api..")
                 .optionalLayer("Service").definedBy("org.yechan.service..")
                 .optionalLayer("DTO").definedBy("org.yechan.dto..")
-                .optionalLayer("Repository").definedBy("..repository..")
-                .optionalLayer("Entity").definedBy("..entity..")
+                .optionalLayer("Repository").definedBy("org.yechan.repository..")
+                .optionalLayer("Entity").definedBy("org.yechan.entity..")
                 .optionalLayer("Config").definedBy("org.yechan.config..");
 
         layeredArchitecture

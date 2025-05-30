@@ -14,14 +14,14 @@ public class PackageDependencyTest {
 
     private final JavaClasses classes = new ClassFileImporter()
             .withImportOption(ImportOption.Predefined.DO_NOT_INCLUDE_TESTS)
-            .importPackages("org.yechan", "entity", "repository");
+            .importPackages("org.yechan");
 
     @Test
     @DisplayName("컨트롤러 클래스는 api 패키지에 있어야 함")
     public void controllerClassesShouldBeInControllerPackage() {
         ArchRule rule = classes()
                 .that().haveNameMatching(".*Controller")
-                .should().resideInAPackage("..api..")
+                .should().resideInAPackage("org.yechan.api..")
                 .allowEmptyShould(true)
                 .because("컨트롤러는 API 패키지에 위치해야 합니다");
 
@@ -33,7 +33,7 @@ public class PackageDependencyTest {
     public void repositoryClassesShouldBeInRepositoryPackage() {
         ArchRule rule = classes()
                 .that().haveNameMatching(".*Repository")
-                .should().resideInAPackage("..repository..")
+                .should().resideInAPackage("org.yechan.repository..")
                 .allowEmptyShould(true)
                 .because("리포지토리는 리포지토리 패키지에 위치해야 합니다");
 
@@ -48,7 +48,7 @@ public class PackageDependencyTest {
                 .and().haveSimpleNameNotEndingWith("Request")
                 .and().haveSimpleNameNotEndingWith("Response")
                 .and().areAnnotatedWith("jakarta.persistence.Entity")
-                .should().resideInAPackage("..entity..")
+                .should().resideInAPackage("org.yechan.entity..")
                 .allowEmptyShould(true)
                 .because("엔티티는 엔티티 패키지에 위치해야 합니다");
 
@@ -59,8 +59,8 @@ public class PackageDependencyTest {
     @DisplayName("도메인 패키지 간 의존성 검사")
     public void domainPackagesShouldNotDependOnEachOther() {
         ArchRule rule = noClasses()
-                .that().resideInAPackage("..entity..")
-                .should().dependOnClassesThat().resideInAPackage("..repository..")
+                .that().resideInAPackage("org.yechan.entity..")
+                .should().dependOnClassesThat().resideInAPackage("org.yechan.repository..")
                 .allowEmptyShould(true)
                 .because("엔티티는 리포지토리에 의존하면 안됩니다");
 

@@ -10,7 +10,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 @Configuration
 @EnableJpaAuditing
-@EnableJpaRepositories(basePackages = {"repository"})
+@EnableJpaRepositories(basePackages = {"org.yechan.repository"})
 public class JpaConfig {
     @PersistenceContext
     private EntityManager entityManager;

@@ -49,7 +49,7 @@ class SecurityConfigurationPropertiesTest {
     }
 
     @Test
-    @DisplayName("동일 권한에 대해 중복된 엔드포인트가 있더라도 예외가 발생하지 않는다.")
+    @DisplayName("동일 권한에 대해 중복된 엔드포인트가 있으면 예외가 발생한다.")
     void sameAuthorityNoConflicts() {
         // given
         List<String> publicEndpoints = List.of("/public/**", "/public/**");

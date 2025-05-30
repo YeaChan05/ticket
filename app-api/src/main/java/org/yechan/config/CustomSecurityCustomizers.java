@@ -24,26 +24,24 @@ public class CustomSecurityCustomizers {
     @Profile("local")
     @ConditionalOnProperty(name = "security.cors-enabled", havingValue = "true")
     static class DevelopmentCorsConfig {
-        
+
         @Bean
         public Customizer<CorsConfigurer<HttpSecurity>> corsCustomizer() {
             return cors -> cors.configurationSource(corsConfigurationSource());
         }
 
         @Bean
-    public CorsConfigurationSource corsConfigurationSource() {
-        CorsConfiguration configuration = new CorsConfiguration();
--       configuration.setAllowedOriginPatterns(Arrays.asList("*"));
-+       configuration.setAllowedOriginPatterns(Arrays.asList("http://localhost:*", "https://localhost:*"));
-        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-        configuration.setAllowedHeaders(Arrays.asList("*"));
--       configuration.setAllowCredentials(true);
-+       configuration.setAllowCredentials(false);
-        
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", configuration);
-        return source;
-    }
+        public CorsConfigurationSource corsConfigurationSource() {
+            CorsConfiguration configuration = new CorsConfiguration();
+            configuration.setAllowedOriginPatterns(Arrays.asList("http://localhost:*", "https://localhost:*"));
+            configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+            configuration.setAllowedHeaders(Arrays.asList("*"));
+            configuration.setAllowCredentials(false);
+
+            UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+            source.registerCorsConfiguration("/**", configuration);
+            return source;
+        }
     }
 
     /**
@@ -52,11 +50,11 @@ public class CustomSecurityCustomizers {
     @Configuration
     @ConditionalOnProperty(name = "security.csrf-enabled", havingValue = "true")
     static class CsrfEnabledConfig {
-        
+
         @Bean
         public Customizer<CsrfConfigurer<HttpSecurity>> csrfCustomizer() {
             return csrf -> csrf
-                .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse());
+                    .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse());
         }
     }
 }

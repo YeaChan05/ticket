@@ -7,6 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.yechan.config.SecurityConfigurationProperties;
 
 class SecurityConfigurationPropertiesTest {
 
@@ -51,11 +52,12 @@ class SecurityConfigurationPropertiesTest {
     @DisplayName("동일 권한에 대해 중복된 엔드포인트가 있더라도 예외가 발생하지 않는다.")
     void sameAuthorityNoConflicts() {
         // given
-        List<String> publicEndpoints = List.of("/public/**","/public/**");
+        List<String> publicEndpoints = List.of("/public/**", "/public/**");
         List<String> userEndpoints = List.of("/user/**");
 
         // when & then
-        assertDoesNotThrow(() -> initProperties(publicEndpoints, userEndpoints));
+        assertThatThrownBy(() -> initProperties(publicEndpoints, userEndpoints))
+                .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
@@ -137,7 +139,6 @@ class SecurityConfigurationPropertiesTest {
         assertThatThrownBy(() -> initProperties(publicEndpoints, userEndpoints))
                 .isInstanceOf(IllegalArgumentException.class);
     }
-
 
 
     private SecurityConfigurationProperties initProperties(final List<String> publicEndpoints,

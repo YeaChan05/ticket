@@ -11,7 +11,7 @@ public class LayeredArchitectureTest {
 
     private final JavaClasses classes = new ClassFileImporter()
             .withImportOption(ImportOption.Predefined.DO_NOT_INCLUDE_TESTS)
-            .importPackages("org.yechan", "entity", "repository");
+            .importPackages("org.yechan", "repository", "entity", "config");
 
     @Test
     @DisplayName("계층 아키텍처 테스트")

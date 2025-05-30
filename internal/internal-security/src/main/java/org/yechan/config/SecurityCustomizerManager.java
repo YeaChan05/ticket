@@ -70,13 +70,17 @@ class SecurityCustomizerManager {
     @Bean
     @ConditionalOnMissingBean(name = "csrfCustomizer")
     public Customizer<CsrfConfigurer<HttpSecurity>> csrfCustomizer() {
-        return AbstractHttpConfigurer::disable;
+        return properties.csrfEnabled() ?
+                Customizer.withDefaults() :
+                AbstractHttpConfigurer::disable;
     }
 
     @Bean
     @ConditionalOnMissingBean(name = "corsCustomizer")
     public Customizer<CorsConfigurer<HttpSecurity>> corsCustomizer() {
-        return AbstractHttpConfigurer::disable;
+        return properties.corsEnabled() ?
+                Customizer.withDefaults() :
+                AbstractHttpConfigurer::disable;
     }
 
     @Bean

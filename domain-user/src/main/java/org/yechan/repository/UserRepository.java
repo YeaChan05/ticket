@@ -1,4 +1,10 @@
 package org.yechan.repository;
 
-public interface UserRepository extends JpaUserRepository {
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Repository;
+
+@Repository
+@RequiredArgsConstructor
+public class UserRepository{
+    private final JpaUserRepository jpaUserRepository;
 }

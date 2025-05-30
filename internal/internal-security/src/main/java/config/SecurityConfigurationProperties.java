@@ -39,7 +39,25 @@ public record SecurityConfigurationProperties(
         }
         AntPathMatcher antPathMatcher = new AntPathMatcher();
         for (String path : paths) {
-            if (paths.stream().filter(s -> !s.equals(path)).anyMatch(p -> antPathMatcher.match(p, path))) {
+    private void validateDuplicateEndpoints(final List<String> paths) {
+        if (paths == null || paths.isEmpty()) {
+            log.debug("No endpoints provided, skipping validation.");
+            return;
+        }
+        AntPathMatcher antPathMatcher = new AntPathMatcher();
+        for (int i = 0; i < paths.size(); i++) {
+            String currentPath = paths.get(i);
+            for (int j = i + 1; j < paths.size(); j++) {
+                String otherPath = paths.get(j);
+                if (antPathMatcher.match(currentPath, otherPath)
+                        || antPathMatcher.match(otherPath, currentPath)) {
+                    throw new IllegalArgumentException(
+                            "Duplicate endpoint found: " + currentPath + " conflicts with " + otherPath);
+                }
+            }
+            log.debug("Valid endpoint: {}", currentPath);
+        }
+    }
                 throw new IllegalArgumentException("Duplicate endpoint found: " + path);
             }
             log.debug("Valid endpoint: {}", path);

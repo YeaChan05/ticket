@@ -6,3 +6,4 @@ spring:
     include:
       - external-${spring.profiles.active}
       - internal-${spring.profiles.active}
+      - security-${spring.profiles.active}

@@ -74,30 +74,64 @@ subprojects {
         mavenCentral()
     }
 
+    jacoco {
+        toolVersion = "0.8.12"
+    }
+
     test {
         useJUnitPlatform()
         finalizedBy 'jacocoTestReport'
         systemProperty 'spring.profiles.active', 'test'
     }
 
-    tasks.register('testCoverage', Test) {
-        group 'verification'
-        description 'Runs the unit tests with coverage'
+    def jacocoExcludes = [
+        'config/**',
+        '**/config/**',
+        'org/yechan/Application.class'
+    ]
 
-        dependsOn(':test',
-                ':jacocoTestReport',
-                ':jacocoTestCoverageVerification')
+    def jacocoClassExcludes = [
+        'org.yechan.entity.Q*',
+        'org.yechan.dto.*',
+        'org.yechan.exception.*',
+        'org.yechan.config.*',
+        'config.*'
+    ]
 
-        tasks['jacocoTestReport'].mustRunAfter(tasks['test'])
-        tasks['jacocoTestCoverageVerification'].mustRunAfter(tasks['jacocoTestReport'])
+    jacocoTestReport {
+        dependsOn test
+        reports {
+            xml.required = true
+            csv.required = false
+            html.destination = layout.buildDirectory.dir("jacocoHtml").get().asFile
+        }
+        finalizedBy 'jacocoTestCoverageVerification'
+
+        afterEvaluate {
+            classDirectories.setFrom(files(classDirectories.files.collect {
+                fileTree(dir: it, exclude: jacocoExcludes)
+            }))
+        }
     }
 
     jacocoTestCoverageVerification {
+        dependsOn jacocoTestReport
+
+        afterEvaluate {
+            classDirectories.setFrom(files(classDirectories.files.collect {
+                fileTree(dir: it, exclude: jacocoExcludes)
+            }))
+        }
+
         violationRules {
             rule {
                 limit {
-                    minimum = 0.30
+                    counter = 'INSTRUCTION'
+                    value = 'COVEREDRATIO'
+                    minimum = 0.85
                 }
+
+                excludes = jacocoClassExcludes
             }
 
             rule {
@@ -125,13 +159,8 @@ subprojects {
                     maximum = 200
                 }
 
-                excludes = [
-                        'org.yechan.entity.Q*',
-                        'org.yechan.dto.*',
-                        'org.yechan.exception.*',
-                ]
+                excludes = jacocoClassExcludes
             }
         }
     }
 }
-

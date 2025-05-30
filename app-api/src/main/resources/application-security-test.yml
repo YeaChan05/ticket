@@ -1,0 +1,10 @@
+security:
+  extensible-enabled: true
+  cors-enabled: true
+  csrf-enabled: false
+  public-endpoints:
+    - "/**"  # TODO: 차후 수정
+
+logging:
+  level:
+    org.springframework.security: DEBUG

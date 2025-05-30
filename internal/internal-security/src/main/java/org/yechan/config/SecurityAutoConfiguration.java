@@ -13,7 +13,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 @AutoConfiguration
 @ConditionalOnClass(HttpSecurity.class)
 @EnableConfigurationProperties(SecurityConfigurationProperties.class)
-@ConfigurationPropertiesScan("config")
+@ConfigurationPropertiesScan("org.yechan.config")
 @Import({
     SecurityCustomizerManager.class,
 })

@@ -1,4 +1,4 @@
-package org.yechan.response;
+package org.yechan.config.response;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;

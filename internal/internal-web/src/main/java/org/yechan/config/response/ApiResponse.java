@@ -1,4 +1,4 @@
-package org.yechan.response;
+package org.yechan.config.response;
 
 import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;

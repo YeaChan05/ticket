@@ -1,4 +1,4 @@
-package org.yechan.response;
+package org.yechan.config.response;
 
 import org.springframework.core.MethodParameter;
 import org.springframework.http.MediaType;

@@ -5,7 +5,6 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-import org.yechan.error.CustomViolationException;
 
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
@@ -13,5 +12,7 @@ import org.yechan.error.CustomViolationException;
 public @interface Email {
     String message() default "Invalid email format";
 
-    Class<? extends CustomViolationException> exception() default CustomViolationException.class;
+    Class<?>[] groups() default {};
+
+    Class<?>[] payload() default {};
 }

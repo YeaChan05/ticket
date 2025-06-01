@@ -74,7 +74,7 @@ public class UserControllerTest {
                         .content(objectMapper.writeValueAsString(userRequest)))
                 .andDo(print())
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.status").value("INVALID_EMAIL"))
+                .andExpect(jsonPath("$.status").value("EMAIL_DUPLICATED"))
                 .andExpect(jsonPath("$.message").value("이미 사용중인 이메일입니다."));
     }
 

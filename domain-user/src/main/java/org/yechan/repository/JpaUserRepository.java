@@ -6,9 +6,11 @@ import org.springframework.data.repository.query.Param;
 import org.yechan.entity.User;
 
 public interface JpaUserRepository extends JpaRepository<User, Long> {
-    @Query("SELECT 1 FROM User u WHERE u.email = :email")
+    @Query("SELECT COUNT(1) > 0 FROM User u WHERE u.email = :email")
     boolean existsByEmail(@Param("email") String email);
 
-    @Query("SELECT 1 FROM User u WHERE u.name = :name")
-    boolean existsByName(String name);
+    @Query("SELECT COUNT(1) > 0 FROM User u WHERE u.name = :name")
+    boolean existsByName(@Param("name") String name);
+
+    boolean existsByPhone(String phone);
 }

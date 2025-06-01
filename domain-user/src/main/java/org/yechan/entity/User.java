@@ -40,11 +40,13 @@ public class User extends BaseEntity {
     private String phone;
 
     @Enumerated(EnumType.STRING)
+    @Builder.Default
     @Column(name = "role", nullable = false)
-    private Role role; // 사용자 권한
+    private Role role = Role.USER; // 사용자 권한
 
+    @Builder.Default
     @Column(name = "enabled", nullable = false)
-    private boolean enabled; // 계정 활성화 여부
+    private boolean enabled = true; // 계정 활성화 여부
 
     public enum Role {
         USER,

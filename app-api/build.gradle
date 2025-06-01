@@ -17,9 +17,9 @@ dependencies {
     implementation project(':internal:internal-mysql')
     implementation 'org.springframework.boot:spring-boot-starter'
     developmentOnly 'org.springframework.boot:spring-boot-docker-compose'
+    testImplementation 'com.fasterxml.jackson.core:jackson-databind'
 }
 
 test {
     systemProperty 'spring.profiles.active', 'test'
 }
-

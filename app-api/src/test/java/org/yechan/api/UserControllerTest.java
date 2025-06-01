@@ -145,7 +145,7 @@ public class UserControllerTest {
                         .content(objectMapper.writeValueAsString(userRequest)))
                 .andDo(print())
                 .andExpect(jsonPath("$.status").value(CONSTRAINT_VIOLATION))
-                .andExpect(jsonPath("$.message").value("비밀번호는 최소 8자 이상이어야 하며, 대문자, 소문자, 숫자, 특수문자를 포함해야 합니다."));
+                .andExpect(jsonPath("$.message").value("비밀번호는 최소 8자 이상, 대문자, 소문자, 숫자, 특수문자를 포함해야 합니다."));
     }
 
     @Test

@@ -1,7 +1,10 @@
 package org.yechan.error;
 
+import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -18,10 +21,30 @@ public class GlobalExceptionHandler {
         logException(e, errorCode);
         return errorCode;
     }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    protected ErrorCode handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
+        GlobalErrorCode errorCode = GlobalErrorCode.INVALID_REQUEST;
+        errorCode.setMessage(e.getBindingResult().getFieldError().getDefaultMessage());//TODO 2025 06 01 22:21:32 : null 체크 필요
+        logException(e, errorCode);
+        return errorCode;
+    }
+
     private void logException(final Exception e, final ErrorCode errorCode) {
         log.error(LOG_FORMAT,
                 e.getClass(),
                 errorCode.getCode(),
                 errorCode.getMessage());
+    }
+
+    @Getter
+    private enum GlobalErrorCode implements ErrorCode {
+        INVALID_REQUEST("CONSTRAINT_VIOLATION");
+        private final String code;
+        @Setter
+        private String message;
+        GlobalErrorCode(final String code) {
+            this.code = code;
+        }
     }
 }

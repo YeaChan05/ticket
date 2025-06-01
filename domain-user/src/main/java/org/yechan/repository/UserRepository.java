@@ -17,6 +17,10 @@ public class UserRepository {
         return jpaUserRepository.existsByName(name);
     }
 
+    public boolean existsByPhoneNumber(final String phone) {
+        return jpaUserRepository.existsByPhone(phone);
+    }
+
     public void insertUser(final String name, final String email, final String password, final String phone) {
         User user = User.builder()
                 .name(name)

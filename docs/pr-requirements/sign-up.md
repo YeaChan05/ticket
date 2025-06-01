@@ -186,10 +186,12 @@
     -   요청 본문:
         ```json
         {
-          "name": "string",
-          "email": "string",
-          "password": "string",
-          "phone": "string"
+          "registerRequest": {
+            "name": "string",
+            "email": "string",
+            "password": "string",
+            "phone": "string"
+          }
         }
         ```
     -   응답 상세:
@@ -198,7 +200,6 @@
             {
               "status": "OK",
               "data": {
-                "id": "long",
                 "name": "string",
                 "email": "string",
                 "role": "USER"

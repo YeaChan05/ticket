@@ -25,6 +25,9 @@ public class UserRegisterer implements UserRegisterUseCase {
         // 이름 중복 검증
         validateUsernameUniqueness(name);
 
+        // 전화번호 중복 검증
+        validatePhoneNumberUniqueness(phone);
+
         // 저장
         registerVerifiedUser(name, email, password, phone);
 
@@ -34,6 +37,12 @@ public class UserRegisterer implements UserRegisterUseCase {
     @Transactional
     protected void registerVerifiedUser(final String name, final String email, final String password, final String phone) {
         userRepository.insertUser(name, email, password, phone);
+    }
+
+    protected void validatePhoneNumberUniqueness(final String phone) {
+        if (userRepository.existsByPhoneNumber(phone)) {
+            throw new UserException("User with phone " + phone + " already exists.", UserErrorCode.PHONE_DUPLICATED);
+        }
     }
 
     protected void validateEmailUniqueness(final String email) {

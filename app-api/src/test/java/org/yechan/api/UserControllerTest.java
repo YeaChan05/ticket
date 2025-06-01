@@ -22,6 +22,7 @@ import org.yechan.repository.JpaUserRepository;
 @AutoConfigureMockMvc
 public class UserControllerTest {
 
+    private static final String CONSTRAINT_VIOLATION = "CONSTRAINT_VIOLATION";
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     @Autowired
@@ -124,7 +125,7 @@ public class UserControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(userRequest)))
                 .andDo(print())
-                .andExpect(jsonPath("$.status").value("CONSTRAINT_VIOLATION"))
+                .andExpect(jsonPath("$.status").value(CONSTRAINT_VIOLATION))
                 .andExpect(jsonPath("$.message").value("이메일 주소는 '@' 기호를 포함해야 합니다."));
     }
 
@@ -143,7 +144,7 @@ public class UserControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(userRequest)))
                 .andDo(print())
-                .andExpect(jsonPath("$.status").value("WEAK_PASSWORD"))
+                .andExpect(jsonPath("$.status").value(CONSTRAINT_VIOLATION))
                 .andExpect(jsonPath("$.message").value("비밀번호는 최소 8자 이상이어야 하며, 대문자, 소문자, 숫자, 특수문자를 포함해야 합니다."));
     }
 
@@ -162,8 +163,8 @@ public class UserControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(userRequest)))
                 .andDo(print())
-                .andExpect(jsonPath("$.status").value("INVALID_PHONE_FORMAT"))
-                .andExpect(jsonPath("$.message").value("유효하지 않은 연락처 형식입니다. (010-XXXX-XXXX)"));
+                .andExpect(jsonPath("$.status").value(CONSTRAINT_VIOLATION))
+                .andExpect(jsonPath("$.message").value("전화번호 형식은 010-xxxx-xxxx이어야 합니다."));
     }
 
     @Test
@@ -181,7 +182,7 @@ public class UserControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(userRequest)))
                 .andDo(print())
-                .andExpect(jsonPath("$.status").value("CONSTRAINT_VIOLATION"))
+                .andExpect(jsonPath("$.status").value(CONSTRAINT_VIOLATION))
                 .andExpect(jsonPath("$.message").value("이름을 입력해주세요."));
     }
 

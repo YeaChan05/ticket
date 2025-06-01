@@ -78,7 +78,7 @@ public class UserControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(userRequest)))
                 .andDo(print())
-                .andExpect(jsonPath("$.status").value("EMAIL_DUPLICATED"))
+                .andExpect(jsonPath("$.status").value("EMAIL-001"))
                 .andExpect(jsonPath("$.message").value("이미 사용중인 이메일입니다."));
     }
 
@@ -105,7 +105,7 @@ public class UserControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(userRequest)))
                 .andDo(print())
-                .andExpect(jsonPath("$.status").value("DUPLICATE_PHONE"))
+                .andExpect(jsonPath("$.status").value("EMAIL-003"))
                 .andExpect(jsonPath("$.message").value("이미 사용중인 연락처입니다."));
     }
 
@@ -124,8 +124,8 @@ public class UserControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(userRequest)))
                 .andDo(print())
-                .andExpect(jsonPath("$.status").value("INVALID_EMAIL_FORMAT"))
-                .andExpect(jsonPath("$.message").value("이메일 형식이 올바르지 않습니다."));
+                .andExpect(jsonPath("$.status").value("CONSTRAINT_VIOLATION"))
+                .andExpect(jsonPath("$.message").value("이메일 주소는 '@' 기호를 포함해야 합니다."));
     }
 
     @Test

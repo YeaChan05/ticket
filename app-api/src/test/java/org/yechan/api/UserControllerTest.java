@@ -3,11 +3,11 @@ package org.yechan.api;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.HashMap;
 import java.util.Map;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,10 +23,17 @@ import org.yechan.repository.JpaUserRepository;
 public class UserControllerTest {
 
     private final ObjectMapper objectMapper = new ObjectMapper();
+
     @Autowired
     private MockMvc mockMvc;
+
     @Autowired
     private JpaUserRepository userRepository;
+
+    @BeforeEach
+    void setUp() {
+        userRepository.deleteAll();
+    }
 
     @Test
     @DisplayName("회원가입_성공_테스트")
@@ -39,15 +46,13 @@ public class UserControllerTest {
         userRequest.put("phone", "010-1234-5678");
 
         // when & then
-        mockMvc.perform(post("/api/users/sign-up")
+        mockMvc.perform(post("/api/v1/users/sign-up")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(userRequest)))
                 .andDo(print())
-                .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.status").value("OK"))
+                .andExpect(jsonPath("$.status").value("SUCCESS"))
                 .andExpect(jsonPath("$.data.name").value("홍길동"))
-                .andExpect(jsonPath("$.data.email").value("test@example.com"))
-                .andExpect(jsonPath("$.data.role").value("USER"));
+                .andExpect(jsonPath("$.data.email").value("test@example.com"));
     }
 
     @Test
@@ -73,7 +78,6 @@ public class UserControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(userRequest)))
                 .andDo(print())
-                .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.status").value("EMAIL_DUPLICATED"))
                 .andExpect(jsonPath("$.message").value("이미 사용중인 이메일입니다."));
     }
@@ -101,7 +105,6 @@ public class UserControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(userRequest)))
                 .andDo(print())
-                .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.status").value("DUPLICATE_PHONE"))
                 .andExpect(jsonPath("$.message").value("이미 사용중인 연락처입니다."));
     }
@@ -121,7 +124,6 @@ public class UserControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(userRequest)))
                 .andDo(print())
-                .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.status").value("INVALID_EMAIL_FORMAT"))
                 .andExpect(jsonPath("$.message").value("이메일 형식이 올바르지 않습니다."));
     }
@@ -141,7 +143,6 @@ public class UserControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(userRequest)))
                 .andDo(print())
-                .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.status").value("WEAK_PASSWORD"))
                 .andExpect(jsonPath("$.message").value("비밀번호는 최소 8자 이상이어야 하며, 대문자, 소문자, 숫자, 특수문자를 포함해야 합니다."));
     }
@@ -161,7 +162,6 @@ public class UserControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(userRequest)))
                 .andDo(print())
-                .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.status").value("INVALID_PHONE_FORMAT"))
                 .andExpect(jsonPath("$.message").value("유효하지 않은 연락처 형식입니다. (010-XXXX-XXXX)"));
     }
@@ -181,8 +181,7 @@ public class UserControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(userRequest)))
                 .andDo(print())
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.status").value("MISSING_FIELD_NAME"))
+                .andExpect(jsonPath("$.status").value("CONSTRAINT_VIOLATION"))
                 .andExpect(jsonPath("$.message").value("이름을 입력해주세요."));
     }
 

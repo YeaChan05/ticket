@@ -23,8 +23,8 @@ public class ResponseWrapper implements ResponseBodyAdvice<Object> {
                                   final Class<? extends HttpMessageConverter<?>> selectedConverterType,
                                   final ServerHttpRequest request, final ServerHttpResponse response) {
         if (body instanceof org.yechan.error.ErrorCode errorCode) {
-            return new ApiResponse<>(errorCode.getCode(),errorCode.getMessage());
+            return ApiResponse.error(errorCode.getCode(), errorCode.getMessage());
         }
-        return new ApiResponse<>("SUCCESS", body);
+        return ApiResponse.success(body);
     }
 }

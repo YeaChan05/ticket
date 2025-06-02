@@ -17,14 +17,16 @@ public class ResponseWrapper implements ResponseBodyAdvice<Object> {
         return MappingJackson2HttpMessageConverter.class.isAssignableFrom(converterType);
     }
 
-    @Override
-    public Object beforeBodyWrite(final Object body, final MethodParameter returnType,
-                                  final MediaType selectedContentType,
-                                  final Class<? extends HttpMessageConverter<?>> selectedConverterType,
-                                  final ServerHttpRequest request, final ServerHttpResponse response) {
-        if (body instanceof org.yechan.error.ErrorCode errorCode) {
-            return ApiResponse.error(errorCode.getCode(), errorCode.getMessage());
-        }
-        return ApiResponse.success(body);
+import org.yechan.error.ErrorCode;
+
+@Override
+public Object beforeBodyWrite(final Object body, final MethodParameter returnType,
+                              final MediaType selectedContentType,
+                              final Class<? extends HttpMessageConverter<?>> selectedConverterType,
+                              final ServerHttpRequest request, final ServerHttpResponse response) {
+    if (body instanceof ErrorCode errorCode) {
+        return ApiResponse.error(errorCode.getCode(), errorCode.getMessage());
     }
+    return ApiResponse.success(body);
+}
 }

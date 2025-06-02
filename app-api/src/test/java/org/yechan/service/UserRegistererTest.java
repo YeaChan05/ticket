@@ -42,6 +42,7 @@ class UserRegistererTest {
         RegisterSuccessResponse response = userRegisterer.registerUser(new UserRegisterRequest(name, email, password, phone));
 
         // then
+        verify(userRepository).insertUser(any());
         assertThat(response).isNotNull();
         assertThat(response.name()).isEqualTo(name);
         assertThat(response.email()).isEqualTo(email);

@@ -2,6 +2,7 @@ package org.yechan.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.yechan.api.port.UserRegisterUseCase;
@@ -17,6 +18,7 @@ import org.yechan.repository.UserRepository;
 @RequiredArgsConstructor
 public class UserRegisterer implements UserRegisterUseCase {
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     public RegisterSuccessResponse registerUser(final UserRegisterRequest request) {
@@ -41,7 +43,8 @@ public class UserRegisterer implements UserRegisterUseCase {
 
     @Transactional
     protected void registerVerifiedUser(final String name, final String email, final String password, final String phone) {
-        userRepository.insertUser(name, email, password, phone);
+        String encryptedPassword = passwordEncoder.encode(password);
+        userRepository.insertUser(name, email, encryptedPassword, phone);
     }
 
     protected void validatePhoneNumberUniqueness(final String phone) {

@@ -21,11 +21,11 @@ public class UserRepository {
         return jpaUserRepository.existsByPhone(phone);
     }
 
-    public void insertUser(final String name, final String email, final String password, final String phone) {
+    public void insertUser(final String name, final String email, final String encryptedPassword, final String phone) {
         User user = User.builder()
                 .name(name)
                 .email(email)
-                .password(password)
+                .password(encryptedPassword)
                 .phone(phone)
                 .build();
         jpaUserRepository.save(user);

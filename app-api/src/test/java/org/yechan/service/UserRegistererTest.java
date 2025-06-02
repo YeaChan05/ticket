@@ -32,6 +32,7 @@ class UserRegistererTest {
         // given
         when(userRepository.existsByEmail(anyString())).thenReturn(false);
         when(userRepository.existsByName(anyString())).thenReturn(false);
+        when(userRepository.existsByPhone(anyString())).thenReturn(false);
 
         // when
         RegisterSuccessResponse response = userRegisterer.registerUser(new UserRegisterRequest(name, email, password, phone));

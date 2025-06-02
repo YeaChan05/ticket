@@ -45,7 +45,7 @@ public class UserRegisterer implements UserRegisterUseCase {
     }
 
     protected void validatePhoneNumberUniqueness(final String phone) {
-        if (userRepository.existsByPhoneNumber(phone)) {
+        if (userRepository.existsByPhone(phone)) {
             throw new UserException("User with phone " + phone + " already exists.", UserErrorCode.PHONE_DUPLICATED);
         }
     }
@@ -57,7 +57,7 @@ public class UserRegisterer implements UserRegisterUseCase {
     }
 
     protected void validateUsernameUniqueness(final String name) {
-        if (userRepository.existByName(name)) {
+        if (userRepository.existsByName(name)) {
             throw new UserException("User with name " + name + " already exists.", UserErrorCode.NAME_DUPLICATED);
         }
     }

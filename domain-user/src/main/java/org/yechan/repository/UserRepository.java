@@ -13,11 +13,11 @@ public class UserRepository {
         return jpaUserRepository.existsByEmail(email);
     }
 
-    public boolean existByName(final String name) {
+    public boolean existsByName(final String name) {
         return jpaUserRepository.existsByName(name);
     }
 
-    public boolean existsByPhoneNumber(final String phone) {
+    public boolean existsByPhone(final String phone) {
         return jpaUserRepository.existsByPhone(phone);
     }
 

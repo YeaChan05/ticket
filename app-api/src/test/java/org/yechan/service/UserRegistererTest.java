@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.lenient;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import autoparams.AutoParams;
@@ -42,7 +43,7 @@ class UserRegistererTest {
         RegisterSuccessResponse response = userRegisterer.registerUser(new UserRegisterRequest(name, email, password, phone));
 
         // then
-        verify(userRepository).insertUser(any());
+        verify(userRepository).insertUser(anyString(), anyString(), anyString(), anyString());
         assertThat(response).isNotNull();
         assertThat(response.name()).isEqualTo(name);
         assertThat(response.email()).isEqualTo(email);

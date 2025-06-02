@@ -1,4 +1,4 @@
-package org.yechan.api.port;
+package org.yechan.service;
 
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -16,7 +16,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.yechan.dto.response.RegisterSuccessResponse;
 import org.yechan.error.exception.UserException;
 import org.yechan.repository.UserRepository;
-import org.yechan.service.UserRegisterer;
 
 @ExtendWith(MockitoExtension.class)
 class UserRegistererTest {

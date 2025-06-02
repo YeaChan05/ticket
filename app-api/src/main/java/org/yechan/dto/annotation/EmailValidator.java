@@ -38,6 +38,10 @@ public class EmailValidator implements ConstraintValidator<Email, String> {
         }
 
         String[] parts = value.split("@");
+        if (parts.length != 2) {
+            addConstraintViolation(context, "이메일 주소는 정확히 하나의 '@' 기호를 포함해야 합니다.");
+            return false;
+        }
         String localPart = parts[0];
         String domain = parts[1];
 

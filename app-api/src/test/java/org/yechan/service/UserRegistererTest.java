@@ -13,6 +13,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.yechan.dto.request.UserRegisterRequest;
 import org.yechan.dto.response.RegisterSuccessResponse;
 import org.yechan.error.exception.UserException;
 import org.yechan.repository.UserRepository;
@@ -33,7 +34,7 @@ class UserRegistererTest {
         when(userRepository.existByName(anyString())).thenReturn(false);
 
         // when
-        RegisterSuccessResponse response = userRegisterer.registerUser(name, email, password, phone);
+        RegisterSuccessResponse response = userRegisterer.registerUser(new UserRegisterRequest(name, email, password, phone));
 
         // then
         assertThat(response).isNotNull();
@@ -46,7 +47,7 @@ class UserRegistererTest {
         when(userRepository.existsByEmail(anyString())).thenReturn(true);
 
         // when & then
-        assertThatThrownBy(() -> userRegisterer.registerUser(name, email, password, phone))
+        assertThatThrownBy(() -> userRegisterer.registerUser(new UserRegisterRequest(name, email, password, phone)))
                 .isInstanceOf(UserException.class)
                 .hasMessage("User with email " + email + " already exists.");
 
@@ -60,7 +61,7 @@ class UserRegistererTest {
         when(userRepository.existByName(anyString())).thenReturn(true);
 
         // when & then
-        assertThatThrownBy(() -> userRegisterer.registerUser(name, email, password, phone))
+        assertThatThrownBy(() -> userRegisterer.registerUser(new UserRegisterRequest(name, email, password, phone)))
                 .isInstanceOf(UserException.class)
                 .hasMessage("User with name " + name + " already exists.");
     }
@@ -74,7 +75,7 @@ class UserRegistererTest {
         when(userRepository.existsByPhoneNumber(anyString())).thenReturn(true);
 
         // when & then
-        assertThatThrownBy(() -> userRegisterer.registerUser(name, email, password, phone))
+        assertThatThrownBy(() -> userRegisterer.registerUser(new UserRegisterRequest(name, email, password, phone)))
                 .isInstanceOf(UserException.class)
                 .hasMessage("User with phone " + phone + " already exists.");
     }
@@ -88,7 +89,7 @@ class UserRegistererTest {
         lenient().when(userRepository.existsByPhoneNumber(phone)).thenReturn(true);
 
         // when & then
-        assertThatThrownBy(() -> userRegisterer.registerUser(name, email, password, phone))
+        assertThatThrownBy(() -> userRegisterer.registerUser(new UserRegisterRequest(name, email, password, phone)))
                 .isInstanceOf(UserException.class)
                 .hasMessage("User with email " + email + " already exists.");
     }

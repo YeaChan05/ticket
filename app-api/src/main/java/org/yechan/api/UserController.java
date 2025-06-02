@@ -16,11 +16,6 @@ public record UserController(
 ) {
     @PostMapping("/sign-up")
     public RegisterSuccessResponse registerUser(@Validated @RequestBody UserRegisterRequest userRegisterRequest) {
-        return userRegisterUseCase.registerUser(
-                userRegisterRequest.name(),
-                userRegisterRequest.email(),
-                userRegisterRequest.password(),
-                userRegisterRequest.phone()
-        );
+        return userRegisterUseCase.registerUser(userRegisterRequest);
     }
 }

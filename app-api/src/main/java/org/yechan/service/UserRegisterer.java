@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.yechan.api.port.UserRegisterUseCase;
+import org.yechan.dto.request.UserRegisterRequest;
 import org.yechan.dto.response.RegisterSuccessResponse;
 import org.yechan.error.UserErrorCode;
 import org.yechan.error.exception.UserException;
@@ -18,8 +19,11 @@ public class UserRegisterer implements UserRegisterUseCase {
     private final UserRepository userRepository;
 
     @Override
-    public RegisterSuccessResponse registerUser(final String name, final String email,
-                                                final String password, final String phone) {
+    public RegisterSuccessResponse registerUser(final UserRegisterRequest request) {
+        String email = request.email();
+        String name = request.name();
+        String password = request.password();
+        String phone = request.phone();
         // 이메일 중복 검증
         validateEmailUniqueness(email);
 

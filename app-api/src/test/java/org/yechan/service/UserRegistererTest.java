@@ -85,7 +85,7 @@ class UserRegistererTest {
 
     @Test
     @AutoParams
-    void 세_예외상황이_둘다_발생하는_상황의_경우_email_예외가_먼저_발생한다(String name, String email, String password, String phone) {
+    void 세_예외상황이_모두_발생하는_상황의_경우_email_예외가_먼저_발생한다(String name, String email, String password, String phone) {
         // given
         lenient().when(userRepository.existsByEmail(email)).thenReturn(true);
         lenient().when(userRepository.existsByName(name)).thenReturn(true);

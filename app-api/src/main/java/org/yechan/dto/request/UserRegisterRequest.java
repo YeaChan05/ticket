@@ -2,7 +2,7 @@ package org.yechan.dto.request;
 
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
-import org.yechan.config.annotation.Email;
+import org.yechan.dto.annotation.Email;
 
 public record UserRegisterRequest(
         @NotNull(message = "이름을 입력해주세요.")

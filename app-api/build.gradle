@@ -16,10 +16,11 @@ dependencies {
     implementation project(':internal:internal-client')
     implementation project(':internal:internal-mysql')
     implementation 'org.springframework.boot:spring-boot-starter'
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
     developmentOnly 'org.springframework.boot:spring-boot-docker-compose'
+    testImplementation 'com.fasterxml.jackson.core:jackson-databind'
 }
 
 test {
     systemProperty 'spring.profiles.active', 'test'
 }
-

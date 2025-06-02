@@ -30,7 +30,8 @@ import org.yechan.repository.JpaUserRepository;
 public class UserControllerTest {
 
     private static final String CONSTRAINT_VIOLATION = "CONSTRAINT_VIOLATION";
-    private final ObjectMapper objectMapper = new ObjectMapper();
+    @Autowired
+    private ObjectMapper objectMapper;
 
     @Autowired
     private MockMvc mockMvc;

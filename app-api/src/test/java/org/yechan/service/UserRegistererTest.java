@@ -39,6 +39,8 @@ class UserRegistererTest {
 
         // then
         assertThat(response).isNotNull();
+        assertThat(response.name()).isEqualTo(name);
+        assertThat(response.email()).isEqualTo(email);
     }
 
     @Test

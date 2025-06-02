@@ -1,4 +1,4 @@
-package org.yechan.config.annotation;
+package org.yechan.dto.annotation;
 
 import jakarta.validation.Constraint;
 import java.lang.annotation.ElementType;

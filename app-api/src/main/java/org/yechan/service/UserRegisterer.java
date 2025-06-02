@@ -1,9 +1,10 @@
-package org.yechan.api.port;
+package org.yechan.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.yechan.api.port.UserRegisterUseCase;
 import org.yechan.dto.response.RegisterSuccessResponse;
 import org.yechan.error.UserErrorCode;
 import org.yechan.error.exception.UserException;

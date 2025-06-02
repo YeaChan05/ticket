@@ -8,6 +8,7 @@ import org.springframework.http.server.ServerHttpRequest;
 import org.springframework.http.server.ServerHttpResponse;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
+import org.yechan.error.ErrorCode;
 
 @RestControllerAdvice
 public class ResponseWrapper implements ResponseBodyAdvice<Object> {
@@ -17,16 +18,14 @@ public class ResponseWrapper implements ResponseBodyAdvice<Object> {
         return MappingJackson2HttpMessageConverter.class.isAssignableFrom(converterType);
     }
 
-import org.yechan.error.ErrorCode;
-
-@Override
-public Object beforeBodyWrite(final Object body, final MethodParameter returnType,
-                              final MediaType selectedContentType,
-                              final Class<? extends HttpMessageConverter<?>> selectedConverterType,
-                              final ServerHttpRequest request, final ServerHttpResponse response) {
-    if (body instanceof ErrorCode errorCode) {
-        return ApiResponse.error(errorCode.getCode(), errorCode.getMessage());
+    @Override
+    public Object beforeBodyWrite(final Object body, final MethodParameter returnType,
+                                  final MediaType selectedContentType,
+                                  final Class<? extends HttpMessageConverter<?>> selectedConverterType,
+                                  final ServerHttpRequest request, final ServerHttpResponse response) {
+        if (body instanceof ErrorCode errorCode) {
+            return ApiResponse.error(errorCode.getCode(), errorCode.getMessage());
+        }
+        return ApiResponse.success(body);
     }
-    return ApiResponse.success(body);
-}
 }

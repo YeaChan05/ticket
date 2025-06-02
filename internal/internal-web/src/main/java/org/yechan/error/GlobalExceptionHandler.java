@@ -22,13 +22,19 @@ public class GlobalExceptionHandler {
         return errorCode;
     }
 
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    protected ErrorCode handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
-        GlobalErrorCode errorCode = GlobalErrorCode.INVALID_REQUEST;
-        errorCode.setMessage(e.getBindingResult().getFieldError().getDefaultMessage());//TODO 2025 06 01 22:21:32 : null 체크 필요
-        logException(e, errorCode);
-        return errorCode;
-    }
+// add this import at the top of the file
+import java.util.Optional;
+
+@ExceptionHandler(MethodArgumentNotValidException.class)
+protected ErrorCode handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
+    GlobalErrorCode errorCode = GlobalErrorCode.INVALID_REQUEST;
+    String message = Optional.ofNullable(e.getBindingResult().getFieldError())
+                             .map(FieldError::getDefaultMessage)
+                             .orElse("잘못된 요청입니다.");
+    errorCode.setMessage(message);
+    logException(e, errorCode);
+    return errorCode;
+}
 
     private void logException(final Exception e, final ErrorCode errorCode) {
         log.error(LOG_FORMAT,

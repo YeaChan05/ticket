@@ -1,8 +1,8 @@
 package org.yechan.api.signup;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.yechan.api.fixture.UserFixture.generateEmail;
 import static org.yechan.api.fixture.UserFixture.generatePhone;
+import static org.yechan.api.fixture.UserFixture.generateUserRegisterRequest;
 import static org.yechan.api.fixture.UserFixture.generateUsername;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -114,21 +114,5 @@ public class POST_spec {
         // Assert
         assertThat(response.getStatus()).isEqualTo("CONSTRAINT_VIOLATION");
         assertThat(response.getMessage()).isEqualTo(expectedMessage);
-    }
-
-
-    private UserRegisterRequest generateUserRegisterRequest() {
-        var username = generateUsername();
-
-        var email = generateEmail();
-
-        var phone = generatePhone();
-
-        return new UserRegisterRequest(
-                username,
-                email,
-                "Password123!",// 중복되어도 상관 없음
-                phone
-        );
     }
 }

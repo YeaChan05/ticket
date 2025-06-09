@@ -14,7 +14,6 @@ import org.yechan.repository.UserRepository;
 
 @Slf4j
 @Service
-@Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class UserRegisterer implements UserRegisterUseCase {
     private final UserRepository userRepository;
@@ -47,18 +46,21 @@ public class UserRegisterer implements UserRegisterUseCase {
         userRepository.insertUser(name, email, encryptedPassword, phone);
     }
 
+    @Transactional(readOnly = true)
     protected void validatePhoneNumberUniqueness(final String phone) {
         if (userRepository.existsByPhone(phone)) {
             throw new UserException("User with phone " + phone + " already exists.", UserErrorCode.PHONE_DUPLICATED);
         }
     }
 
+    @Transactional(readOnly = true)
     protected void validateEmailUniqueness(final String email) {
         if (userRepository.existsByEmail(email)) {
             throw new UserException("User with email " + email + " already exists.", UserErrorCode.EMAIL_DUPLICATED);
         }
     }
 
+    @Transactional(readOnly = true)
     protected void validateUsernameUniqueness(final String name) {
         if (userRepository.existsByName(name)) {
             throw new UserException("User with name " + name + " already exists.", UserErrorCode.NAME_DUPLICATED);

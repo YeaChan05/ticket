@@ -1,7 +1,6 @@
 package org.yechan.api.signup;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.yechan.api.fixture.UserFixture.generateEmail;
 import static org.yechan.api.fixture.UserFixture.generatePhone;
 import static org.yechan.api.fixture.UserFixture.generateUserRegisterRequest;
 import static org.yechan.api.fixture.UserFixture.generateUsername;
@@ -30,12 +29,7 @@ public class POST_spec {
             @Autowired ObjectMapper objectMapper
     ) {
         // Arrange
-        UserRegisterRequest request = new UserRegisterRequest(
-                generateUsername(),
-                generateEmail(),
-                "securep!21Assword",
-                generatePhone()
-        );
+        UserRegisterRequest request = generateUserRegisterRequest();
         // Act
         var response = client.postForObject(
                 "/api/v1/users/sign-up",

@@ -2,12 +2,14 @@ package org.yechan.config.response;
 
 import java.time.LocalDateTime;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
+@NoArgsConstructor
 public class ApiResponse<T> {
-    private final String status;
-    private final T data;
-    private final LocalDateTime timestamp = LocalDateTime.now();
+    private String status;
+    private T data;
+    private LocalDateTime timestamp = LocalDateTime.now();
 
 
     public ApiResponse(String status, T data) {

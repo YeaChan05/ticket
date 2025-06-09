@@ -19,33 +19,33 @@ import org.springframework.util.StreamUtils;
 @Component
 @Order(Ordered.HIGHEST_PRECEDENCE)
 @RequiredArgsConstructor
-public class CommonHttpMessageConverter extends AbstractHttpMessageConverter<ApiResponse<Object>> {
+public class CommonHttpMessageConverter extends AbstractHttpMessageConverter<Object> {
     private final ObjectMapper objectMapper;
 
     @Override
     protected boolean supports(final Class<?> clazz) {
-        return clazz.equals(ApiResponse.class) || clazz.isPrimitive() || clazz.equals(String.class);
+        return ApiResponse.class.isAssignableFrom(clazz) || ErrorResponse.class.isAssignableFrom(clazz);
     }
 
     /**
      *
      */
     @Override
-    protected ApiResponse<Object> readInternal(final Class<? extends ApiResponse<Object>> clazz,
+    protected ApiResponse<Object> readInternal(final Class<?> clazz,
                                                final HttpInputMessage inputMessage)
             throws HttpMessageNotReadableException {
         throw new UnsupportedOperationException("this converter does not support reading");
     }
 
     @Override
-    protected void writeInternal(final ApiResponse<Object> objectApiResponse, final HttpOutputMessage outputMessage)
+    protected void writeInternal(final Object objectApiResponse, final HttpOutputMessage outputMessage)
             throws IOException, HttpMessageNotWritableException {
         String responseMessage = objectMapper.writeValueAsString(outputMessage);
         StreamUtils.copy(responseMessage.getBytes(StandardCharsets.UTF_8), outputMessage.getBody());
     }
 
     @Override
-    protected void addDefaultHeaders(HttpHeaders headers, ApiResponse<Object> objectApiResponse, MediaType contentType)
+    protected void addDefaultHeaders(HttpHeaders headers, Object objectApiResponse, MediaType contentType)
     {
         try {
             super.addDefaultHeaders(headers, objectApiResponse, contentType);

@@ -4,14 +4,13 @@ import java.time.LocalDateTime;
 import lombok.Getter;
 
 @Getter
-public class ApiResponse<T> {
+public class ErrorResponse {
     private final String status;
-    private final T data;
+    private final String message;
     private final LocalDateTime timestamp = LocalDateTime.now();
 
-
-    public ApiResponse(String status, T data) {
+    public ErrorResponse(String status, String message) {
         this.status = status;
-        this.data = data;
+        this.message = message;
     }
 }

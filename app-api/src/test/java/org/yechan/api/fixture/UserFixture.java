@@ -17,8 +17,8 @@ public class UserFixture {
     }
 
     public static String generatePhone() {
-        int middle = ThreadLocalRandom.current().nextInt(1000, 10000);
-        int last = ThreadLocalRandom.current().nextInt(1000, 10000);
+        int middle = ThreadLocalRandom.current().nextInt(0, 10000);
+        int last = ThreadLocalRandom.current().nextInt(0, 10000);
         return String.format("010-%d-%d", middle, last);
     }
 

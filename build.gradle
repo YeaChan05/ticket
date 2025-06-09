@@ -118,6 +118,11 @@ subprojects {
     jacocoTestCoverageVerification {
         dependsOn jacocoTestReport
 
+        onlyIf {
+            !project.gradle.startParameter.taskNames.any { it.contains(":") } &&
+                    (test.filter.includePatterns.isEmpty() && test.filter.excludePatterns.isEmpty())
+        }
+
         afterEvaluate {
             classDirectories.setFrom(files(classDirectories.files.collect {
                 fileTree(dir: it, exclude: jacocoExcludes)

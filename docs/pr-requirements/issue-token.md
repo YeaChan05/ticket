@@ -111,7 +111,7 @@
 테스트
 - [x] 로그인 시도 시 등록된 email과 password로 요청하면 SUCCESS 응답이 반환된다
 
-- [ ] 로그인 시도 시 등록된 email과 password로 요청하면 JWT 토큰이 반환된다
+- [ ] 로그인 시도 시 등록된 email과 password로 요청하면 토큰이 반환된다
 
 - [ ] 로그인 시도 시 등록되지 않은 email이면 400 예외가 발생한다
 

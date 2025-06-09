@@ -5,15 +5,14 @@ import java.util.concurrent.ThreadLocalRandom;
 import org.yechan.dto.request.UserRegisterRequest;
 
 public class UserFixture {
-    private static final String uuid = UUID.randomUUID().toString();
-
-
     public static String generateEmail() {
+        String uuid = UUID.randomUUID().toString();
         String localPart = uuid.replace("-", "");
         return localPart + "@test.com";
     }
 
     public static String generateUsername() {
+        String uuid = UUID.randomUUID().toString();
         return uuid.substring(0, 8);
     }
 

@@ -121,7 +121,7 @@ public class POST_spec {
 
         // Act
         var response = client.postForObject(
-                "/ai/v1/auth/issueToken",
+                "/api/v1/auth/issueToken",
                 new IssueTokenRequest(email, password),
                 ErrorResponse.class
         );

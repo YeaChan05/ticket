@@ -19,7 +19,7 @@ public class UserFixture {
     public static String generatePhone() {
         int middle = ThreadLocalRandom.current().nextInt(0, 10000);
         int last = ThreadLocalRandom.current().nextInt(0, 10000);
-        return String.format("010-%d-%d", middle, last);
+        return String.format("010-%04d-%04d", middle, last);
     }
 
     public static UserRegisterRequest generateUserRegisterRequest() {

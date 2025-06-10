@@ -10,34 +10,30 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.web.client.TestRestTemplate;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.yechan.api.config.IntegrationTest;
 import org.yechan.config.response.ApiResponse;
 import org.yechan.config.response.ErrorResponse;
 import org.yechan.dto.request.IssueTokenRequest;
-import org.yechan.entity.User;
-import org.yechan.repository.JpaUserRepository;
+import org.yechan.dto.request.UserRegisterRequest;
 
 @IntegrationTest
 @DisplayName("POST /api/v1/auth/issueToken")
 public class POST_spec {
     @Test
     void 로그인_시도_시_등록된_email과_password로_요청하면_200_응답이_반환된다(
-            @Autowired TestRestTemplate client,
-            @Autowired JpaUserRepository userRepository,
-            @Autowired PasswordEncoder passwordEncoder) {
+            @Autowired TestRestTemplate client
+    ) {
         // Arrange
         var name = generateUsername();
         var email = generateEmail();
         var password = "securep!21Assword";
         var phone = generatePhone();
 
-        userRepository.save(User.builder()
-                .name(name)
-                .email(email)
-                .password(passwordEncoder.encode(password))
-                .phone(phone)
-                .build());
+        client.postForObject(
+                URI.create("/api/v1/users/sign-up"),
+                new UserRegisterRequest(name, email, password, phone),
+                ApiResponse.class
+        );
 
         IssueTokenRequest request = new IssueTokenRequest(
                 email,
@@ -58,21 +54,18 @@ public class POST_spec {
 
     @Test
     void 로그인_시도_시_등록된_email과_password로_요청하면_JWT_토큰이_반환된다(
-            @Autowired TestRestTemplate client,
-            @Autowired JpaUserRepository userRepository,
-            @Autowired PasswordEncoder passwordEncoder
+            @Autowired TestRestTemplate client
     ) {
         // Arrange
         var email = generateEmail();
         var password = "securep!21Assword";
         var name = generateUsername();
         var phone = generatePhone();
-        userRepository.save(User.builder()
-                .name(name)
-                .email(email)
-                .password(passwordEncoder.encode(password))
-                .phone(phone)
-                .build());
+        client.postForObject(
+                URI.create("/api/v1/users/sign-up"),
+                new UserRegisterRequest(name, email, password, phone),
+                ApiResponse.class
+        );
 
         IssueTokenRequest request = new IssueTokenRequest(
                 email,
@@ -116,5 +109,20 @@ public class POST_spec {
         assertThat(response).isNotNull();
         assertThat(response.getStatus()).isEqualTo("USER-001");
         assertThat(response.getMessage()).isEqualTo("사용자를 찾을 수 없습니다.");
+    }
+
+    @Test
+    void 로그인_시도_시_email에_상응하는_비밀번호가_누락이면_USER_예외가_발생한다(
+            @Autowired TestRestTemplate client
+    ) {
+        // Arrange
+        String name = generateUsername();
+        String email = generateEmail();
+        String password = null;// 비밀번호가 누락된 경우
+        String phone = generatePhone();
+        // Act
+
+        // Assert
+
     }
 }

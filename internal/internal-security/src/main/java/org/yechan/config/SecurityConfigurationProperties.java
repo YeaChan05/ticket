@@ -3,6 +3,7 @@ package org.yechan.config;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
 import org.springframework.boot.context.properties.bind.DefaultValue;
 import org.springframework.util.AntPathMatcher;
 
@@ -22,7 +23,10 @@ public record SecurityConfigurationProperties(
         boolean corsEnabled,
 
         @DefaultValue("false")
-        boolean csrfEnabled
+        boolean csrfEnabled,
+
+        @NestedConfigurationProperty
+        JwtProperties jwt
 ) {
 
     public SecurityConfigurationProperties {

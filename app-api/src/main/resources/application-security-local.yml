@@ -10,7 +10,9 @@ security:
   csrf-enabled: false
   public-endpoints:
     - "/api/v1/users/sign-up"
-
+  jwt:
+    secret: Rm9ySldUR2VuZXJhdGlvbkFuZEl0U2hvdWxkQmVWZXJ5TG9uZ0FuZFJhbmRvbTEyMyFAI0A=
+    access-expiration: 3600
 
 logging:
   level:

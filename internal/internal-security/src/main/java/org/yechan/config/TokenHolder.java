@@ -1,4 +1,4 @@
-package org.yechan.dto.response;
+package org.yechan.config;
 
 public record TokenHolder(String accessToken) {
 }

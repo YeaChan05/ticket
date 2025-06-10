@@ -116,13 +116,18 @@ public class POST_spec {
             @Autowired TestRestTemplate client
     ) {
         // Arrange
-        String name = generateUsername();
         String email = generateEmail();
         String password = null;// 비밀번호가 누락된 경우
-        String phone = generatePhone();
+
         // Act
+        var response = client.postForObject(
+                "/ai/v1/auth/issueToken",
+                new IssueTokenRequest(email, password),
+                ErrorResponse.class
+        );
 
         // Assert
-
+        assertThat(response).isNotNull();
+        assertThat(response.getStatus()).isEqualTo("USER-003");
     }
 }

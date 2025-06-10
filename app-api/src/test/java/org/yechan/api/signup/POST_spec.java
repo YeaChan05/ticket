@@ -1,11 +1,12 @@
 package org.yechan.api.signup;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.yechan.api.fixture.UserFixture.generateEmail;
 import static org.yechan.api.fixture.UserFixture.generatePhone;
-import static org.yechan.api.fixture.UserFixture.generateUserRegisterRequest;
 import static org.yechan.api.fixture.UserFixture.generateUsername;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
@@ -21,6 +22,7 @@ import org.yechan.entity.User;
 import org.yechan.repository.JpaUserRepository;
 
 @IntegrationTest
+@DisplayName("POST /api/v1/users/sign-up")
 public class POST_spec {
 
     @Test
@@ -29,7 +31,12 @@ public class POST_spec {
             @Autowired ObjectMapper objectMapper
     ) {
         // Arrange
-        UserRegisterRequest request = generateUserRegisterRequest();
+        UserRegisterRequest request = new UserRegisterRequest(
+                generateUsername(),
+                generateEmail(),
+                "securep!21Assword",
+                generatePhone()
+        );
         // Act
         var response = client.postForObject(
                 "/api/v1/users/sign-up",
@@ -53,14 +60,22 @@ public class POST_spec {
             @Autowired JpaUserRepository userRepository
     ) {
         // Arrange
+        var username = generateUsername();
+        var email = generateEmail();
+        var phone = generatePhone();
+        var password = "securep!21Assword";
         User existingUser = User.builder()
-                .name("existingUser")
-                .email("")
-                .name("testUser")
-                .password(passwordEncoder.encode("securep!21Assword"))
-                .phone("010-1234-5678")
+                .name(username)
+                .email(email)
+                .password(passwordEncoder.encode(password))
+                .phone(phone)
                 .build();
-        UserRegisterRequest request = generateUserRegisterRequest();
+        UserRegisterRequest request = new UserRegisterRequest(
+                username,
+                email,
+                password,
+                phone
+        );
         userRepository.save(existingUser);
 
         UserRegisterRequest duplicatedEmailRequest = new UserRegisterRequest(
@@ -96,12 +111,19 @@ public class POST_spec {
             String expectedMessage,
             @Autowired TestRestTemplate client) {
         // Arrange
-        var request = generateUserRegisterRequest();
+        var name = generateUsername();
+        var phone = generatePhone();
+        var request = new UserRegisterRequest(
+                name,
+                invalidEmail,
+                "securep!21Assword",
+                phone
+        );
         UserRegisterRequest invalidRequest = new UserRegisterRequest(
-                generateUsername(),
+                name,
                 invalidEmail,
                 request.password(),
-                generatePhone()
+                phone
         );
 
         // Act

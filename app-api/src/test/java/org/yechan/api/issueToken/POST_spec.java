@@ -2,34 +2,42 @@ package org.yechan.api.issueToken;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.yechan.api.fixture.UserFixture.generateEmail;
-import static org.yechan.api.fixture.UserFixture.generateUserRegisterRequest;
+import static org.yechan.api.fixture.UserFixture.generatePhone;
 import static org.yechan.api.fixture.UserFixture.generateUsername;
 
 import java.net.URI;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.yechan.api.config.IntegrationTest;
 import org.yechan.config.response.ApiResponse;
 import org.yechan.config.response.ErrorResponse;
 import org.yechan.dto.request.IssueTokenRequest;
-import org.yechan.dto.request.UserRegisterRequest;
+import org.yechan.entity.User;
+import org.yechan.repository.JpaUserRepository;
 
 @IntegrationTest
+@DisplayName("POST /api/v1/auth/issueToken")
 public class POST_spec {
     @Test
     void 로그인_시도_시_등록된_email과_password로_요청하면_200_응답이_반환된다(
-            @Autowired TestRestTemplate client
-    ) {
+            @Autowired TestRestTemplate client,
+            @Autowired JpaUserRepository userRepository,
+            @Autowired PasswordEncoder passwordEncoder) {
         // Arrange
-        var userRegisterRequest = generateUserRegisterRequest();
-        var email = userRegisterRequest.email();
-        var password = userRegisterRequest.password();
-        client.postForObject(
-                "/api/v1/users/sign-up",
-                userRegisterRequest,
-                ApiResponse.class
-        );
+        var name = generateUsername();
+        var email = generateEmail();
+        var password = "securep!21Assword";
+        var phone = generatePhone();
+
+        userRepository.save(User.builder()
+                .name(name)
+                .email(email)
+                .password(passwordEncoder.encode(password))
+                .phone(phone)
+                .build());
 
         IssueTokenRequest request = new IssueTokenRequest(
                 email,
@@ -50,17 +58,21 @@ public class POST_spec {
 
     @Test
     void 로그인_시도_시_등록된_email과_password로_요청하면_JWT_토큰이_반환된다(
-            @Autowired TestRestTemplate client
+            @Autowired TestRestTemplate client,
+            @Autowired JpaUserRepository userRepository,
+            @Autowired PasswordEncoder passwordEncoder
     ) {
         // Arrange
-        var userRegisterRequest = generateUserRegisterRequest();
-        var email = userRegisterRequest.email();
-        var password = userRegisterRequest.password();
-        client.postForObject(
-                "/api/v1/users/sign-up",
-                userRegisterRequest,
-                ApiResponse.class
-        );
+        var email = generateEmail();
+        var password = "securep!21Assword";
+        var name = generateUsername();
+        var phone = generatePhone();
+        userRepository.save(User.builder()
+                .name(name)
+                .email(email)
+                .password(passwordEncoder.encode(password))
+                .phone(phone)
+                .build());
 
         IssueTokenRequest request = new IssueTokenRequest(
                 email,
@@ -84,14 +96,8 @@ public class POST_spec {
             @Autowired TestRestTemplate client
     ) {
         // Arrange
-        var userRegisterRequest = new UserRegisterRequest(
-                generateUsername(),
-                generateEmail(),
-                "securep!21Assword",
-                generateEmail()
-        );
-        var email = userRegisterRequest.email();
-        var password = userRegisterRequest.password();
+        var email = generateEmail();
+        var password = "securep!21Assword";
 
         // not registering the user
         IssueTokenRequest request = new IssueTokenRequest(

@@ -5,7 +5,6 @@ import static org.yechan.api.fixture.UserFixture.generateEmail;
 import static org.yechan.api.fixture.UserFixture.generatePhone;
 import static org.yechan.api.fixture.UserFixture.generateUsername;
 
-import java.net.URI;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +29,7 @@ public class POST_spec {
         var phone = generatePhone();
 
         client.postForObject(
-                URI.create("/api/v1/users/sign-up"),
+                "/api/v1/users/sign-up",
                 new UserRegisterRequest(name, email, password, phone),
                 ApiResponse.class
         );
@@ -42,7 +41,7 @@ public class POST_spec {
 
         // Act
         var response = client.postForObject(
-                URI.create("/api/v1/auth/issueToken"),
+                "/api/v1/auth/issueToken",
                 request,
                 ApiResponse.class
         );
@@ -62,7 +61,7 @@ public class POST_spec {
         var name = generateUsername();
         var phone = generatePhone();
         client.postForObject(
-                URI.create("/api/v1/users/sign-up"),
+                "/api/v1/users/sign-up",
                 new UserRegisterRequest(name, email, password, phone),
                 ApiResponse.class
         );
@@ -74,7 +73,7 @@ public class POST_spec {
 
         // Act
         var response = client.postForObject(
-                URI.create("/api/v1/auth/issueToken"),
+                "/api/v1/auth/issueToken",
                 request,
                 ApiResponse.class
         );
@@ -100,7 +99,7 @@ public class POST_spec {
 
         // Act
         var response = client.postForObject(
-                URI.create("/api/v1/auth/issueToken"),
+                "/api/v1/auth/issueToken",
                 request,
                 ErrorResponse.class
         );
@@ -117,17 +116,16 @@ public class POST_spec {
     ) {
         // Arrange
         String email = generateEmail();
-        String password = null;// 비밀번호가 누락된 경우
 
         // Act
         var response = client.postForObject(
                 "/api/v1/auth/issueToken",
-                new IssueTokenRequest(email, password),
+                new IssueTokenRequest(email, null),// 비밀번호가 누락된 경우
                 ErrorResponse.class
         );
 
         // Assert
         assertThat(response).isNotNull();
-        assertThat(response.getStatus()).isEqualTo("USER-003");
+        assertThat(response.getStatus()).isEqualTo("CONSTRAINT_VIOLATION");
     }
 }

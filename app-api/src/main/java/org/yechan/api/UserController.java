@@ -1,6 +1,6 @@
 package org.yechan.api;
 
-import org.springframework.validation.annotation.Validated;
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -15,7 +15,7 @@ public record UserController(
         UserRegisterUseCase userRegisterUseCase
 ) {
     @PostMapping("/sign-up")
-    public RegisterSuccessResponse registerUser(@Validated @RequestBody UserRegisterRequest userRegisterRequest) {
+    public RegisterSuccessResponse registerUser(@Valid @RequestBody UserRegisterRequest userRegisterRequest) {
         return userRegisterUseCase.registerUser(userRegisterRequest);
     }
 }

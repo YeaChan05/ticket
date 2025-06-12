@@ -10,6 +10,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -136,5 +137,40 @@ public class POST_spec {
         // Assert
         assertThat(response.getStatus()).isEqualTo("CONSTRAINT_VIOLATION");
         assertThat(response.getMessage()).isEqualTo(expectedMessage);
+    }
+
+    @ParameterizedTest
+    @ValueSource(
+            strings = {
+                    "1234As!",// 길이 부족
+                    "1234Asda",// 특수문자 없음
+                    "zzzzAsda!",
+                    "1ZZZZZZ!"//소문자 없음
+            }
+    )
+    void 유효하지_않은_비밀번호_형식으로_요청하면_실패한다(
+            String password,
+            @Autowired TestRestTemplate client
+    ) {
+        // Arrange
+        var name = generateUsername();
+        var email = generateEmail();
+        var phone = generatePhone();
+        var request = new UserRegisterRequest(
+                name,
+                email,
+                password,
+                phone
+        );
+
+        // Act
+        var response = client.postForObject(
+                "/api/v1/users/sign-up",
+                request,
+                ErrorResponse.class
+        );
+
+        // Assert
+        assertThat(response.getStatus()).isEqualTo("CONSTRAINT_VIOLATION");
     }
 }

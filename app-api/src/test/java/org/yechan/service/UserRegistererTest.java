@@ -7,9 +7,9 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.yechan.api.fixture.UserFixture.generateEmail;
-import static org.yechan.api.fixture.UserFixture.generatePhone;
-import static org.yechan.api.fixture.UserFixture.generateUsername;
+import static org.yechan.EmailGenerator.generateEmail;
+import static org.yechan.PhoneNumberGenerator.generatePhone;
+import static org.yechan.UsernameGenerator.generateUsername;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -51,7 +51,7 @@ class UserRegistererTest {
         // Assert
         verify(userRepository).insertUser(name, email, passwordEncoder.encode(password), phone);
         assertThat(response).isNotNull();
-        assertThat(response.name()).isEqualTo(name);
+        assertThat(response.username()).isEqualTo(name);
         assertThat(response.email()).isEqualTo(email);
     }
 
@@ -84,7 +84,7 @@ class UserRegistererTest {
         // Act & Assert
         assertThatThrownBy(() -> userRegisterer.registerUser(new UserRegisterRequest(name, email, password, phone)))
                 .isInstanceOf(UserException.class)
-                .hasMessage("User with name " + name + " already exists.");
+                .hasMessage("User with username " + name + " already exists.");
     }
 
     @Test

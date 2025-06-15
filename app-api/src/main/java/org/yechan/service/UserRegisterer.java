@@ -63,7 +63,7 @@ public class UserRegisterer implements UserRegisterUseCase {
     @Transactional(readOnly = true)
     protected void validateUsernameUniqueness(final String name) {
         if (userRepository.existsByName(name)) {
-            throw new UserException("User with name " + name + " already exists.", UserErrorCode.NAME_DUPLICATED);
+            throw new UserException("User with username " + name + " already exists.", UserErrorCode.NAME_DUPLICATED);
         }
     }
 }

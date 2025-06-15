@@ -54,8 +54,7 @@ public record TestFixture(
                 .get(url, uriVariables)
                 .build();
 
-        ResolvableType resolvableType = ResolvableType.forClassWithGenerics(ApiResponse.class, responseDataClass);
-        ParameterizedTypeReference<ApiResponse<T>> responseType = ParameterizedTypeReference.forType(resolvableType.getType());
+        var responseType = getResponseType(responseDataClass);
 
         ResponseEntity<ApiResponse<T>> response = client.exchange(requestEntity, responseType);
         return response.getBody();
@@ -71,9 +70,14 @@ public record TestFixture(
                 .post(url, uriVariables)
                 .body(requestBody);
 
-        ResolvableType resolvableType = ResolvableType.forClassWithGenerics(ApiResponse.class, responseDataClass);
-        ParameterizedTypeReference<ApiResponse<T>> responseType = ParameterizedTypeReference.forType(resolvableType.getType());
+        var responseType = getResponseType(responseDataClass);
 
         return client.exchange(requestEntity, responseType).getBody();
+    }
+
+    private <T> ParameterizedTypeReference<ApiResponse<T>> getResponseType(
+            final Class<T> responseDataClass) {
+        ResolvableType resolvableType = ResolvableType.forClassWithGenerics(ApiResponse.class, responseDataClass);
+        return ParameterizedTypeReference.forType(resolvableType.getType());
     }
 }

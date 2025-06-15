@@ -29,7 +29,7 @@ public class TokenIssuer implements IssueTokenUseCase {
         var claims = Map.of(
                 "role", user.getRole().name(),
                 "email", user.getEmail(),
-                "name", user.getName()
+                "username", user.getName()
         );
         return tokenProvider.createAccessToken(String.valueOf(user.getId()), claims);
     }

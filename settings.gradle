@@ -24,6 +24,3 @@ include 'external'
 // 애플리케이션 모듈
 include 'app-api'
 
-// 아키텍처 테스트 모듈
-include 'architecture-test'
-

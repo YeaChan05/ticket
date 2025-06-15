@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.yechan.api.port.IssueTokenUseCase;
-import org.yechan.config.TokenHolder;
+import org.yechan.dto.TokenHolder;
 import org.yechan.dto.request.IssueTokenRequest;
 
 @RestController

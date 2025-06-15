@@ -8,6 +8,7 @@ import java.util.Base64;
 import java.util.Date;
 import java.util.Map;
 import org.springframework.stereotype.Component;
+import org.yechan.dto.TokenHolder;
 
 @Component
 public class TokenProvider {

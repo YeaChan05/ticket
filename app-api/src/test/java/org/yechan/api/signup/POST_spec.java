@@ -180,7 +180,7 @@ public class POST_spec {
     }
 
     @Test
-    void 중복된_이메일로_가입_시_에러_코드_EMAIL_001를_반환한다(
+    void 중복된_이메일로_가입_시_에러_코드_USER_006를_반환한다(
             @Autowired TestFixture fixture
     ) {
         // Arrange
@@ -212,13 +212,13 @@ public class POST_spec {
         ).onError(
                 response -> {
                     // Assert
-                    assertThat(response.getStatus()).isEqualTo("EMAIL-001");
+                    assertThat(response.getStatus()).isEqualTo("USER-006");
                 }
         );
     }
 
     @Test
-    void 중복된_이름으로_가입_시_에러_코드_EMAIL_002를_반환한다(
+    void 중복된_이름으로_가입_시_에러_코드_USER_002를_반환한다(
             @Autowired TestFixture fixture
     ) {
         // Arrange
@@ -249,7 +249,7 @@ public class POST_spec {
         ).onError(
                 response -> {
                     // Assert
-                    assertThat(response.getStatus()).isEqualTo("EMAIL-002");
+                    assertThat(response.getStatus()).isEqualTo("USER-002");
                 }
         );
     }
@@ -321,6 +321,45 @@ public class POST_spec {
                     // Assert
                     assertThat(response.getStatus()).isEqualTo("CONSTRAINT_VIOLATION");
                     assertThat(response.getMessage()).isEqualTo("전화번호 형식은 010-xxxx-xxxx이어야 합니다.");
+                }
+        );
+    }
+
+    @Test
+    @DisplayName("중복된 연락처로 가입 시 에러 코드 USER-005를 반환한다")
+    void 중복된_연락처로_가입_시_에러_코드_USER_005를_반환한다(
+            @Autowired TestFixture fixture
+    ) {
+        // Arrange
+        var phone = generatePhone();
+        var registeredRequest = new UserRegisterRequest(
+                generateUsername(),
+                generateEmail(),
+                "Password123!",
+                phone
+        );
+        var request = new UserRegisterRequest(
+                generateUsername(),
+                generateEmail(),
+                "Qweasd123!",
+                phone
+        );
+
+        fixture.post(
+                "/api/v1/users/sign-up",
+                registeredRequest,
+                RegisterSuccessResponse.class
+        );
+
+        // Act
+        fixture.post(
+                "/api/v1/users/sign-up",
+                request,
+                RegisterSuccessResponse.class
+        ).onError(
+                response -> {
+                    // Assert
+                    assertThat(response.getStatus()).isEqualTo("USER-005");
                 }
         );
     }

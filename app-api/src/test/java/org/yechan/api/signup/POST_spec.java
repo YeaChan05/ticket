@@ -9,6 +9,7 @@ import static org.yechan.UsernameGenerator.generateUsername;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -360,6 +361,38 @@ public class POST_spec {
                 response -> {
                     // Assert
                     assertThat(response.getStatus()).isEqualTo("USER-005");
+                }
+        );
+    }
+
+    static UserRegisterRequest[] invalidUsernameProvider() {
+        return new UserRegisterRequest[]{
+                new UserRegisterRequest(null, generateEmail(), "Password123!", generatePhone()),
+                new UserRegisterRequest("", generateEmail(), "Password123!", generatePhone()),
+                new UserRegisterRequest(generateUsername(), null, "Password123!", generatePhone()),
+                new UserRegisterRequest(generateUsername(), "", "Password123!", generatePhone()),
+                new UserRegisterRequest(generateUsername(), generateEmail(), null, generatePhone()),
+                new UserRegisterRequest(generateUsername(), generateEmail(), "", generatePhone()),
+                new UserRegisterRequest(generateUsername(), generateEmail(), "Password123!", null),
+                new UserRegisterRequest(generateUsername(), generateEmail(), "Password123!", "")
+        };
+    }
+
+    @ParameterizedTest
+    @MethodSource("org.yechan.api.signup.POST_spec#invalidUsernameProvider")
+    void 회원가입_페이지는_모든_필수_입력_필드를_포함한다(
+            UserRegisterRequest request,
+            @Autowired TestFixture fixture
+    ) {
+        // Act
+        fixture.post(
+                "/api/v1/users/sign-up",
+                request,
+                RegisterSuccessResponse.class
+        ).onError(
+                response -> {
+                    // Assert
+                    assertThat(response.getStatus()).isEqualTo("CONSTRAINT_VIOLATION");
                 }
         );
     }

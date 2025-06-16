@@ -47,9 +47,6 @@ public class POST_spec {
                 response -> {
                     // Assert
                     assertThat(response.getStatus()).isEqualTo("SUCCESS");
-                    var data = response.getData();
-                    assertThat(data.email()).isEqualTo(email);
-                    assertThat(data.username()).isEqualTo(username);
                 }
         );
     }
@@ -393,6 +390,35 @@ public class POST_spec {
                 response -> {
                     // Assert
                     assertThat(response.getStatus()).isEqualTo("CONSTRAINT_VIOLATION");
+                }
+        );
+    }
+
+    @Test
+    void 회원가입_성공_시_사용자에게_명확한_완료_피드백을_제공한다(
+            @Autowired TestFixture fixture
+    ) {
+        // Arrange
+        var username = generateUsername();
+        var email = generateEmail();
+        var request = new UserRegisterRequest(
+                username,
+                email,
+                "Password123!",
+                generatePhone()
+        );
+
+        // Act
+        fixture.post(
+                "/api/v1/users/sign-up",
+                request,
+                RegisterSuccessResponse.class
+        ).onSuccess(
+                response -> {
+                    // Assert
+                    assertThat(response.getStatus()).isEqualTo("SUCCESS");
+                    assertThat(response.getData().email()).isEqualTo(email);
+                    assertThat(response.getData().username()).isEqualTo(username);
                 }
         );
     }

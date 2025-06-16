@@ -2,6 +2,7 @@ package org.yechan.api.signup;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.yechan.EmailGenerator.generateEmail;
+import static org.yechan.PasswordGenerator.generatePassword;
 import static org.yechan.PhoneNumberGenerator.generatePhone;
 import static org.yechan.UsernameGenerator.generateUsername;
 
@@ -110,7 +111,37 @@ public class POST_spec {
 
     }
 
-    private String generatePassword() {
-        return "Password123!";
+    @Test
+    void 회원_정보는_요청된_내용과_동일하게_데이터베이스에_저장된다(
+            @Autowired TestFixture fixture,
+            @Autowired JpaUserRepository repository
+    ) {
+        // Arrange
+        var username = generateUsername();
+        var email = generateEmail();
+        var phone = generatePhone();
+        var password = generatePassword();
+        var request = new UserRegisterRequest(
+                username,
+                email,
+                password,
+                phone
+        );
+
+        // Act
+        fixture.post(
+                "/api/v1/users/sign-up",
+                request,
+                RegisterSuccessResponse.class
+        );
+
+        // Assert
+        repository.findByEmail(email)
+                .ifPresent(user -> {
+                    assertThat(user.getName()).isEqualTo(username);
+                    assertThat(user.getEmail()).isEqualTo(email);
+                    assertThat(user.getPhone()).isEqualTo(phone);
+                });
     }
+
 }

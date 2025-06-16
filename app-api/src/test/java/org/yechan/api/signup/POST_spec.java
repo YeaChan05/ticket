@@ -285,6 +285,42 @@ public class POST_spec {
                 response -> {
                     // Assert
                     assertThat(response.getStatus()).isEqualTo("CONSTRAINT_VIOLATION");
+                    assertThat(response.getMessage()).isEqualTo("비밀번호는 최소 8자 이상, 대문자, 소문자, 숫자, 특수문자를 포함해야 합니다.");
+                }
+        );
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {
+            "1234567890",
+            "abcdefghij",
+            "ABCDEFGHIJ",
+            "!@#$%^&*()",
+            "abc123!@#"
+    })
+    @DisplayName("연락처는 010-XXXX-XXXX 형식이어야 한다")
+    void 연락처는_010_XXXX_XXXX_형식이어야_한다(
+            String phone,
+            @Autowired TestFixture fixture
+    ) {
+        // Arrange
+        var request = new UserRegisterRequest(
+                generateUsername(),
+                generateEmail(),
+                "Password123!",
+                phone
+        );
+
+        // Act
+        fixture.post(
+                "/api/v1/users/sign-up",
+                request,
+                RegisterSuccessResponse.class
+        ).onError(
+                response -> {
+                    // Assert
+                    assertThat(response.getStatus()).isEqualTo("CONSTRAINT_VIOLATION");
+                    assertThat(response.getMessage()).isEqualTo("전화번호 형식은 010-xxxx-xxxx이어야 합니다.");
                 }
         );
     }

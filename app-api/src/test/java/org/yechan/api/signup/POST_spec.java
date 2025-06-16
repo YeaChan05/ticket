@@ -252,8 +252,40 @@ public class POST_spec {
                     assertThat(response.getStatus()).isEqualTo("EMAIL-002");
                 }
         );
+    }
 
-        // Assert
+    @ParameterizedTest
+    @ValueSource(strings = {
+            "short",
+            "1234567",
+            "abcdefgh",
+            "ABCDEFGH",
+            "12345678",
+            "!@#$%^&*",
+            "abc123!@#"
+    })
+    void 비밀번호는_최소_8자_이상_대문자_소문자_숫자_특수문자를_포함해야_한다(
+            String password,
+            @Autowired TestFixture fixture
+    ) {
+        // Arrange
+        var request = new UserRegisterRequest(
+                generateUsername(),
+                generateEmail(),
+                password,
+                generatePhone()
+        );
 
+        // Act
+        fixture.post(
+                "/api/v1/users/sign-up",
+                request,
+                RegisterSuccessResponse.class
+        ).onError(
+                response -> {
+                    // Assert
+                    assertThat(response.getStatus()).isEqualTo("CONSTRAINT_VIOLATION");
+                }
+        );
     }
 }

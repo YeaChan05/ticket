@@ -215,6 +215,43 @@ public class POST_spec {
                     assertThat(response.getStatus()).isEqualTo("EMAIL-001");
                 }
         );
+    }
+
+    @Test
+    void 중복된_이름으로_가입_시_에러_코드_EMAIL_002를_반환한다(
+            @Autowired TestFixture fixture
+    ) {
+        // Arrange
+        var username = generateUsername();
+        var registeredRequest = new UserRegisterRequest(
+                username,
+                generateEmail(),
+                "Password123!",
+                generatePhone()
+        );
+        var request = new UserRegisterRequest(
+                username,
+                generateEmail(),
+                "Qweasd123!",
+                generatePhone()
+        );
+        fixture.post(
+                "/api/v1/users/sign-up",
+                registeredRequest,
+                RegisterSuccessResponse.class
+        );
+
+        // Act
+        fixture.post(
+                "/api/v1/users/sign-up",
+                request,
+                RegisterSuccessResponse.class
+        ).onError(
+                response -> {
+                    // Assert
+                    assertThat(response.getStatus()).isEqualTo("EMAIL-002");
+                }
+        );
 
         // Assert
 

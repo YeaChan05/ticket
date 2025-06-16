@@ -124,23 +124,23 @@
     -   요청 본문:
         ```json
         {
-          "name": "string",
+          "username": "string",
           "email": "string",
           "password": "string",
           "phone": "string"
         }
         ```
-    -   응답 상세:
-        -   성공 (HTTP 201 Created):
-            ```json
-            {
-              "status": "SUCCESS",
-              "data": {
-                "name": "string",
-                "email": "string"
-              }
-            }
-            ```
+    - curl 명령 예시
+        ```curl
+        curl -X POST http://localhost:8080/api/v1/users/sign-up \
+        -H "Content-Type: application/json" \
+        -d '{
+            "username": "testUser",
+            "email": "test@example.com",
+            "password": "Password123!",
+            "phone": "010-1234-5678"
+        }'
+        ```
         -   실패 - 유효성 검사 오류 (HTTP 400 Bad Request):
             -   예시 1: 이메일 형식 오류
                 ```json

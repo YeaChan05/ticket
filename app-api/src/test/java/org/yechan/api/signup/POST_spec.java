@@ -8,11 +8,12 @@ import static org.yechan.UsernameGenerator.generateUsername;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.yechan.TestFixture;
 import org.yechan.config.IntegrationTest;
-import org.yechan.config.response.ApiResponse;
 import org.yechan.dto.request.UserRegisterRequest;
 import org.yechan.dto.response.RegisterSuccessResponse;
 import org.yechan.repository.JpaUserRepository;
@@ -37,16 +38,19 @@ public class POST_spec {
         );
 
         // Act
-        ApiResponse<RegisterSuccessResponse> response = fixture.post(
+        fixture.post(
                 "/api/v1/users/sign-up",
                 request,
                 RegisterSuccessResponse.class
+        ).onSuccess(
+                response -> {
+                    // Assert
+                    assertThat(response.getStatus()).isEqualTo("SUCCESS");
+                    var data = response.getData();
+                    assertThat(data.email()).isEqualTo(email);
+                    assertThat(data.username()).isEqualTo(username);
+                }
         );
-
-        // Assert
-        var data = response.getData();
-        assertThat(data.email()).isEqualTo(email);
-        assertThat(data.username()).isEqualTo(username);
     }
 
     @Test
@@ -66,14 +70,17 @@ public class POST_spec {
         );
 
         // Act
-        var response = fixture.post(
+        fixture.post(
                 "/api/v1/users/sign-up",
                 request,
                 RegisterSuccessResponse.class
+        ).onSuccess(
+                response -> {
+                    // Assert
+                    assertThat(response.getStatus()).isEqualTo("SUCCESS");
+                }
         );
 
-        // Assert
-        assertThat(response.getStatus()).isEqualTo("SUCCESS");
     }
 
     @Test
@@ -99,16 +106,13 @@ public class POST_spec {
                 "/api/v1/users/sign-up",
                 request,
                 RegisterSuccessResponse.class
+        ).onSuccess(
+                response -> {
+                    var user = repository.findByEmail(email).orElseThrow();
+                    assertThat(user.getPassword()).isNotEqualTo(password);
+                    assertThat(passwordEncoder.matches(password, user.getPassword())).isTrue();
+                }
         );
-
-        // Assert
-        repository.findByEmail(email)
-                .ifPresent(user -> {
-                            assertThat(user.getPassword()).isNotEqualTo(password);
-                            assertThat(passwordEncoder.matches(password, user.getPassword())).isTrue();
-                        }
-                );
-
     }
 
     @Test
@@ -127,21 +131,51 @@ public class POST_spec {
                 password,
                 phone
         );
+        // Act
+        fixture.post(
+                "/api/v1/users/sign-up",
+                request,
+                RegisterSuccessResponse.class
+        ).onSuccess(
+                response -> {
+                    // Assert
+                    var user = repository.findByEmail(email).orElseThrow();
+                    assertThat(user.getName()).isEqualTo(username);
+                    assertThat(user.getEmail()).isEqualTo(email);
+                    assertThat(user.getPhone()).isEqualTo(phone);
+                }
+        );
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {
+            "plainaddress",
+            "@missingusername.com",
+            "username@.com",
+            "username@domain..com",
+    })
+    void 이메일은_RFC_5322_형식을_만족해야_한다(
+            String email,
+            @Autowired TestFixture fixture
+    ) {
+        // Arrange
+        var request = new UserRegisterRequest(
+                generateUsername(),
+                email,
+                "Password123!",
+                generatePhone()
+        );
 
         // Act
         fixture.post(
                 "/api/v1/users/sign-up",
                 request,
                 RegisterSuccessResponse.class
+        ).onError(
+                response -> {
+                    // Assert
+                    assertThat(response.getStatus()).isEqualTo("CONSTRAINT_VIOLATION");
+                }
         );
-
-        // Assert
-        repository.findByEmail(email)
-                .ifPresent(user -> {
-                    assertThat(user.getName()).isEqualTo(username);
-                    assertThat(user.getEmail()).isEqualTo(email);
-                    assertThat(user.getPhone()).isEqualTo(phone);
-                });
     }
-
 }

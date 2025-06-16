@@ -1,15 +1,15 @@
 package org.yechan.api.issueToken;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.yechan.api.fixture.UserFixture.generateEmail;
-import static org.yechan.api.fixture.UserFixture.generatePhone;
-import static org.yechan.api.fixture.UserFixture.generateUsername;
+import static org.yechan.EmailGenerator.generateEmail;
+import static org.yechan.PhoneNumberGenerator.generatePhone;
+import static org.yechan.UsernameGenerator.generateUsername;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.web.client.TestRestTemplate;
-import org.yechan.api.config.IntegrationTest;
+import org.yechan.config.IntegrationTest;
 import org.yechan.config.response.ApiResponse;
 import org.yechan.config.response.ErrorResponse;
 import org.yechan.dto.request.IssueTokenRequest;

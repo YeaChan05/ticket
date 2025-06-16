@@ -178,4 +178,45 @@ public class POST_spec {
                 }
         );
     }
+
+    @Test
+    void 중복된_이메일로_가입_시_에러_코드_EMAIL_001를_반환한다(
+            @Autowired TestFixture fixture
+    ) {
+        // Arrange
+        var email = generateEmail();
+        var registeredRequest = new UserRegisterRequest(
+                generateUsername(),
+                email,
+                "Password123!",
+                generatePhone()
+        );
+
+        var request = new UserRegisterRequest(
+                generateUsername(),
+                email,
+                "Qweasd123!",
+                generatePhone()
+        );
+        fixture.post(
+                "/api/v1/users/sign-up",
+                registeredRequest,
+                RegisterSuccessResponse.class
+        );
+
+        // Act
+        fixture.post(
+                "/api/v1/users/sign-up",
+                request,
+                RegisterSuccessResponse.class
+        ).onError(
+                response -> {
+                    // Assert
+                    assertThat(response.getStatus()).isEqualTo("EMAIL-001");
+                }
+        );
+
+        // Assert
+
+    }
 }

@@ -1,5 +1,6 @@
 package org.yechan;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.context.annotation.Bean;
@@ -10,7 +11,8 @@ public class TestFixtureConfig {
 
     @Bean
     @Scope("prototype")
-    public TestFixture testFixture(TestRestTemplate testRestTemplate) {
-        return new TestFixture(testRestTemplate);
+    public TestFixture testFixture(TestRestTemplate testRestTemplate,
+                                   ObjectMapper objectMapper) {
+        return new TestFixture(testRestTemplate, objectMapper);
     }
 }

@@ -264,6 +264,42 @@ public class POST_spec {
 
     }
 
+    @Test
+    void 토큰의_payload에_email_정보와_username이_포함된다(
+            @Autowired TestFixture fixture
+    ) {
+        // Arrange
+        var email = generateEmail();
+        var password = PASSWORD;
+        var username = generateUsername();
+        var phone = generatePhone();
+        generateUser(fixture, username, email, password, phone);
+        IssueTokenRequest request = new IssueTokenRequest(
+                email,
+                password
+        );
+
+        // Act
+        fixture.post(
+                        "/api/v1/auth/issueToken",
+                        request,
+                        TokenHolder.class
+                )
+                .onSuccess(
+                        response -> {
+                            // Assert
+                            var body = response.getData();
+                            assertThat(body).isNotNull();
+                            assertThat(body.accessToken()).isNotBlank();
+                            var parts = body.accessToken().split("\\.");
+                            var payload = decodeBase64Url(parts[1]);
+                            assertThat(payload).contains("\"email\":\"" + email + "\"");
+                            assertThat(payload).contains("\"username\":\"" + username + "\"");
+                        }
+                );
+
+    }
+
     public void generateUser(final TestFixture fixture, final String name, final String email,
                              final String password, final String phone) {
         fixture.post(

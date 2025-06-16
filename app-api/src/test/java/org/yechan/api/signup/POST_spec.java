@@ -154,7 +154,7 @@ public class POST_spec {
             "username@.com",
             "username@domain..com",
     })
-    void 이메일은_RFC_5322_형식을_만족해야_한다(
+    void 이메일이_RFC_5322_형식을_만족하지_않은_경우_CONSTRAINT_VIOLATION이_응답된다(
             String email,
             @Autowired TestFixture fixture
     ) {

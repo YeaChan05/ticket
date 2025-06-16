@@ -45,4 +45,33 @@ public class POST_spec {
         assertThat(data.email()).isEqualTo(email);
         assertThat(data.username()).isEqualTo(username);
     }
+
+    @Test
+    void 회원가입_성공_시_정의된_성공_코드를_반환한다(
+            @Autowired TestFixture fixture
+    ) {
+        // Arrange
+
+        var username = generateUsername();
+        var email = generateEmail();
+        var phone = generatePhone();
+        var request = new UserRegisterRequest(
+                username,
+                email,
+                "Password123!",
+                phone
+        );
+
+        // Act
+        var response = fixture.post(
+                "/api/v1/users/sign-up",
+                request,
+                RegisterSuccessResponse.class
+        );
+
+        // Assert
+        assertThat(response.getStatus()).isEqualTo("SUCCESS");
+    }
+
+
 }

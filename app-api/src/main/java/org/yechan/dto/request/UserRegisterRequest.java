@@ -8,7 +8,7 @@ import org.yechan.dto.annotation.Email;
 public record UserRegisterRequest(
         @NotNull(message = "이름을 입력해주세요.")
         @NotBlank(message = "이름은 비워둘 수 없습니다.")
-        String name,
+        String username,
 
         @NotNull(message = "이메일을 입력해주세요.")
         @NotBlank(message = "이메일은 비워둘 수 없습니다.")

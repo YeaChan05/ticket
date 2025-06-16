@@ -93,14 +93,16 @@
   ```
 - curl 명령 예시
   ```bash
-  curl -i -X METHOD 'path' \
+  curl -i -X POST '/api/v1/auth/issueToken' \
   -H 'Content-Type: application/json' \
   -d '{
+    "email": "test@test.com",
+    "password": "tesT!1234",
   }'
   ```
 
 성공 응답
-- 상태코드: 301 Created
+- 상태코드: SUCCESS
 
 
 ### 5. 개발 및 테스트 체크리스트
@@ -115,7 +117,7 @@
 - [x] 로그인 시도 시 email에 상응하는 비밀번호가 누락이면 CONSTRAINT_VIOLATION 예외가 발생한다
 - [x] 로그인 시도 시 잘못된 비밀번호를 입력하면 USER-003 예외가 발생한다
 - [x] 로그인 파라미터가 잘못된 형식이면 CONSTRAINT_VIOLATION 예외가 발생한다
-- [ ] 로그인 성공 시 토큰은 JWT 형식을 따른다
+- [x] 로그인 성공 시 토큰은 JWT 형식을 따른다
 - [ ] 토큰의 payload에 email 정보가 포함된다
 - [ ] 디코딩된 토큰은 원본 정보를 가지고 있어야한다
 - [ ] 만료된 토큰으로 접근 시 401 예외가 발생한다

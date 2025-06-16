@@ -7,6 +7,8 @@ import static org.yechan.UsernameGenerator.generateUsername;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.yechan.TestFixture;
 import org.yechan.config.IntegrationTest;
@@ -21,15 +23,6 @@ import org.yechan.dto.response.RegisterSuccessResponse;
 public class POST_spec {
     @Autowired
     private ResponseWrapper responseWrapper;
-
-    private static void generateUser(final TestFixture fixture, final String name, final String email,
-                                     final String password, final String phone) {
-        fixture.post(
-                "/api/v1/users/sign-up",
-                new UserRegisterRequest(name, email, password, phone),
-                RegisterSuccessResponse.class
-        );
-    }
 
     @Test
     void 로그인_시도_시_등록된_email과_password로_요청하면_200_응답이_반환된다(
@@ -176,5 +169,50 @@ public class POST_spec {
                             assertThat(response.getMessage()).isEqualTo("비밀번호가 일치하지 않습니다.");
                         }
                 );
+    }
+
+    private static IssueTokenRequest[] invalidEmailProvider() {
+        return new IssueTokenRequest[]{
+                new IssueTokenRequest("invalid-email", "password123!"),
+                new IssueTokenRequest("user@.com", "password123!"),
+                new IssueTokenRequest("user@domain", "password123!"),
+                new IssueTokenRequest("user@domain..com", "password123!"),
+                new IssueTokenRequest("", "password123!"),
+                new IssueTokenRequest(null, "password123!"),
+                new IssueTokenRequest("valid@test.com", ""),
+                new IssueTokenRequest("valid@test.com", null)
+        };
+    }
+
+    private static void generateUser(final TestFixture fixture, final String name, final String email,
+                                     final String password, final String phone) {
+        fixture.post(
+                "/api/v1/users/sign-up",
+                new UserRegisterRequest(name, email, password, phone),
+                RegisterSuccessResponse.class
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("org.yechan.api.issueToken.POST_spec#invalidEmailProvider")
+    @DisplayName("로그인 파라미터가 잘못된 형식이면 CONSTRAINT_VIOLATION 예외가 발생한다")
+    void 로그인_파라미터가_잘못된_형식이면_CONSTRAINT_VIOLATION_예외가_발생한다(
+            IssueTokenRequest request,
+            @Autowired TestFixture fixture
+    ) {
+        // Act
+        fixture.post(
+                        "/api/v1/auth/issueToken",
+                        request,
+                        TokenHolder.class
+                )
+                .onError(
+                        response -> {
+                            // Assert
+                            assertThat(response).isNotNull();
+                            assertThat(response.getStatus()).isEqualTo("CONSTRAINT_VIOLATION");
+                        }
+                );
+
     }
 }

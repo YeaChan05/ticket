@@ -1,4 +1,4 @@
-package org.yechan;
+package org.yechan.fixture;
 
 import java.util.function.Consumer;
 import org.yechan.config.response.ApiResponse;

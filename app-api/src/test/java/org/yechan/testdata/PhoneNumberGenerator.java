@@ -1,4 +1,4 @@
-package org.yechan;
+package org.yechan.testdata;
 
 import java.util.concurrent.ThreadLocalRandom;
 

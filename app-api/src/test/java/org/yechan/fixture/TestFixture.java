@@ -1,4 +1,4 @@
-package org.yechan;
+package org.yechan.fixture;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JavaType;

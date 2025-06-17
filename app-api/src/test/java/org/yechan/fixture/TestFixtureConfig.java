@@ -1,4 +1,4 @@
-package org.yechan;
+package org.yechan.fixture;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.boot.test.context.TestConfiguration;

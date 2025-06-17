@@ -7,9 +7,9 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.lenient;
-import static org.yechan.EmailGenerator.generateEmail;
-import static org.yechan.PhoneNumberGenerator.generatePhone;
-import static org.yechan.UsernameGenerator.generateUsername;
+import static org.yechan.testdata.EmailGenerator.generateEmail;
+import static org.yechan.testdata.PhoneNumberGenerator.generatePhone;
+import static org.yechan.testdata.UsernameGenerator.generateUsername;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

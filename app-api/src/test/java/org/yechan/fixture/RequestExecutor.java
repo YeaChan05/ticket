@@ -1,4 +1,4 @@
-package org.yechan;
+package org.yechan.fixture;
 
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;

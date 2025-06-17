@@ -1,10 +1,10 @@
 package org.yechan.api.signup;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.yechan.EmailGenerator.generateEmail;
-import static org.yechan.PasswordGenerator.generatePassword;
-import static org.yechan.PhoneNumberGenerator.generatePhone;
-import static org.yechan.UsernameGenerator.generateUsername;
+import static org.yechan.testdata.EmailGenerator.generateEmail;
+import static org.yechan.testdata.PasswordGenerator.generatePassword;
+import static org.yechan.testdata.PhoneNumberGenerator.generatePhone;
+import static org.yechan.testdata.UsernameGenerator.generateUsername;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -13,10 +13,10 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.yechan.TestFixture;
 import org.yechan.config.IntegrationTest;
 import org.yechan.dto.request.UserRegisterRequest;
 import org.yechan.dto.response.RegisterSuccessResponse;
+import org.yechan.fixture.TestFixture;
 import org.yechan.repository.JpaUserRepository;
 
 @IntegrationTest

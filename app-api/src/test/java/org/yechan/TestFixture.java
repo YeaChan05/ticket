@@ -17,7 +17,7 @@ public record TestFixture(
         ObjectMapper objectMapper
 ) {
 
-    public <T> TestResult<ApiResponse<T>, ErrorResponse> get(
+    public <T> TestResult<T> get(
             String url,
             Class<T> responseDataClass,
             Object... uriVariables
@@ -26,7 +26,7 @@ public record TestFixture(
         return processRequest(requestEntity, getResponseType(responseDataClass));
     }
 
-    public <T> TestResult<ApiResponse<T>, ErrorResponse> post(
+    public <T> TestResult<T> post(
             String url,
             Object requestBody,
             Class<T> responseDataClass,
@@ -36,7 +36,7 @@ public record TestFixture(
         return processRequest(requestEntity, getResponseType(responseDataClass));
     }
 
-    private <T> TestResult<ApiResponse<T>, ErrorResponse> processRequest(
+    private <T> TestResult<T> processRequest(
             final RequestEntity<?> requestEntity, final ParameterizedTypeReference<ApiResponse<T>> responseType) {
         try {
             ResponseEntity<String> responseEntity = client.exchange(requestEntity, String.class);
@@ -48,7 +48,7 @@ public record TestFixture(
 
 
 
-    private <T> TestResult<ApiResponse<T>, ErrorResponse> parseResponseBody(
+    private <T> TestResult<T> parseResponseBody(
             final String responseBody, final ParameterizedTypeReference<ApiResponse<T>> responseType) {
         try {
             JavaType javaType = objectMapper.constructType(responseType.getType());

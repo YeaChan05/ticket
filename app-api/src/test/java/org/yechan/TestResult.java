@@ -1,21 +1,23 @@
 package org.yechan;
 
 import java.util.function.Consumer;
+import org.yechan.config.response.ApiResponse;
+import org.yechan.config.response.ErrorResponse;
 
-public class TestResult<S, E> {
-    private final S success;
-    private final E error;
+public class TestResult<T> {
+    private final ApiResponse<T> success;
+    private final ErrorResponse error;
 
-    private TestResult(S success, E error) {
+    private TestResult(ApiResponse<T> success, ErrorResponse error) {
         this.success = success;
         this.error = error;
     }
 
-    public static <S, E> TestResult<S, E> success(S success) {
+    public static<T> TestResult<T> success(ApiResponse<T> success) {
         return new TestResult<>(success, null);
     }
 
-    public static <S, E> TestResult<S, E> error(E error) {
+    public static <T> TestResult<T> error(ErrorResponse error) {
         return new TestResult<>(null, error);
     }
 
@@ -23,17 +25,19 @@ public class TestResult<S, E> {
         return success != null;
     }
 
-    public void onSuccess(Consumer<S> consumer) {
+    public TestResult<T> onSuccess(Consumer<ApiResponse<T>> consumer) {
         if (isSuccess()) {
             consumer.accept(success);
+            return this;
         } else {
             throw new AssertionError("API call was expected to succeed, but it failed. Error: " + error.toString());
         }
     }
 
-    public void onError(Consumer<E> consumer) {
+    public TestResult<T> onError(Consumer<ErrorResponse> consumer) {
         if (!isSuccess()) {
             consumer.accept(error);
+            return this;
         } else {
             throw new AssertionError("API call was expected to fail, but it succeeded. Success: " + success.toString());
         }

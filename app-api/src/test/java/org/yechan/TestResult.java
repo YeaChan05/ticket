@@ -42,4 +42,20 @@ public class TestResult<T> {
             throw new AssertionError("API call was expected to fail, but it succeeded. Success: " + success.toString());
         }
     }
+
+    public ApiResponse<T> getApiResponse() {
+        if (isSuccess()) {
+            return success;
+        } else {
+            throw new AssertionError("API call was expected to succeed, but it failed. Error: " + error.toString());
+        }
+    }
+
+    public ErrorResponse getErrorResponse() {
+        if (!isSuccess()) {
+            return error;
+        } else {
+            throw new AssertionError("API call was expected to fail, but it succeeded. Success: " + success.toString());
+        }
+    }
 }

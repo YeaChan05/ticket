@@ -6,9 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.core.ResolvableType;
-import org.springframework.http.RequestEntity;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.client.RestClientResponseException;
+import org.springframework.http.HttpMethod;
 import org.yechan.config.response.ApiResponse;
 import org.yechan.config.response.ErrorResponse;
 
@@ -17,38 +15,22 @@ public record TestFixture(
         ObjectMapper objectMapper
 ) {
 
-    public <T> TestResult<T> get(
+    public RequestExecutor get(
             String url,
-            Class<T> responseDataClass,
             Object... uriVariables
     ) {
-        RequestEntity<Void> requestEntity = RequestEntity.get(url, uriVariables).build();
-        return processRequest(requestEntity, getResponseType(responseDataClass));
+        return new RequestExecutor(this, HttpMethod.GET, url, null, uriVariables);
     }
 
-    public <T> TestResult<T> post(
+    public RequestExecutor post(
             String url,
             Object requestBody,
-            Class<T> responseDataClass,
             Object... uriVariables
     ) {
-        RequestEntity<Object> requestEntity = RequestEntity.post(url, uriVariables).body(requestBody);
-        return processRequest(requestEntity, getResponseType(responseDataClass));
+        return new RequestExecutor(this, HttpMethod.POST, url, requestBody, uriVariables);
     }
 
-    private <T> TestResult<T> processRequest(
-            final RequestEntity<?> requestEntity, final ParameterizedTypeReference<ApiResponse<T>> responseType) {
-        try {
-            ResponseEntity<String> responseEntity = client.exchange(requestEntity, String.class);
-            return parseResponseBody(responseEntity.getBody(), responseType);
-        } catch (RestClientResponseException e) {
-            return TestResult.error(parseToErrorResponse(e.getResponseBodyAsString()));
-        }
-    }
-
-
-
-    private <T> TestResult<T> parseResponseBody(
+    <T> TestResult<T> parseResponseBody(
             final String responseBody, final ParameterizedTypeReference<ApiResponse<T>> responseType) {
         try {
             JavaType javaType = objectMapper.constructType(responseType.getType());
@@ -59,7 +41,7 @@ public record TestFixture(
         }
     }
 
-    private ErrorResponse parseToErrorResponse(String responseBody) {
+    ErrorResponse parseToErrorResponse(String responseBody) {
         try {
             return objectMapper.readValue(responseBody, ErrorResponse.class);
         } catch (JsonProcessingException ex) {
@@ -67,7 +49,7 @@ public record TestFixture(
         }
     }
 
-    private <T> ParameterizedTypeReference<ApiResponse<T>> getResponseType(
+    <T> ParameterizedTypeReference<ApiResponse<T>> getResponseType(
             final Class<T> responseDataClass) {
         ResolvableType resolvableType = ResolvableType.forClassWithGenerics(ApiResponse.class, responseDataClass);
         return ParameterizedTypeReference.forType(resolvableType.getType());

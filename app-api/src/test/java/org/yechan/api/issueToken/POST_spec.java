@@ -305,9 +305,9 @@ public class POST_spec {
     }
 
     @Test
-    void 만료된_토큰으로_접근_시_401_예외가_발생한다(
+    void 여러_번_로그인_시도해도_항상_새로운_토큰이_발급된다(
             @Autowired TestFixture fixture
-    ) {
+    ) throws InterruptedException {
         // Arrange
         var email = generateEmail();
         var password = PASSWORD;
@@ -320,24 +320,25 @@ public class POST_spec {
         );
 
         // Act
-        var apiResponse = fixture.post(
+        var apiResponse1 = fixture.post(
                         "/api/v1/auth/issueToken",
                         request
                 )
                 .withoutToken()
                 .exchange(TokenHolder.class)
-                .onSuccess(
-                        response -> {
-                            var body = response.getData();
-                            assertThat(body).isNotNull();
-                            assertThat(body.accessToken()).isNotBlank();
-                        }
+                .getApiResponse();
+        var apiResponse2 = fixture.post(
+                        "/api/v1/auth/issueToken",
+                        request
                 )
+                .withoutToken()
+                .exchange(TokenHolder.class)
                 .getApiResponse();
 
         // Assert
-        var token = apiResponse.getData().accessToken();
-        //TODO 2025 06 17 17:15:54 : 토큰 만료 시간을 조정하여 테스트를 진행해야 합니다.
+        var token1 = apiResponse1.getData().accessToken();
+        var token2 = apiResponse2.getData().accessToken();
+        assertThat(token1).isNotEqualTo(token2);
     }
 
     public void generateUser(final TestFixture fixture, final String name, final String email,

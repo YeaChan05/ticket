@@ -12,7 +12,7 @@ public class EmailValidator implements ConstraintValidator<Email, String> {
 
     @Override
     public boolean isValid(final String value, final ConstraintValidatorContext context) {
-        // 빈 값은 @NotNull이나 @NotEmpty로 검증
+        // 빈 값은 @NotBlank로 검증
         if (value == null || value.isEmpty()) {
             return true;
         }

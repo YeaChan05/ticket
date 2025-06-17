@@ -7,6 +7,7 @@ import java.security.Key;
 import java.util.Base64;
 import java.util.Date;
 import java.util.Map;
+import java.util.UUID;
 import org.springframework.stereotype.Component;
 import org.yechan.dto.TokenHolder;
 
@@ -32,6 +33,7 @@ public class TokenProvider {
                 .setClaims(claims)
                 .signWith(key, SignatureAlgorithm.HS256)
                 .setExpiration(validity)
+                .setId(UUID.randomUUID().toString())
                 .compact();
         return new TokenHolder(accessToken);
     }

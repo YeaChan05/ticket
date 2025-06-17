@@ -40,15 +40,17 @@ public class POST_spec {
 
         // Act
         fixture.post(
-                "/api/v1/users/sign-up",
-                request,
-                RegisterSuccessResponse.class
-        ).onSuccess(
-                response -> {
-                    // Assert
-                    assertThat(response.getStatus()).isEqualTo("SUCCESS");
-                }
-        );
+                        "/api/v1/users/sign-up",
+                        request
+                )
+                .withoutToken()
+                .exchange(RegisterSuccessResponse.class)
+                .onSuccess(
+                        response -> {
+                            // Assert
+                            assertThat(response.getStatus()).isEqualTo("SUCCESS");
+                        }
+                );
     }
 
     @Test
@@ -69,15 +71,16 @@ public class POST_spec {
 
         // Act
         fixture.post(
-                "/api/v1/users/sign-up",
-                request,
-                RegisterSuccessResponse.class
-        ).onSuccess(
-                response -> {
-                    // Assert
-                    assertThat(response.getStatus()).isEqualTo("SUCCESS");
-                }
-        );
+                        "/api/v1/users/sign-up",
+                        request
+                )
+                .withoutToken()
+                .exchange(RegisterSuccessResponse.class).onSuccess(
+                        response -> {
+                            // Assert
+                            assertThat(response.getStatus()).isEqualTo("SUCCESS");
+                        }
+                );
 
     }
 
@@ -101,16 +104,18 @@ public class POST_spec {
 
         // Act
         fixture.post(
-                "/api/v1/users/sign-up",
-                request,
-                RegisterSuccessResponse.class
-        ).onSuccess(
-                response -> {
-                    var user = repository.findByEmail(email).orElseThrow();
-                    assertThat(user.getPassword()).isNotEqualTo(password);
-                    assertThat(passwordEncoder.matches(password, user.getPassword())).isTrue();
-                }
-        );
+                        "/api/v1/users/sign-up",
+                        request
+                )
+                .withoutToken()
+                .exchange(RegisterSuccessResponse.class)
+                .onSuccess(
+                        response -> {
+                            var user = repository.findByEmail(email).orElseThrow();
+                            assertThat(user.getPassword()).isNotEqualTo(password);
+                            assertThat(passwordEncoder.matches(password, user.getPassword())).isTrue();
+                        }
+                );
     }
 
     @Test
@@ -131,18 +136,19 @@ public class POST_spec {
         );
         // Act
         fixture.post(
-                "/api/v1/users/sign-up",
-                request,
-                RegisterSuccessResponse.class
-        ).onSuccess(
-                response -> {
-                    // Assert
-                    var user = repository.findByEmail(email).orElseThrow();
-                    assertThat(user.getName()).isEqualTo(username);
-                    assertThat(user.getEmail()).isEqualTo(email);
-                    assertThat(user.getPhone()).isEqualTo(phone);
-                }
-        );
+                        "/api/v1/users/sign-up",
+                        request
+                )
+                .withoutToken()
+                .exchange(RegisterSuccessResponse.class).onSuccess(
+                        response -> {
+                            // Assert
+                            var user = repository.findByEmail(email).orElseThrow();
+                            assertThat(user.getName()).isEqualTo(username);
+                            assertThat(user.getEmail()).isEqualTo(email);
+                            assertThat(user.getPhone()).isEqualTo(phone);
+                        }
+                );
     }
 
     @ParameterizedTest
@@ -166,15 +172,16 @@ public class POST_spec {
 
         // Act
         fixture.post(
-                "/api/v1/users/sign-up",
-                request,
-                RegisterSuccessResponse.class
-        ).onError(
-                response -> {
-                    // Assert
-                    assertThat(response.getStatus()).isEqualTo("CONSTRAINT_VIOLATION");
-                }
-        );
+                        "/api/v1/users/sign-up",
+                        request
+                )
+                .withoutToken()
+                .exchange(RegisterSuccessResponse.class).onError(
+                        response -> {
+                            // Assert
+                            assertThat(response.getStatus()).isEqualTo("CONSTRAINT_VIOLATION");
+                        }
+                );
     }
 
     @Test
@@ -197,22 +204,24 @@ public class POST_spec {
                 generatePhone()
         );
         fixture.post(
-                "/api/v1/users/sign-up",
-                registeredRequest,
-                RegisterSuccessResponse.class
-        );
+                        "/api/v1/users/sign-up",
+                        registeredRequest
+                )
+                .withoutToken()
+                .exchange(RegisterSuccessResponse.class);
 
         // Act
         fixture.post(
-                "/api/v1/users/sign-up",
-                request,
-                RegisterSuccessResponse.class
-        ).onError(
-                response -> {
-                    // Assert
-                    assertThat(response.getStatus()).isEqualTo("USER-006");
-                }
-        );
+                        "/api/v1/users/sign-up",
+                        request
+                )
+                .withoutToken()
+                .exchange(RegisterSuccessResponse.class).onError(
+                        response -> {
+                            // Assert
+                            assertThat(response.getStatus()).isEqualTo("USER-006");
+                        }
+                );
     }
 
     @Test
@@ -234,22 +243,24 @@ public class POST_spec {
                 generatePhone()
         );
         fixture.post(
-                "/api/v1/users/sign-up",
-                registeredRequest,
-                RegisterSuccessResponse.class
-        );
+                        "/api/v1/users/sign-up",
+                        registeredRequest
+                )
+                .withoutToken()
+                .exchange(RegisterSuccessResponse.class);
 
         // Act
         fixture.post(
-                "/api/v1/users/sign-up",
-                request,
-                RegisterSuccessResponse.class
-        ).onError(
-                response -> {
-                    // Assert
-                    assertThat(response.getStatus()).isEqualTo("USER-002");
-                }
-        );
+                        "/api/v1/users/sign-up",
+                        request
+                )
+                .withoutToken()
+                .exchange(RegisterSuccessResponse.class).onError(
+                        response -> {
+                            // Assert
+                            assertThat(response.getStatus()).isEqualTo("USER-002");
+                        }
+                );
     }
 
     @ParameterizedTest
@@ -276,16 +287,17 @@ public class POST_spec {
 
         // Act
         fixture.post(
-                "/api/v1/users/sign-up",
-                request,
-                RegisterSuccessResponse.class
-        ).onError(
-                response -> {
-                    // Assert
-                    assertThat(response.getStatus()).isEqualTo("CONSTRAINT_VIOLATION");
-                    assertThat(response.getMessage()).isEqualTo("비밀번호는 최소 8자 이상, 대문자, 소문자, 숫자, 특수문자를 포함해야 합니다.");
-                }
-        );
+                        "/api/v1/users/sign-up",
+                        request
+                )
+                .withoutToken()
+                .exchange(RegisterSuccessResponse.class).onError(
+                        response -> {
+                            // Assert
+                            assertThat(response.getStatus()).isEqualTo("CONSTRAINT_VIOLATION");
+                            assertThat(response.getMessage()).isEqualTo("비밀번호는 최소 8자 이상, 대문자, 소문자, 숫자, 특수문자를 포함해야 합니다.");
+                        }
+                );
     }
 
     @ParameterizedTest
@@ -311,16 +323,17 @@ public class POST_spec {
 
         // Act
         fixture.post(
-                "/api/v1/users/sign-up",
-                request,
-                RegisterSuccessResponse.class
-        ).onError(
-                response -> {
-                    // Assert
-                    assertThat(response.getStatus()).isEqualTo("CONSTRAINT_VIOLATION");
-                    assertThat(response.getMessage()).isEqualTo("전화번호 형식은 010-xxxx-xxxx이어야 합니다.");
-                }
-        );
+                        "/api/v1/users/sign-up",
+                        request
+                )
+                .withoutToken()
+                .exchange(RegisterSuccessResponse.class).onError(
+                        response -> {
+                            // Assert
+                            assertThat(response.getStatus()).isEqualTo("CONSTRAINT_VIOLATION");
+                            assertThat(response.getMessage()).isEqualTo("전화번호 형식은 010-xxxx-xxxx이어야 합니다.");
+                        }
+                );
     }
 
     @Test
@@ -344,22 +357,26 @@ public class POST_spec {
         );
 
         fixture.post(
-                "/api/v1/users/sign-up",
-                registeredRequest,
-                RegisterSuccessResponse.class
-        );
+                        "/api/v1/users/sign-up",
+                        registeredRequest,
+                        RegisterSuccessResponse.class
+                )
+                .withoutToken()
+                .exchange(RegisterSuccessResponse.class);
 
         // Act
         fixture.post(
-                "/api/v1/users/sign-up",
-                request,
-                RegisterSuccessResponse.class
-        ).onError(
-                response -> {
-                    // Assert
-                    assertThat(response.getStatus()).isEqualTo("USER-005");
-                }
-        );
+                        "/api/v1/users/sign-up",
+                        request,
+                        RegisterSuccessResponse.class
+                )
+                .withoutToken()
+                .exchange(RegisterSuccessResponse.class).onError(
+                        response -> {
+                            // Assert
+                            assertThat(response.getStatus()).isEqualTo("USER-005");
+                        }
+                );
     }
 
     static UserRegisterRequest[] invalidUsernameProvider() {
@@ -383,15 +400,17 @@ public class POST_spec {
     ) {
         // Act
         fixture.post(
-                "/api/v1/users/sign-up",
-                request,
-                RegisterSuccessResponse.class
-        ).onError(
-                response -> {
-                    // Assert
-                    assertThat(response.getStatus()).isEqualTo("CONSTRAINT_VIOLATION");
-                }
-        );
+                        "/api/v1/users/sign-up",
+                        request
+                )
+                .withoutToken()
+                .exchange(RegisterSuccessResponse.class)
+                .onError(
+                        response -> {
+                            // Assert
+                            assertThat(response.getStatus()).isEqualTo("CONSTRAINT_VIOLATION");
+                        }
+                );
     }
 
     @Test
@@ -410,16 +429,17 @@ public class POST_spec {
 
         // Act
         fixture.post(
-                "/api/v1/users/sign-up",
-                request,
-                RegisterSuccessResponse.class
-        ).onSuccess(
-                response -> {
-                    // Assert
-                    assertThat(response.getStatus()).isEqualTo("SUCCESS");
-                    assertThat(response.getData().email()).isEqualTo(email);
-                    assertThat(response.getData().username()).isEqualTo(username);
-                }
-        );
+                        "/api/v1/users/sign-up",
+                        request
+                )
+                .withoutToken()
+                .exchange(RegisterSuccessResponse.class).onSuccess(
+                        response -> {
+                            // Assert
+                            assertThat(response.getStatus()).isEqualTo("SUCCESS");
+                            assertThat(response.getData().email()).isEqualTo(email);
+                            assertThat(response.getData().username()).isEqualTo(username);
+                        }
+                );
     }
 }

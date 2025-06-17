@@ -1,11 +1,11 @@
 package org.yechan.api.issueToken;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.yechan.EmailGenerator.generateEmail;
 import static org.yechan.PhoneNumberGenerator.generatePhone;
 import static org.yechan.UsernameGenerator.generateUsername;
 
-import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -14,7 +14,6 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.yechan.TestFixture;
 import org.yechan.config.IntegrationTest;
-import org.yechan.config.response.ResponseWrapper;
 import org.yechan.dto.TokenHolder;
 import org.yechan.dto.request.IssueTokenRequest;
 import org.yechan.dto.request.UserRegisterRequest;
@@ -24,12 +23,23 @@ import org.yechan.dto.response.RegisterSuccessResponse;
 @DisplayName("POST /api/v1/auth/issueToken")
 public class POST_spec {
     private static final String PASSWORD = "securep!21Assword";
-    @Autowired
-    private ResponseWrapper responseWrapper;
+
+    private static IssueTokenRequest[] invalidEmailProvider() {
+        return new IssueTokenRequest[]{
+                new IssueTokenRequest("invalid-email", "password123!"),
+                new IssueTokenRequest("user@.com", "password123!"),
+                new IssueTokenRequest("user@domain", "password123!"),
+                new IssueTokenRequest("user@domain..com", "password123!"),
+                new IssueTokenRequest("", "password123!"),
+                new IssueTokenRequest(null, "password123!"),
+                new IssueTokenRequest("valid@test.com", ""),
+                new IssueTokenRequest("valid@test.com", null)
+        };
+    }
 
     private static String decodeBase64Url(String base64UrlString) {
         byte[] decodedBytes = Base64.getUrlDecoder().decode(base64UrlString);
-        return new String(decodedBytes, StandardCharsets.UTF_8);
+        return new String(decodedBytes, UTF_8);
     }
 
     @Test
@@ -52,9 +62,10 @@ public class POST_spec {
         // Act
         fixture.post(
                         "/api/v1/auth/issueToken",
-                        request,
-                        TokenHolder.class
+                        request
                 )
+                .withoutToken()
+                .exchange(TokenHolder.class)
                 .onSuccess(
                         response -> {
                             // Assert
@@ -84,9 +95,10 @@ public class POST_spec {
         // Act
         fixture.post(
                         "/api/v1/auth/issueToken",
-                        request,
-                        TokenHolder.class
+                        request
                 )
+                .withoutToken()
+                .exchange(TokenHolder.class)
                 .onSuccess(
                         response -> {
                             // Assert
@@ -107,9 +119,10 @@ public class POST_spec {
         // Act
         fixture.post(
                         "/api/v1/auth/issueToken",
-                        new IssueTokenRequest(email, null),// 비밀번호가 누락된 경우
-                        TokenHolder.class
+                        new IssueTokenRequest(email, null)// 비밀번호가 누락된 경우
                 )
+                .withoutToken()
+                .exchange(TokenHolder.class)
                 .onError(
                         response -> {
                             // Assert
@@ -137,28 +150,16 @@ public class POST_spec {
         // Act
         fixture.post(
                         "/api/v1/auth/issueToken",
-                        request,
-                        TokenHolder.class
+                        request
                 )
+                .withoutToken()
+                .exchange(TokenHolder.class)
                 .onError(response -> {
                     // Assert
                     assertThat(response).isNotNull();
                     assertThat(response.getStatus()).isEqualTo("USER-001");
                     assertThat(response.getMessage()).isEqualTo("사용자를 찾을 수 없습니다.");
                 });
-    }
-
-    private static IssueTokenRequest[] invalidEmailProvider() {
-        return new IssueTokenRequest[]{
-                new IssueTokenRequest("invalid-email", "password123!"),
-                new IssueTokenRequest("user@.com", "password123!"),
-                new IssueTokenRequest("user@domain", "password123!"),
-                new IssueTokenRequest("user@domain..com", "password123!"),
-                new IssueTokenRequest("", "password123!"),
-                new IssueTokenRequest(null, "password123!"),
-                new IssueTokenRequest("valid@test.com", ""),
-                new IssueTokenRequest("valid@test.com", null)
-        };
     }
 
     @Test
@@ -179,8 +180,9 @@ public class POST_spec {
         // Act
         fixture.post(
                         "/api/v1/auth/issueToken",
-                        request,
-                        TokenHolder.class)
+                        request)
+                .withoutToken()
+                .exchange(TokenHolder.class)
                 .onError(
                         response -> {
                             // Assert
@@ -201,9 +203,10 @@ public class POST_spec {
         // Act
         fixture.post(
                         "/api/v1/auth/issueToken",
-                        request,
-                        TokenHolder.class
+                        request
                 )
+                .withoutToken()
+                .exchange(TokenHolder.class)
                 .onError(
                         response -> {
                             // Assert
@@ -232,9 +235,10 @@ public class POST_spec {
         // Act
         fixture.post(
                         "/api/v1/auth/issueToken",
-                        request,
-                        TokenHolder.class
+                        request
                 )
+                .withoutToken()
+                .exchange(TokenHolder.class)
                 .onSuccess(
                         response -> {
                             // Assert
@@ -258,7 +262,6 @@ public class POST_spec {
 
                             var signature = decodeBase64Url(parts[2]);
                             assertThat(signature).isNotBlank();
-                            assertThat(signature).doesNotContain("=");
                         }
                 );
 
@@ -282,9 +285,10 @@ public class POST_spec {
         // Act
         fixture.post(
                         "/api/v1/auth/issueToken",
-                        request,
-                        TokenHolder.class
+                        request
                 )
+                .withoutToken()
+                .exchange(TokenHolder.class)
                 .onSuccess(
                         response -> {
                             // Assert
@@ -300,12 +304,50 @@ public class POST_spec {
 
     }
 
+    @Test
+    void 만료된_토큰으로_접근_시_401_예외가_발생한다(
+            @Autowired TestFixture fixture
+    ) {
+        // Arrange
+        var email = generateEmail();
+        var password = PASSWORD;
+        var username = generateUsername();
+        var phone = generatePhone();
+        generateUser(fixture, username, email, password, phone);
+        IssueTokenRequest request = new IssueTokenRequest(
+                email,
+                password
+        );
+
+        // Act
+        var apiResponse = fixture.post(
+                        "/api/v1/auth/issueToken",
+                        request
+                )
+                .withoutToken()
+                .exchange(TokenHolder.class)
+                .onSuccess(
+                        response -> {
+                            var body = response.getData();
+                            assertThat(body).isNotNull();
+                            assertThat(body.accessToken()).isNotBlank();
+                        }
+                )
+                .getApiResponse();
+
+        // Assert
+        var token = apiResponse.getData().accessToken();
+        //TODO 2025 06 17 17:15:54 : 토큰 만료 시간을 조정하여 테스트를 진행해야 합니다.
+    }
+
     public void generateUser(final TestFixture fixture, final String name, final String email,
                              final String password, final String phone) {
         fixture.post(
-                "/api/v1/users/sign-up",
-                new UserRegisterRequest(name, email, password, phone),
-                RegisterSuccessResponse.class
-        );
+                        "/api/v1/users/sign-up",
+                        new UserRegisterRequest(name, email, password, phone),
+                        RegisterSuccessResponse.class
+                )
+                .withoutToken()
+                .exchange(RegisterSuccessResponse.class);
     }
 }

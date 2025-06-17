@@ -20,7 +20,7 @@ import org.yechan.dto.response.RegisterSuccessResponse;
 import org.yechan.fixture.TestFixture;
 
 @IntegrationTest
-@DisplayName("POST /api/v1/auth/issueToken")
+@DisplayName("POST /api/v1/auth/token")
 public class POST_spec {
     private static final String PASSWORD = "securep!21Assword";
 
@@ -61,7 +61,7 @@ public class POST_spec {
 
         // Act
         fixture.post(
-                        "/api/v1/auth/issueToken",
+                        "/api/v1/auth/token",
                         request
                 )
                 .withoutToken()
@@ -94,7 +94,7 @@ public class POST_spec {
 
         // Act
         fixture.post(
-                        "/api/v1/auth/issueToken",
+                        "/api/v1/auth/token",
                         request
                 )
                 .withoutToken()
@@ -118,7 +118,7 @@ public class POST_spec {
 
         // Act
         fixture.post(
-                        "/api/v1/auth/issueToken",
+                        "/api/v1/auth/token",
                         new IssueTokenRequest(email, null)// 비밀번호가 누락된 경우
                 )
                 .withoutToken()
@@ -149,7 +149,7 @@ public class POST_spec {
 
         // Act
         fixture.post(
-                        "/api/v1/auth/issueToken",
+                        "/api/v1/auth/token",
                         request
                 )
                 .withoutToken()
@@ -179,7 +179,7 @@ public class POST_spec {
 
         // Act
         fixture.post(
-                        "/api/v1/auth/issueToken",
+                        "/api/v1/auth/token",
                         request)
                 .withoutToken()
                 .exchange(TokenHolder.class)
@@ -202,7 +202,7 @@ public class POST_spec {
     ) {
         // Act
         fixture.post(
-                        "/api/v1/auth/issueToken",
+                        "/api/v1/auth/token",
                         request
                 )
                 .withoutToken()
@@ -234,7 +234,7 @@ public class POST_spec {
 
         // Act
         fixture.post(
-                        "/api/v1/auth/issueToken",
+                        "/api/v1/auth/token",
                         request
                 )
                 .withoutToken()
@@ -284,7 +284,7 @@ public class POST_spec {
 
         // Act
         fixture.post(
-                        "/api/v1/auth/issueToken",
+                        "/api/v1/auth/token",
                         request
                 )
                 .withoutToken()
@@ -321,14 +321,14 @@ public class POST_spec {
 
         // Act
         var apiResponse1 = fixture.post(
-                        "/api/v1/auth/issueToken",
+                        "/api/v1/auth/token",
                         request
                 )
                 .withoutToken()
                 .exchange(TokenHolder.class)
                 .getApiResponse();
         var apiResponse2 = fixture.post(
-                        "/api/v1/auth/issueToken",
+                        "/api/v1/auth/token",
                         request
                 )
                 .withoutToken()

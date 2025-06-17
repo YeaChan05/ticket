@@ -14,7 +14,7 @@ import org.yechan.dto.request.IssueTokenRequest;
 public record IssueUserTokenController(
         IssueTokenUseCase issueTokenUseCase
 ) {
-    @PostMapping("/issueToken")
+    @PostMapping("/token")
     public TokenHolder issueUserToken(@Valid @RequestBody IssueTokenRequest request) {
         return issueTokenUseCase.issueToken(request);
     }

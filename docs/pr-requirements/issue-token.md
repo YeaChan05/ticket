@@ -93,7 +93,7 @@
   ```
 - curl 명령 예시
   ```bash
-  curl -i -X POST '/api/v1/auth/issueToken' \
+  curl -i -X POST '/api/v1/auth/token' \
   -H 'Content-Type: application/json' \
   -d '{
     "email": "test@test.com",

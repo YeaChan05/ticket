@@ -4,9 +4,9 @@ package org.yechan.service;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.lenient;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 import static org.yechan.EmailGenerator.generateEmail;
 import static org.yechan.PhoneNumberGenerator.generatePhone;
 import static org.yechan.UsernameGenerator.generateUsername;
@@ -19,8 +19,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.yechan.dto.request.UserRegisterRequest;
 import org.yechan.dto.response.RegisterSuccessResponse;
+import org.yechan.error.UserErrorCode;
 import org.yechan.error.exception.UserException;
-import org.yechan.repository.UserRepository;
 
 @ExtendWith(MockitoExtension.class)
 class UserRegistererTest {
@@ -28,7 +28,10 @@ class UserRegistererTest {
     private UserRegisterer userRegisterer;
 
     @Mock
-    private UserRepository userRepository;
+    private UserPersister userPersister;
+
+    @Mock
+    private UserValidator userValidator;
 
     @Mock
     private PasswordEncoder passwordEncoder;
@@ -43,13 +46,14 @@ class UserRegistererTest {
         UserRegisterRequest user = new UserRegisterRequest(name, email, password, phone);
 
         // Act
-        when(userRepository.existsByEmail(anyString())).thenReturn(false);
-        when(userRepository.existsByName(anyString())).thenReturn(false);
-        when(userRepository.existsByPhone(anyString())).thenReturn(false);
+        doNothing().when(userValidator).validateEmailUniqueness(anyString());
+        doNothing().when(userValidator).validateUsernameUniqueness(anyString());
+        doNothing().when(userValidator).validatePhoneNumberUniqueness(anyString());
+        lenient().when(passwordEncoder.encode(password)).thenReturn(anyString());
+
         RegisterSuccessResponse response = userRegisterer.registerUser(user);
 
         // Assert
-        verify(userRepository).insertUser(name, email, passwordEncoder.encode(password), phone);
         assertThat(response).isNotNull();
         assertThat(response.username()).isEqualTo(name);
         assertThat(response.email()).isEqualTo(email);
@@ -62,7 +66,9 @@ class UserRegistererTest {
         String email = generateEmail();
         String password = "Password123!";
         String phone = generatePhone();
-        when(userRepository.existsByEmail(anyString())).thenReturn(true);
+        doThrow(
+                new UserException("User with email " + email + " already exists.", UserErrorCode.EMAIL_DUPLICATED)
+        ).when(userValidator).validateEmailUniqueness(anyString());
 
         // Act & Assert
         assertThatThrownBy(() -> userRegisterer.registerUser(new UserRegisterRequest(name, email, password, phone)))
@@ -78,8 +84,10 @@ class UserRegistererTest {
         String email = generateEmail();
         String password = "Password123!";
         String phone = generatePhone();
-        when(userRepository.existsByEmail(anyString())).thenReturn(false);
-        when(userRepository.existsByName(anyString())).thenReturn(true);
+        doNothing().when(userValidator).validateEmailUniqueness(anyString());
+        doThrow(
+                new UserException("User with username " + name + " already exists.", UserErrorCode.NAME_DUPLICATED)
+        ).when(userValidator).validateUsernameUniqueness(anyString());
 
         // Act & Assert
         assertThatThrownBy(() -> userRegisterer.registerUser(new UserRegisterRequest(name, email, password, phone)))
@@ -94,9 +102,11 @@ class UserRegistererTest {
         String email = generateEmail();
         String password = "Password123!";
         String phone = generatePhone();
-        when(userRepository.existsByEmail(anyString())).thenReturn(false);
-        when(userRepository.existsByName(anyString())).thenReturn(false);
-        when(userRepository.existsByPhone(anyString())).thenReturn(true);
+        lenient().doNothing().when(userValidator).validateEmailUniqueness(anyString());
+        lenient().doNothing().when(userValidator).validateUsernameUniqueness(anyString());
+        lenient().doThrow(
+                new UserException("User with phone " + phone + " already exists.", UserErrorCode.PHONE_DUPLICATED)
+        ).when(userValidator).validatePhoneNumberUniqueness(anyString());
 
         // Act & Assert
         assertThatThrownBy(() -> userRegisterer.registerUser(new UserRegisterRequest(name, email, password, phone)))
@@ -111,9 +121,12 @@ class UserRegistererTest {
         String email = generateEmail();
         String password = "Password123!";
         String phone = generatePhone();
-        lenient().when(userRepository.existsByEmail(email)).thenReturn(true);
-        lenient().when(userRepository.existsByName(name)).thenReturn(true);
-        lenient().when(userRepository.existsByPhone(phone)).thenReturn(true);
+        lenient().doThrow(new UserException("User with email " + email + " already exists.", UserErrorCode.EMAIL_DUPLICATED))
+                .when(userValidator).validateEmailUniqueness(email);
+        lenient().doThrow(new UserException("User with username " + name + " already exists.", UserErrorCode.NAME_DUPLICATED))
+                .when(userValidator).validateUsernameUniqueness(name);
+        lenient().doThrow(new UserException("User with phone " + phone + " already exists.", UserErrorCode.PHONE_DUPLICATED))
+                .when(userValidator).validatePhoneNumberUniqueness(password);
 
         // Act & Assert
         assertThatThrownBy(() -> userRegisterer.registerUser(new UserRegisterRequest(name, email, password, phone)))

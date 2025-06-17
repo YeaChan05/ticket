@@ -25,9 +25,9 @@ public class UserValidator {
         }
     }
 
-    public void validateUsernameUniqueness(final String name) {
-        if (userRepository.existsByName(name)) {
-            throw new UserException("User with username " + name + " already exists.", UserErrorCode.NAME_DUPLICATED);
+    public void validateUsernameUniqueness(final String username) {
+        if (userRepository.existsByName(username)) {
+            throw new UserException("User with username " + username + " already exists.", UserErrorCode.NAME_DUPLICATED);
         }
     }
 }

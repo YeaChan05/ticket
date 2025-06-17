@@ -1,6 +1,11 @@
 package org.yechan.service;
 
+import static org.yechan.service.TokenIssuer.ClaimKey.EMAIL;
+import static org.yechan.service.TokenIssuer.ClaimKey.ROLE;
+import static org.yechan.service.TokenIssuer.ClaimKey.USERNAME;
+
 import java.util.Map;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -27,9 +32,9 @@ public class TokenIssuer implements IssueTokenUseCase {
                 .orElseThrow(() -> new UserException("사용자를 찾을 수 없습니다.", UserErrorCode.USER_NOT_FOUND));
         verifyPassword(user.getPassword(), request.password());
         var claims = Map.of(
-                "role", user.getRole().name(),
-                "email", user.getEmail(),
-                "username", user.getName()
+                ROLE.getKey(), user.getRole().name(),
+                EMAIL.getKey(), user.getEmail(),
+                USERNAME.getKey(), user.getName()
         );
         return tokenProvider.createAccessToken(String.valueOf(user.getId()), claims);
     }
@@ -37,6 +42,19 @@ public class TokenIssuer implements IssueTokenUseCase {
     private void verifyPassword(final String password, final String requestedPassword) {
         if (!passwordEncoder.matches(requestedPassword, password)) {
             throw new UserException("비밀번호가 일치하지 않습니다.", UserErrorCode.PASSWORD_MISMATCH);
+        }
+    }
+
+    @Getter
+    enum ClaimKey {
+        ROLE("role"),
+        EMAIL("email"),
+        USERNAME("username");
+
+        private final String key;
+
+        ClaimKey(String key) {
+            this.key = key;
         }
     }
 }

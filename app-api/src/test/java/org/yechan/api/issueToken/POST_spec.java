@@ -24,24 +24,6 @@ import org.yechan.fixture.TestFixture;
 public class POST_spec {
     private static final String PASSWORD = "securep!21Assword";
 
-    private static IssueTokenRequest[] invalidEmailProvider() {
-        return new IssueTokenRequest[]{
-                new IssueTokenRequest("invalid-email", "password123!"),
-                new IssueTokenRequest("user@.com", "password123!"),
-                new IssueTokenRequest("user@domain", "password123!"),
-                new IssueTokenRequest("user@domain..com", "password123!"),
-                new IssueTokenRequest("", "password123!"),
-                new IssueTokenRequest(null, "password123!"),
-                new IssueTokenRequest("valid@test.com", ""),
-                new IssueTokenRequest("valid@test.com", null)
-        };
-    }
-
-    private static String decodeBase64Url(String base64UrlString) {
-        byte[] decodedBytes = Base64.getUrlDecoder().decode(base64UrlString);
-        return new String(decodedBytes, UTF_8);
-    }
-
     @Test
     void 로그인_시도_시_등록된_email과_password로_요청하면_200_응답이_반환된다(
             @Autowired TestFixture fixture
@@ -304,10 +286,39 @@ public class POST_spec {
 
     }
 
+    private static IssueTokenRequest[] invalidEmailProvider() {
+        return new IssueTokenRequest[]{
+                new IssueTokenRequest("invalid-email", "password123!"),
+                new IssueTokenRequest("user@.com", "password123!"),
+                new IssueTokenRequest("user@domain", "password123!"),
+                new IssueTokenRequest("user@domain..com", "password123!"),
+                new IssueTokenRequest("", "password123!"),
+                new IssueTokenRequest(null, "password123!"),
+                new IssueTokenRequest("valid@test.com", ""),
+                new IssueTokenRequest("valid@test.com", null)
+        };
+    }
+
+    public void generateUser(final TestFixture fixture, final String name, final String email,
+                             final String password, final String phone) {
+        fixture.post(
+                        "/api/v1/users/sign-up",
+                        new UserRegisterRequest(name, email, password, phone),
+                        RegisterSuccessResponse.class
+                )
+                .withoutToken()
+                .exchange(RegisterSuccessResponse.class);
+    }
+
+    private static String decodeBase64Url(String base64UrlString) {
+        byte[] decodedBytes = Base64.getUrlDecoder().decode(base64UrlString);
+        return new String(decodedBytes, UTF_8);
+    }
+
     @Test
     void 여러_번_로그인_시도해도_항상_새로운_토큰이_발급된다(
             @Autowired TestFixture fixture
-    ) throws InterruptedException {
+    ) {
         // Arrange
         var email = generateEmail();
         var password = PASSWORD;
@@ -339,16 +350,5 @@ public class POST_spec {
         var token1 = apiResponse1.getData().accessToken();
         var token2 = apiResponse2.getData().accessToken();
         assertThat(token1).isNotEqualTo(token2);
-    }
-
-    public void generateUser(final TestFixture fixture, final String name, final String email,
-                             final String password, final String phone) {
-        fixture.post(
-                        "/api/v1/users/sign-up",
-                        new UserRegisterRequest(name, email, password, phone),
-                        RegisterSuccessResponse.class
-                )
-                .withoutToken()
-                .exchange(RegisterSuccessResponse.class);
     }
 }

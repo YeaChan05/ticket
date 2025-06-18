@@ -21,7 +21,7 @@ import org.yechan.fixture.TestFixture;
 
 @IntegrationTest
 @DisplayName("POST /api/v1/auth/token")
-public class POST_spec {
+public class POST_specs {
     private static final String PASSWORD = "securep!21Assword";
 
     private static String decodeBase64Url(String base64UrlString) {

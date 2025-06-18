@@ -21,7 +21,7 @@ import org.yechan.repository.JpaUserRepository;
 
 @IntegrationTest
 @DisplayName("POST /api/v1/users/sign-up")
-public class POST_spec {
+public class POST_specs {
 
     static UserRegisterRequest[] invalidUsernameProvider() {
         return new UserRegisterRequest[]{
@@ -391,7 +391,7 @@ public class POST_spec {
     }
 
     @ParameterizedTest
-    @MethodSource("org.yechan.api.signup.POST_spec#invalidUsernameProvider")
+    @MethodSource("org.yechan.api.signup.POST_specs#invalidUsernameProvider")
     void 회원가입_페이지는_모든_필수_입력_필드를_포함한다(
             UserRegisterRequest request,
             @Autowired TestFixture fixture

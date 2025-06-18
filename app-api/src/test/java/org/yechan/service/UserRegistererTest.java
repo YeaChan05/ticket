@@ -49,7 +49,7 @@ class UserRegistererTest {
         doNothing().when(userValidator).validateEmailUniqueness(anyString());
         doNothing().when(userValidator).validateUsernameUniqueness(anyString());
         doNothing().when(userValidator).validatePhoneNumberUniqueness(anyString());
-        lenient().when(passwordEncoder.encode(password)).thenReturn(anyString());
+        lenient().when(passwordEncoder.encode(password)).thenReturn("ENCODED_" + password);
 
         RegisterSuccessResponse response = userRegisterer.registerUser(user);
 

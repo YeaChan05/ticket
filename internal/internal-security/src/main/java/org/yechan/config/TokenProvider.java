@@ -28,9 +28,9 @@ public class TokenProvider {
         Date validity = new Date(now + this.accessExpiration * 1000);
 
         var accessToken = Jwts.builder()
+                .setClaims(claims)
                 .setSubject(subject)
                 .setIssuedAt(date)
-                .setClaims(claims)
                 .signWith(key, SignatureAlgorithm.HS256)
                 .setExpiration(validity)
                 .setId(UUID.randomUUID().toString())

@@ -126,7 +126,7 @@ class UserRegistererTest {
         lenient().doThrow(new UserException("User with username " + name + " already exists.", UserErrorCode.NAME_DUPLICATED))
                 .when(userValidator).validateUsernameUniqueness(name);
         lenient().doThrow(new UserException("User with phone " + phone + " already exists.", UserErrorCode.PHONE_DUPLICATED))
-                .when(userValidator).validatePhoneNumberUniqueness(password);
+                .when(userValidator).validatePhoneNumberUniqueness(phone);
 
         // Act & Assert
         assertThatThrownBy(() -> userRegisterer.registerUser(new UserRegisterRequest(name, email, password, phone)))

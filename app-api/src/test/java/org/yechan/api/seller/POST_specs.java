@@ -10,7 +10,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.yechan.config.IntegrationTest;
-import org.yechan.dto.request.HostRegisterRequest;
+import org.yechan.dto.request.SellerRegisterRequest;
 import org.yechan.fixture.TestFixture;
 
 @IntegrationTest
@@ -25,7 +25,7 @@ public class POST_specs {
         var email = generateEmail();
         var phone = generatePhone();
         var password = generatePassword();
-        var request = new HostRegisterRequest(
+        var request = new SellerRegisterRequest(
                 hostname,
                 email,
                 phone,

@@ -1,5 +1,7 @@
 package org.yechan.fixture;
 
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.RequestEntity;
@@ -40,6 +42,7 @@ public class RequestExecutor {
 
     private RequestEntity<?> buildRequestEntity() {
         BodyBuilder builder = RequestEntity.method(method, url, uriVariables);
+        builder.header("Content-Type", APPLICATION_JSON_VALUE);
         if (token != null && !token.isBlank()) {
             builder.header("Authorization", "Bearer " + token);
         }

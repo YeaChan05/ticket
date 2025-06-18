@@ -88,9 +88,12 @@
   Content-Type: application/json
   ```
 - 본문
-  ```
-  
-  ```
+  ```json
+      {
+         "email": "test@test.com",
+         "password": "tesT!1234"
+      }
+   ```
 - curl 명령 예시
   ```bash
   curl -i -X POST '/api/v1/auth/token' \

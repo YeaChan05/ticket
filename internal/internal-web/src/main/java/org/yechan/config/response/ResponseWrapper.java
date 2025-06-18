@@ -24,8 +24,13 @@ public class ResponseWrapper implements ResponseBodyAdvice<Object> {
                                   final Class<? extends HttpMessageConverter<?>> selectedConverterType,
                                   final ServerHttpRequest request, final ServerHttpResponse response) {
         if (body instanceof ErrorCode errorCode) {
-            return ApiResponse.error(errorCode.getCode(), errorCode.getMessage());
+            return new ErrorResponse(errorCode.getCode(), errorCode.getMessage());
         }
-        return ApiResponse.success(body);
+
+        if (body instanceof ApiResponse || body instanceof ErrorResponse) {
+            return body;
+        }
+
+        return new ApiResponse<>("SUCCESS",body);
     }
 }

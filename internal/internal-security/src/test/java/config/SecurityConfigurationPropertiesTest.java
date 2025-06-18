@@ -7,6 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.yechan.config.JwtProperties;
 import org.yechan.config.SecurityConfigurationProperties;
 
 class SecurityConfigurationPropertiesTest {
@@ -148,7 +149,11 @@ class SecurityConfigurationPropertiesTest {
                 userEndpoints,
                 false,
                 false,
-                false
+                false,
+                new JwtProperties(
+                        "secret",
+                        3600
+                )
         );
     }
 }

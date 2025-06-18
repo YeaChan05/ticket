@@ -6,14 +6,13 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor
-public class ApiResponse<T> {
+public class ErrorResponse {
     private String status;
-    private T data;
+    private String message;
     private LocalDateTime timestamp = LocalDateTime.now();
 
-
-    public ApiResponse(String status, T data) {
+    public ErrorResponse(String status, String message) {
         this.status = status;
-        this.data = data;
+        this.message = message;
     }
 }

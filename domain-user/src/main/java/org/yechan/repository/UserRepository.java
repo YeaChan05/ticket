@@ -1,5 +1,6 @@
 package org.yechan.repository;
 
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import org.yechan.entity.User;
@@ -29,5 +30,9 @@ public class UserRepository {
                 .phone(phone)
                 .build();
         jpaUserRepository.save(user);
+    }
+
+    public Optional<User> findByEmail(final String email) {
+        return jpaUserRepository.findByEmail(email);
     }
 }

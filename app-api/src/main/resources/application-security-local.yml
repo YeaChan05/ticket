@@ -9,15 +9,13 @@ security:
   cors-enabled: false
   csrf-enabled: false
   public-endpoints:
-    - "/test/**"
-  user-endpoints:
-    - "/user/**"
+    - "/api/v1/users/sign-up"
+  jwt:
+    secret: Rm9ySldUR2VuZXJhdGlvbkFuZEl0U2hvdWxkQmVWZXJ5TG9uZ0FuZFJhbmRvbTEyMyFAI0A=
+    access-expiration: 3600
 
 logging:
   level:
     root: INFO
-    config: DEBUG
     org.yechan: DEBUG
-    org.springframework.boot.autoconfigure: DEBUG
-    org.springframework.boot.context.properties: DEBUG
-    org.springframework.context.annotation: DEBUG
+

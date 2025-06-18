@@ -14,12 +14,21 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-public class Host extends BaseEntity {
+public class Seller extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name="host_id")
+    @Column(name="seller_id")
     private Long id;
 
-    @Column(name="host_name", nullable = false)
+    @Column(name="seller_name", nullable = false)
     private String name;
+
+    @Column(name="seller_email", nullable = false)
+    private String email;
+
+    @Column(name="seller_password", nullable = false)
+    private String password;
+
+    @Column(name="seller_contact", nullable = false)
+    private String contact;
 }

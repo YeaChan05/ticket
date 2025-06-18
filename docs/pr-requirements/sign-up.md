@@ -131,7 +131,7 @@
         }
         ```
     - curl 명령 예시
-        ```curl
+        ```bash
         curl -X POST http://localhost:8080/api/v1/users/sign-up \
         -H "Content-Type: application/json" \
         -d '{

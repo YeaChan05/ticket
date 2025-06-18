@@ -23,6 +23,19 @@ import org.yechan.repository.JpaUserRepository;
 @DisplayName("POST /api/v1/users/sign-up")
 public class POST_spec {
 
+    static UserRegisterRequest[] invalidUsernameProvider() {
+        return new UserRegisterRequest[]{
+                new UserRegisterRequest(null, generateEmail(), "Password123!", generatePhone()),
+                new UserRegisterRequest("", generateEmail(), "Password123!", generatePhone()),
+                new UserRegisterRequest(generateUsername(), null, "Password123!", generatePhone()),
+                new UserRegisterRequest(generateUsername(), "", "Password123!", generatePhone()),
+                new UserRegisterRequest(generateUsername(), generateEmail(), null, generatePhone()),
+                new UserRegisterRequest(generateUsername(), generateEmail(), "", generatePhone()),
+                new UserRegisterRequest(generateUsername(), generateEmail(), "Password123!", null),
+                new UserRegisterRequest(generateUsername(), generateEmail(), "Password123!", "")
+        };
+    }
+
     @Test
     void 회원가입_요청은_성공적으로_처리된다(
             @Autowired TestFixture fixture
@@ -41,9 +54,9 @@ public class POST_spec {
         // Act
         fixture.post(
                         "/api/v1/users/sign-up",
-                        request
+                        request,
+                        null
                 )
-                .withoutToken()
                 .exchange(RegisterSuccessResponse.class)
                 .onSuccess(
                         response -> {
@@ -72,9 +85,9 @@ public class POST_spec {
         // Act
         fixture.post(
                         "/api/v1/users/sign-up",
-                        request
+                        request,
+                        null
                 )
-                .withoutToken()
                 .exchange(RegisterSuccessResponse.class).onSuccess(
                         response -> {
                             // Assert
@@ -105,9 +118,9 @@ public class POST_spec {
         // Act
         fixture.post(
                         "/api/v1/users/sign-up",
-                        request
+                        request,
+                        null
                 )
-                .withoutToken()
                 .exchange(RegisterSuccessResponse.class)
                 .onSuccess(
                         response -> {
@@ -137,9 +150,9 @@ public class POST_spec {
         // Act
         fixture.post(
                         "/api/v1/users/sign-up",
-                        request
+                        request,
+                        null
                 )
-                .withoutToken()
                 .exchange(RegisterSuccessResponse.class).onSuccess(
                         response -> {
                             // Assert
@@ -173,9 +186,9 @@ public class POST_spec {
         // Act
         fixture.post(
                         "/api/v1/users/sign-up",
-                        request
+                        request,
+                        null
                 )
-                .withoutToken()
                 .exchange(RegisterSuccessResponse.class).onError(
                         response -> {
                             // Assert
@@ -205,17 +218,17 @@ public class POST_spec {
         );
         fixture.post(
                         "/api/v1/users/sign-up",
-                        registeredRequest
+                        registeredRequest,
+                        null
                 )
-                .withoutToken()
                 .exchange(RegisterSuccessResponse.class);
 
         // Act
         fixture.post(
                         "/api/v1/users/sign-up",
-                        request
+                        request,
+                        null
                 )
-                .withoutToken()
                 .exchange(RegisterSuccessResponse.class).onError(
                         response -> {
                             // Assert
@@ -244,17 +257,17 @@ public class POST_spec {
         );
         fixture.post(
                         "/api/v1/users/sign-up",
-                        registeredRequest
+                        registeredRequest,
+                        null
                 )
-                .withoutToken()
                 .exchange(RegisterSuccessResponse.class);
 
         // Act
         fixture.post(
                         "/api/v1/users/sign-up",
-                        request
+                        request,
+                        null
                 )
-                .withoutToken()
                 .exchange(RegisterSuccessResponse.class).onError(
                         response -> {
                             // Assert
@@ -288,9 +301,9 @@ public class POST_spec {
         // Act
         fixture.post(
                         "/api/v1/users/sign-up",
-                        request
+                        request,
+                        null
                 )
-                .withoutToken()
                 .exchange(RegisterSuccessResponse.class).onError(
                         response -> {
                             // Assert
@@ -324,9 +337,9 @@ public class POST_spec {
         // Act
         fixture.post(
                         "/api/v1/users/sign-up",
-                        request
+                        request,
+                        null
                 )
-                .withoutToken()
                 .exchange(RegisterSuccessResponse.class).onError(
                         response -> {
                             // Assert
@@ -359,37 +372,22 @@ public class POST_spec {
         fixture.post(
                         "/api/v1/users/sign-up",
                         registeredRequest,
-                        RegisterSuccessResponse.class
+                        null
                 )
-                .withoutToken()
                 .exchange(RegisterSuccessResponse.class);
 
         // Act
         fixture.post(
                         "/api/v1/users/sign-up",
                         request,
-                        RegisterSuccessResponse.class
+                        null
                 )
-                .withoutToken()
                 .exchange(RegisterSuccessResponse.class).onError(
                         response -> {
                             // Assert
                             assertThat(response.getStatus()).isEqualTo("USER-005");
                         }
                 );
-    }
-
-    static UserRegisterRequest[] invalidUsernameProvider() {
-        return new UserRegisterRequest[]{
-                new UserRegisterRequest(null, generateEmail(), "Password123!", generatePhone()),
-                new UserRegisterRequest("", generateEmail(), "Password123!", generatePhone()),
-                new UserRegisterRequest(generateUsername(), null, "Password123!", generatePhone()),
-                new UserRegisterRequest(generateUsername(), "", "Password123!", generatePhone()),
-                new UserRegisterRequest(generateUsername(), generateEmail(), null, generatePhone()),
-                new UserRegisterRequest(generateUsername(), generateEmail(), "", generatePhone()),
-                new UserRegisterRequest(generateUsername(), generateEmail(), "Password123!", null),
-                new UserRegisterRequest(generateUsername(), generateEmail(), "Password123!", "")
-        };
     }
 
     @ParameterizedTest
@@ -401,9 +399,9 @@ public class POST_spec {
         // Act
         fixture.post(
                         "/api/v1/users/sign-up",
-                        request
+                        request,
+                        null
                 )
-                .withoutToken()
                 .exchange(RegisterSuccessResponse.class)
                 .onError(
                         response -> {
@@ -430,9 +428,9 @@ public class POST_spec {
         // Act
         fixture.post(
                         "/api/v1/users/sign-up",
-                        request
+                        request,
+                        null
                 )
-                .withoutToken()
                 .exchange(RegisterSuccessResponse.class).onSuccess(
                         response -> {
                             // Assert

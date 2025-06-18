@@ -3,6 +3,7 @@ package org.yechan.fixture;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.annotation.Nullable;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.core.ResolvableType;
@@ -17,17 +18,19 @@ public record TestFixture(
 
     public RequestExecutor get(
             String url,
+            @Nullable String token,
             Object... uriVariables
     ) {
-        return new RequestExecutor(this, HttpMethod.GET, url, null, uriVariables);
+        return new RequestExecutor(this, HttpMethod.GET, url, null,token, uriVariables);
     }
 
     public RequestExecutor post(
             String url,
             Object requestBody,
+            @Nullable String token,
             Object... uriVariables
     ) {
-        return new RequestExecutor(this, HttpMethod.POST, url, requestBody, uriVariables);
+        return new RequestExecutor(this, HttpMethod.POST, url, requestBody,token, uriVariables);
     }
 
     <T> TestResult<T> parseResponseBody(

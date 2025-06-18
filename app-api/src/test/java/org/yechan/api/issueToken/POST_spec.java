@@ -24,6 +24,11 @@ import org.yechan.fixture.TestFixture;
 public class POST_spec {
     private static final String PASSWORD = "securep!21Assword";
 
+    private static String decodeBase64Url(String base64UrlString) {
+        byte[] decodedBytes = Base64.getUrlDecoder().decode(base64UrlString);
+        return new String(decodedBytes, UTF_8);
+    }
+
     @Test
     void 로그인_시도_시_등록된_email과_password로_요청하면_200_응답이_반환된다(
             @Autowired TestFixture fixture
@@ -44,9 +49,9 @@ public class POST_spec {
         // Act
         fixture.post(
                         "/api/v1/auth/token",
-                        request
+                        request,
+                        null
                 )
-                .withoutToken()
                 .exchange(TokenHolder.class)
                 .onSuccess(
                         response -> {
@@ -77,9 +82,9 @@ public class POST_spec {
         // Act
         fixture.post(
                         "/api/v1/auth/token",
-                        request
+                        request,
+                        null
                 )
-                .withoutToken()
                 .exchange(TokenHolder.class)
                 .onSuccess(
                         response -> {
@@ -101,9 +106,9 @@ public class POST_spec {
         // Act
         fixture.post(
                         "/api/v1/auth/token",
-                        new IssueTokenRequest(email, null)// 비밀번호가 누락된 경우
+                        new IssueTokenRequest(email, null),// 비밀번호가 누락된 경우
+                        null
                 )
-                .withoutToken()
                 .exchange(TokenHolder.class)
                 .onError(
                         response -> {
@@ -132,9 +137,9 @@ public class POST_spec {
         // Act
         fixture.post(
                         "/api/v1/auth/token",
-                        request
+                        request,
+                        null
                 )
-                .withoutToken()
                 .exchange(TokenHolder.class)
                 .onError(response -> {
                     // Assert
@@ -162,8 +167,9 @@ public class POST_spec {
         // Act
         fixture.post(
                         "/api/v1/auth/token",
-                        request)
-                .withoutToken()
+                        request,
+                        null
+                )
                 .exchange(TokenHolder.class)
                 .onError(
                         response -> {
@@ -185,9 +191,9 @@ public class POST_spec {
         // Act
         fixture.post(
                         "/api/v1/auth/token",
-                        request
+                        request,
+                        null
                 )
-                .withoutToken()
                 .exchange(TokenHolder.class)
                 .onError(
                         response -> {
@@ -217,9 +223,9 @@ public class POST_spec {
         // Act
         fixture.post(
                         "/api/v1/auth/token",
-                        request
+                        request,
+                        null
                 )
-                .withoutToken()
                 .exchange(TokenHolder.class)
                 .onSuccess(
                         response -> {
@@ -249,6 +255,19 @@ public class POST_spec {
 
     }
 
+    private static IssueTokenRequest[] invalidEmailProvider() {
+        return new IssueTokenRequest[]{
+                new IssueTokenRequest("invalid-email", "password123!"),
+                new IssueTokenRequest("user@.com", "password123!"),
+                new IssueTokenRequest("user@domain", "password123!"),
+                new IssueTokenRequest("user@domain..com", "password123!"),
+                new IssueTokenRequest("", "password123!"),
+                new IssueTokenRequest(null, "password123!"),
+                new IssueTokenRequest("valid@test.com", ""),
+                new IssueTokenRequest("valid@test.com", null)
+        };
+    }
+
     @Test
     void 토큰의_payload에_email_정보와_username이_포함된다(
             @Autowired TestFixture fixture
@@ -267,9 +286,9 @@ public class POST_spec {
         // Act
         fixture.post(
                         "/api/v1/auth/token",
-                        request
+                        request,
+                        null
                 )
-                .withoutToken()
                 .exchange(TokenHolder.class)
                 .onSuccess(
                         response -> {
@@ -284,35 +303,6 @@ public class POST_spec {
                         }
                 );
 
-    }
-
-    private static IssueTokenRequest[] invalidEmailProvider() {
-        return new IssueTokenRequest[]{
-                new IssueTokenRequest("invalid-email", "password123!"),
-                new IssueTokenRequest("user@.com", "password123!"),
-                new IssueTokenRequest("user@domain", "password123!"),
-                new IssueTokenRequest("user@domain..com", "password123!"),
-                new IssueTokenRequest("", "password123!"),
-                new IssueTokenRequest(null, "password123!"),
-                new IssueTokenRequest("valid@test.com", ""),
-                new IssueTokenRequest("valid@test.com", null)
-        };
-    }
-
-    public void generateUser(final TestFixture fixture, final String name, final String email,
-                             final String password, final String phone) {
-        fixture.post(
-                        "/api/v1/users/sign-up",
-                        new UserRegisterRequest(name, email, password, phone),
-                        RegisterSuccessResponse.class
-                )
-                .withoutToken()
-                .exchange(RegisterSuccessResponse.class);
-    }
-
-    private static String decodeBase64Url(String base64UrlString) {
-        byte[] decodedBytes = Base64.getUrlDecoder().decode(base64UrlString);
-        return new String(decodedBytes, UTF_8);
     }
 
     @Test
@@ -333,16 +323,16 @@ public class POST_spec {
         // Act
         var apiResponse1 = fixture.post(
                         "/api/v1/auth/token",
-                        request
+                        request,
+                        null
                 )
-                .withoutToken()
                 .exchange(TokenHolder.class)
                 .getApiResponse();
         var apiResponse2 = fixture.post(
                         "/api/v1/auth/token",
-                        request
+                        request,
+                        null
                 )
-                .withoutToken()
                 .exchange(TokenHolder.class)
                 .getApiResponse();
 
@@ -350,5 +340,18 @@ public class POST_spec {
         var token1 = apiResponse1.getData().accessToken();
         var token2 = apiResponse2.getData().accessToken();
         assertThat(token1).isNotEqualTo(token2);
+    }
+
+    private void generateUser(TestFixture fixture,
+                              String name,
+                              String email,
+                              String password,
+                              String phone) {
+        fixture.post(
+                        "/api/v1/users/sign-up",
+                        new UserRegisterRequest(name, email, password, phone),
+                        null
+                )
+                .exchange(RegisterSuccessResponse.class);
     }
 }

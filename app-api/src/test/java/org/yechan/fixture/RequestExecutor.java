@@ -15,24 +15,16 @@ public class RequestExecutor {
     private final String url;
     private final Object body;
     private final Object[] uriVariables;
-    private String token;
+    private final String token;
 
-    RequestExecutor(TestFixture fixture, HttpMethod method, String url, Object body, Object... uriVariables) {
+    RequestExecutor(TestFixture fixture, HttpMethod method, String url, Object body, String token,
+                    Object... uriVariables) {
         this.fixture = fixture;
         this.method = method;
         this.url = url;
         this.body = body;
-        this.uriVariables = uriVariables;
-    }
-
-    public RequestExecutor withToken(String token) {
         this.token = token;
-        return this;
-    }
-
-    public RequestExecutor withoutToken() {
-        this.token = null;
-        return this;
+        this.uriVariables = uriVariables;
     }
 
     public <T> TestResult<T> exchange(Class<T> responseDataClass) {

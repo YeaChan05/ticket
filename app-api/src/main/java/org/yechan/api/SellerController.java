@@ -1,6 +1,7 @@
 package org.yechan.api;
 
 
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -13,7 +14,7 @@ import org.yechan.dto.response.SuccessfulSellerRegistrationResponse;
 @RequestMapping("/api/v1/sellers")
 public record SellerController(SellerRegisterUseCase sellerRegisterUseCase) {
     @PostMapping("/sign-up")
-    public SuccessfulSellerRegistrationResponse registerSeller(@RequestBody SellerRegisterRequest request) {
+    public SuccessfulSellerRegistrationResponse registerSeller(@Valid @RequestBody SellerRegisterRequest request) {
         return sellerRegisterUseCase.registerSeller(
                 request.sellerName(),
                 request.email(),

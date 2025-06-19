@@ -8,6 +8,8 @@ import static org.yechan.testdata.UsernameGenerator.generateUsername;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.yechan.config.IntegrationTest;
 import org.yechan.dto.request.SellerRegisterRequest;
@@ -83,4 +85,40 @@ public class POST_specs {
         assertThat(seller.getEmail()).isEqualTo(email);
         assertThat(seller.getContact()).isEqualTo(contact);
     }
+
+    static SellerRegisterRequest[] blankFieldSellerRegisterRequests() {
+        return new SellerRegisterRequest[]{
+                new SellerRegisterRequest("", generateEmail(), generatePassword(), generatePhone()), // 이름 누락
+                new SellerRegisterRequest(generateUsername(), "", generatePassword(), generatePhone()), // 이메일 누락
+                new SellerRegisterRequest(generateUsername(), generateEmail(), "", generatePhone()), // 비밀번호 누락
+                new SellerRegisterRequest(generateUsername(), generateEmail(), generatePassword(), ""), // 전화번호 누락
+                new SellerRegisterRequest(null, generateEmail(), generatePassword(), generatePhone()), // 이름 null
+                new SellerRegisterRequest(generateUsername(), null, generatePassword(), generatePhone()), // 이메일 null
+                new SellerRegisterRequest(generateUsername(), generateEmail(), null, generatePhone()), // 비밀번호 null
+                new SellerRegisterRequest(generateUsername(), generateEmail(), generatePassword(), null) // 전화번호 null
+        };
+    }
+
+    @ParameterizedTest
+    @MethodSource("org.yechan.api.seller.POST_specs#blankFieldSellerRegisterRequests")
+    void 판매자_회원가입_요청_시_필수_필드가_누락된_경우_CONSTRAINT_VIOLATION이_응답된다(
+            SellerRegisterRequest request,// Arrange
+            @Autowired TestFixture fixture
+    ) {
+        // Act
+        fixture.post(
+                        "/api/v1/sellers/sign-up",
+                        request,
+                        null
+                )
+                .exchange(Void.class)
+                .onError(
+                        // Assert
+                        error -> {
+                            assertThat(error.getStatus()).isEqualTo("CONSTRAINT_VIOLATION");
+                        }
+                );
+    }
+
+
 }

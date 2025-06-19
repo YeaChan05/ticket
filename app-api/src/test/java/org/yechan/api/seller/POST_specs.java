@@ -296,9 +296,10 @@ public class POST_specs {
     ) {
         // Arrange
         var password = generatePassword();
+        var email = generateEmail();
         var request = new SellerRegisterRequest(
                 generateUsername(),
-                generateEmail(),
+                email,
                 password,
                 generatePhone()
         );
@@ -312,7 +313,16 @@ public class POST_specs {
                 .exchange(Void.class)
                 .onSuccess(
                         // Assert
-                        response -> assertThat(passwordEncoder.matches(password, repository.findById(1L).orElseThrow().getPassword())).isTrue()
+                        response -> {
+                            repository.findAll()
+                                    .stream()
+                                    .filter(seller -> seller.getEmail().equals(email))
+                                    .findAny()
+                                    .ifPresent(seller
+                                            -> assertThat(passwordEncoder.matches(password, seller.getPassword()))
+                                            .isTrue());
+
+                        }
                 );
     }
 }

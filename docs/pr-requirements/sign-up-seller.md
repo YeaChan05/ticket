@@ -187,7 +187,7 @@
 테스트
 - [x] 판매자 회원가입 요청은 성공적으로 처리된다
 - [x] 판매자의 정보는 요청된 내용과 동일하게 데이터베이스에 저장된다
-- [ ] 판매자 회원가입 요청 시 필수 필드가 누락된 경우 CONSTRAINT_VIOLATION이 응답된다
+- [x] 판매자 회원가입 요청 시 필수 필드가 누락된 경우 CONSTRAINT_VIOLATION이 응답된다
 - [ ] 이메일이 RFC 5322 형식을 만족하지 않은 경우 CONSTRAINT_VIOLATION이 응답된다
 - [ ] 연락처의 형식이 010-XXXX-XXXX이 아닌경우 CONSTRAINT_VIOLATION이 응답된다
 - [ ] 중복된 이메일로 가입 시 에러 코드 SELLER-001을 반환한다

@@ -155,9 +155,8 @@ public class POST_specs {
             @Autowired TestFixture fixture
     ) {
         // Arrange
-        var password = PASSWORD;
         var email = generateEmail();
-        generateUser(fixture, generateUsername(), email, password, generatePhone());
+        generateUser(fixture, generateUsername(), email, PASSWORD, generatePhone());
         var wrongPassword = "wrongPassword!23";
         IssueTokenRequest request = new IssueTokenRequest(
                 email,

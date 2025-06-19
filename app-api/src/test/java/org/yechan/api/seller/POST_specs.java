@@ -53,8 +53,7 @@ public class POST_specs {
 
     @Test
     void 판매자의_정보는_요청된_내용과_동일하게_데이터베이스에_저장된다(
-            @Autowired TestFixture fixture,
-            @Autowired JpaSellerRepository repository
+            @Autowired TestFixture fixture
     ) {
         // Arrange
         var sellerName = generateUsername();
@@ -76,9 +75,7 @@ public class POST_specs {
                 .exchange(SuccessfulSellerRegisterResponse.class)
                 .onSuccess(
                         // Assert
-                        response -> {
-                            assertThat(response.getStatus()).isEqualTo("SUCCESS");
-                        }
+                        response -> assertThat(response.getStatus()).isEqualTo("SUCCESS")
                 )
                 .getApiResponse();
 
@@ -116,9 +113,7 @@ public class POST_specs {
                 .exchange(Void.class)
                 .onError(
                         // Assert
-                        error -> {
-                            assertThat(error.getStatus()).isEqualTo("CONSTRAINT_VIOLATION");
-                        }
+                        error -> assertThat(error.getStatus()).isEqualTo("CONSTRAINT_VIOLATION")
                 );
     }
 
@@ -145,9 +140,7 @@ public class POST_specs {
                 .exchange(Void.class)
                 .onError(
                         // Assert
-                        error -> {
-                            assertThat(error.getStatus()).isEqualTo("CONSTRAINT_VIOLATION");
-                        }
+                        error -> assertThat(error.getStatus()).isEqualTo("CONSTRAINT_VIOLATION")
                 );
     }
 
@@ -186,9 +179,7 @@ public class POST_specs {
                 .exchange(Void.class)
                 .onError(
                         // Assert
-                        error -> {
-                            assertThat(error.getStatus()).isEqualTo("SELLER-001");
-                        }
+                        error -> assertThat(error.getStatus()).isEqualTo("SELLER-001")
                 );
     }
 
@@ -228,9 +219,7 @@ public class POST_specs {
                 .exchange(Void.class)
                 .onError(
                         // Assert
-                        error -> {
-                            assertThat(error.getStatus()).isEqualTo("SELLER-002");
-                        }
+                        error -> assertThat(error.getStatus()).isEqualTo("SELLER-002")
                 );
     }
 
@@ -270,9 +259,7 @@ public class POST_specs {
                 .exchange(Void.class)
                 .onError(
                         // Assert
-                        error -> {
-                            assertThat(error.getStatus()).isEqualTo("SELLER-003");
-                        }
+                        error -> assertThat(error.getStatus()).isEqualTo("SELLER-003")
                 );
     }
 
@@ -299,9 +286,7 @@ public class POST_specs {
                 .exchange(Void.class)
                 .onError(
                         // Assert
-                        error -> {
-                            assertThat(error.getStatus()).isEqualTo("CONSTRAINT_VIOLATION");
-                        }
+                        error -> assertThat(error.getStatus()).isEqualTo("CONSTRAINT_VIOLATION")
                 );
     }
 
@@ -329,9 +314,7 @@ public class POST_specs {
                 .exchange(Void.class)
                 .onSuccess(
                         // Assert
-                        response -> {
-                            assertThat(passwordEncoder.matches(password, repository.findById(1L).orElseThrow().getPassword())).isTrue();
-                        }
+                        response -> assertThat(passwordEncoder.matches(password, repository.findById(1L).orElseThrow().getPassword())).isTrue()
                 );
     }
 }

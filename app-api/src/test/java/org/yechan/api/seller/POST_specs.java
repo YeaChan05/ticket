@@ -81,7 +81,7 @@ public class POST_specs {
                 );
 
         // Assert
-        var seller = repository.findById(1L).orElseThrow();
+        var seller = repository.findByEmail(email).orElseThrow();
         assertThat(seller.getName()).isEqualTo(hostname);
         assertThat(seller.getEmail()).isEqualTo(email);
         assertThat(seller.getContact()).isEqualTo(contact);

@@ -45,9 +45,7 @@ public class POST_specs {
                 .exchange(Void.class)
                 .onSuccess(
                         // Assert
-                        response -> {
-                            assertThat(response.getStatus()).isEqualTo("SUCCESS");
-                        }
+                        response -> assertThat(response.getStatus()).isEqualTo("SUCCESS")
                 );
     }
 

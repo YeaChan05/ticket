@@ -148,4 +148,45 @@ public class POST_specs {
                         }
                 );
     }
+
+    @Test
+    @DisplayName("중복된 이메일로 가입 시 에러 코드 SELLER-001을 반환한다")
+    void 중복된_이메일로_가입_시_에러_코드_SELLER_001을_반환한다(
+            @Autowired TestFixture fixture
+    ) {
+        // Arrange
+        var email = generateEmail();
+        var request1 = new SellerRegisterRequest(
+                generateUsername(),
+                email,
+                generatePassword(),
+                generatePhone()
+        );
+        var request2 = new SellerRegisterRequest(
+                generateUsername(),
+                email,
+                generatePassword(),
+                generatePhone()
+        );
+
+        fixture.post(
+                        "/api/v1/sellers/sign-up",
+                        request1,
+                        null
+                )
+                .exchange(Void.class);
+        // Act
+        fixture.post(
+                        "/api/v1/sellers/sign-up",
+                        request2,
+                        null
+                )
+                .exchange(Void.class)
+                .onError(
+                        // Assert
+                        error -> {
+                            assertThat(error.getStatus()).isEqualTo("SELLER-001");
+                        }
+                );
+    }
 }

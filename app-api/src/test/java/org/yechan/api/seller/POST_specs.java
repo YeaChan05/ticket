@@ -19,7 +19,7 @@ import org.yechan.fixture.TestFixture;
 import org.yechan.repository.JpaSellerRepository;
 
 @IntegrationTest
-@DisplayName("POST /api/v1/seller")
+@DisplayName("POST /api/v1/sellers/sign-up")
 public class POST_specs {
     @Test
     void 판매자_회원가입_요청은_성공적으로_처리된다(

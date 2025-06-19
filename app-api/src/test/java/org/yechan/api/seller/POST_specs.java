@@ -231,4 +231,46 @@ public class POST_specs {
                         }
                 );
     }
+
+    @Test
+    @DisplayName("중복된 연락처로 가입 시 에러 코드 SELLER-003을 반환한다")
+    void 중복된_연락처로_가입_시_에러_코드_SELLER_003을_반환한다(
+            @Autowired TestFixture fixture
+    ) {
+        // Arrange
+        var contact = generatePhone();
+        var request1 = new SellerRegisterRequest(
+                generateUsername(),
+                generateEmail(),
+                generatePassword(),
+                contact
+        );
+
+        var request2 = new SellerRegisterRequest(
+                generateUsername(),
+                generateEmail(),
+                generatePassword(),
+                contact
+        );
+
+        fixture.post(
+                        "/api/v1/sellers/sign-up",
+                        request1,
+                        null
+                )
+                .exchange(Void.class);
+        // Act
+        fixture.post(
+                        "/api/v1/sellers/sign-up",
+                        request2,
+                        null
+                )
+                .exchange(Void.class)
+                .onError(
+                        // Assert
+                        error -> {
+                            assertThat(error.getStatus()).isEqualTo("SELLER-003");
+                        }
+                );
+    }
 }

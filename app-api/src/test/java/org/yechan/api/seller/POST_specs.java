@@ -273,4 +273,33 @@ public class POST_specs {
                         }
                 );
     }
+
+    @ParameterizedTest
+    @MethodSource("org.yechan.testdata.PasswordGenerator#invalidPasswordRequests")
+    void 비밀번호는_최소_8자_이상_대문자_소문자_숫자_특수문자를_포함해야_한다(
+            String password,
+            @Autowired TestFixture fixture
+    ) {
+        // Arrange
+        var request = new SellerRegisterRequest(
+                generateUsername(),
+                generateEmail(),
+                password,
+                generatePhone()
+        );
+
+        // Act
+        fixture.post(
+                        "/api/v1/sellers/sign-up",
+                        request,
+                        null
+                )
+                .exchange(Void.class)
+                .onError(
+                        // Assert
+                        error -> {
+                            assertThat(error.getStatus()).isEqualTo("CONSTRAINT_VIOLATION");
+                        }
+                );
+    }
 }

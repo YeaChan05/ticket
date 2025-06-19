@@ -245,7 +245,7 @@ public class POST_specs {
     }
 
     @ParameterizedTest
-    @MethodSource("org.yechan.api.issueToken.POST_spec#invalidIssueTokenRequests")
+    @MethodSource("org.yechan.api.issueToken.POST_specs#invalidIssueTokenRequests")
     @DisplayName("로그인 파라미터가 잘못된 형식이면 CONSTRAINT_VIOLATION 예외가 발생한다")
     void 로그인_파라미터가_잘못된_형식이면_CONSTRAINT_VIOLATION_예외가_발생한다(
             IssueTokenRequest request,

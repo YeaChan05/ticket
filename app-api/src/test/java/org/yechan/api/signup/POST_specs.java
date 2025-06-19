@@ -23,19 +23,6 @@ import org.yechan.repository.JpaUserRepository;
 @DisplayName("POST /api/v1/users/sign-up")
 public class POST_specs {
 
-    static UserRegisterRequest[] invalidUsernameProvider() {
-        return new UserRegisterRequest[]{
-                new UserRegisterRequest(null, generateEmail(), "Password123!", generatePhone()),
-                new UserRegisterRequest("", generateEmail(), "Password123!", generatePhone()),
-                new UserRegisterRequest(generateUsername(), null, "Password123!", generatePhone()),
-                new UserRegisterRequest(generateUsername(), "", "Password123!", generatePhone()),
-                new UserRegisterRequest(generateUsername(), generateEmail(), null, generatePhone()),
-                new UserRegisterRequest(generateUsername(), generateEmail(), "", generatePhone()),
-                new UserRegisterRequest(generateUsername(), generateEmail(), "Password123!", null),
-                new UserRegisterRequest(generateUsername(), generateEmail(), "Password123!", "")
-        };
-    }
-
     @Test
     void 회원가입_요청은_성공적으로_처리된다(
             @Autowired TestFixture fixture
@@ -276,41 +263,17 @@ public class POST_specs {
                 );
     }
 
-    @ParameterizedTest
-    @ValueSource(strings = {
-            "short",
-            "1234567",
-            "abcdefgh",
-            "ABCDEFGH",
-            "12345678",
-            "!@#$%^&*",
-            "abc123!@#"
-    })
-    void 비밀번호는_최소_8자_이상_대문자_소문자_숫자_특수문자를_포함해야_한다(
-            String password,
-            @Autowired TestFixture fixture
-    ) {
-        // Arrange
-        var request = new UserRegisterRequest(
-                generateUsername(),
-                generateEmail(),
-                password,
-                generatePhone()
-        );
-
-        // Act
-        fixture.post(
-                        "/api/v1/users/sign-up",
-                        request,
-                        null
-                )
-                .exchange(RegisterSuccessResponse.class).onError(
-                        response -> {
-                            // Assert
-                            assertThat(response.getStatus()).isEqualTo("CONSTRAINT_VIOLATION");
-                            assertThat(response.getMessage()).isEqualTo("비밀번호는 최소 8자 이상, 대문자, 소문자, 숫자, 특수문자를 포함해야 합니다.");
-                        }
-                );
+    static UserRegisterRequest[] invalidUsernameProvider() {
+        return new UserRegisterRequest[]{
+                new UserRegisterRequest(null, generateEmail(), "Password123!", generatePhone()),
+                new UserRegisterRequest("", generateEmail(), "Password123!", generatePhone()),
+                new UserRegisterRequest(generateUsername(), null, "Password123!", generatePhone()),
+                new UserRegisterRequest(generateUsername(), "", "Password123!", generatePhone()),
+                new UserRegisterRequest(generateUsername(), generateEmail(), null, generatePhone()),
+                new UserRegisterRequest(generateUsername(), generateEmail(), "", generatePhone()),
+                new UserRegisterRequest(generateUsername(), generateEmail(), "Password123!", null),
+                new UserRegisterRequest(generateUsername(), generateEmail(), "Password123!", "")
+        };
     }
 
     @ParameterizedTest
@@ -437,6 +400,35 @@ public class POST_specs {
                             assertThat(response.getStatus()).isEqualTo("SUCCESS");
                             assertThat(response.getData().email()).isEqualTo(email);
                             assertThat(response.getData().username()).isEqualTo(username);
+                        }
+                );
+    }
+
+    @ParameterizedTest
+    @MethodSource("org.yechan.testdata.PasswordGenerator#invalidPasswordRequests")
+    void 비밀번호는_최소_8자_이상_대문자_소문자_숫자_특수문자를_포함해야_한다(
+            String password,
+            @Autowired TestFixture fixture
+    ) {
+        // Arrange
+        var request = new UserRegisterRequest(
+                generateUsername(),
+                generateEmail(),
+                password,
+                generatePhone()
+        );
+
+        // Act
+        fixture.post(
+                        "/api/v1/users/sign-up",
+                        request,
+                        null
+                )
+                .exchange(RegisterSuccessResponse.class).onError(
+                        response -> {
+                            // Assert
+                            assertThat(response.getStatus()).isEqualTo("CONSTRAINT_VIOLATION");
+                            assertThat(response.getMessage()).isEqualTo("비밀번호는 최소 8자 이상, 대문자, 소문자, 숫자, 특수문자를 포함해야 합니다.");
                         }
                 );
     }

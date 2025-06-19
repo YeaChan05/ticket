@@ -181,28 +181,17 @@ public class POST_specs {
                 );
     }
 
-    @ParameterizedTest
-    @MethodSource("org.yechan.api.issueToken.POST_spec#invalidEmailProvider")
-    @DisplayName("로그인 파라미터가 잘못된 형식이면 CONSTRAINT_VIOLATION 예외가 발생한다")
-    void 로그인_파라미터가_잘못된_형식이면_CONSTRAINT_VIOLATION_예외가_발생한다(
-            IssueTokenRequest request,
-            @Autowired TestFixture fixture
-    ) {
-        // Act
-        fixture.post(
-                        "/api/v1/auth/token",
-                        request,
-                        null
-                )
-                .exchange(TokenHolder.class)
-                .onError(
-                        response -> {
-                            // Assert
-                            assertThat(response).isNotNull();
-                            assertThat(response.getStatus()).isEqualTo("CONSTRAINT_VIOLATION");
-                        }
-                );
-
+    private static IssueTokenRequest[] invalidIssueTokenRequests() {
+        return new IssueTokenRequest[]{
+                new IssueTokenRequest("invalid-email", "password123!"),
+                new IssueTokenRequest("user@.com", "password123!"),
+                new IssueTokenRequest("user@domain", "password123!"),
+                new IssueTokenRequest("user@domain..com", "password123!"),
+                new IssueTokenRequest("", "password123!"),
+                new IssueTokenRequest(null, "password123!"),
+                new IssueTokenRequest("valid@test.com", ""),
+                new IssueTokenRequest("valid@test.com", null)
+        };
     }
 
     @Test
@@ -255,17 +244,28 @@ public class POST_specs {
 
     }
 
-    private static IssueTokenRequest[] invalidEmailProvider() {
-        return new IssueTokenRequest[]{
-                new IssueTokenRequest("invalid-email", "password123!"),
-                new IssueTokenRequest("user@.com", "password123!"),
-                new IssueTokenRequest("user@domain", "password123!"),
-                new IssueTokenRequest("user@domain..com", "password123!"),
-                new IssueTokenRequest("", "password123!"),
-                new IssueTokenRequest(null, "password123!"),
-                new IssueTokenRequest("valid@test.com", ""),
-                new IssueTokenRequest("valid@test.com", null)
-        };
+    @ParameterizedTest
+    @MethodSource("org.yechan.api.issueToken.POST_spec#invalidIssueTokenRequests")
+    @DisplayName("로그인 파라미터가 잘못된 형식이면 CONSTRAINT_VIOLATION 예외가 발생한다")
+    void 로그인_파라미터가_잘못된_형식이면_CONSTRAINT_VIOLATION_예외가_발생한다(
+            IssueTokenRequest request,
+            @Autowired TestFixture fixture
+    ) {
+        // Act
+        fixture.post(
+                        "/api/v1/auth/token",
+                        request,
+                        null
+                )
+                .exchange(TokenHolder.class)
+                .onError(
+                        response -> {
+                            // Assert
+                            assertThat(response).isNotNull();
+                            assertThat(response.getStatus()).isEqualTo("CONSTRAINT_VIOLATION");
+                        }
+                );
+
     }
 
     @Test

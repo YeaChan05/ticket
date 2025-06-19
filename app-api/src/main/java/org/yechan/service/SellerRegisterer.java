@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.yechan.api.port.SellerRegisterUseCase;
-import org.yechan.dto.response.SuccessfulSellerRegistrationResponse;
+import org.yechan.dto.response.SuccessfulSellerRegisterResponse;
 
 @Service
 @RequiredArgsConstructor
@@ -13,10 +13,10 @@ public class SellerRegisterer implements SellerRegisterUseCase {
     private final SellerPersister sellerPersister;
     private final SellerValidator sellerValidator;
     @Override
-    public SuccessfulSellerRegistrationResponse registerSeller(String sellerName,
-                                                               String email,
-                                                               String contact,
-                                                               String password) {
+    public SuccessfulSellerRegisterResponse registerSeller(String sellerName,
+                                                           String email,
+                                                           String contact,
+                                                           String password) {
         // 이메일 중복 검증
         sellerValidator.validateEmailUniqueness(email);
 
@@ -29,6 +29,6 @@ public class SellerRegisterer implements SellerRegisterUseCase {
         // 판매자 정보 저장
         sellerPersister.registerVerifiedSeller(sellerName, email, contact, password);
 
-        return new SuccessfulSellerRegistrationResponse(sellerName, email);
+        return new SuccessfulSellerRegisterResponse(sellerName, email);
     }
 }

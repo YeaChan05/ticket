@@ -14,7 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.yechan.config.IntegrationTest;
 import org.yechan.dto.request.SellerRegisterRequest;
-import org.yechan.dto.response.SuccessfulSellerRegistrationResponse;
+import org.yechan.dto.response.SuccessfulSellerRegisterResponse;
 import org.yechan.fixture.TestFixture;
 import org.yechan.repository.JpaSellerRepository;
 
@@ -73,7 +73,7 @@ public class POST_specs {
                         request,
                         null
                 )
-                .exchange(SuccessfulSellerRegistrationResponse.class)
+                .exchange(SuccessfulSellerRegisterResponse.class)
                 .onSuccess(
                         // Assert
                         response -> {

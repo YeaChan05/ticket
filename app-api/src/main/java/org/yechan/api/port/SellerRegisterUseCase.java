@@ -1,7 +1,7 @@
 package org.yechan.api.port;
 
-import org.yechan.dto.response.SuccessfulSellerRegistrationResponse;
+import org.yechan.dto.response.SuccessfulSellerRegisterResponse;
 
 public interface SellerRegisterUseCase {
-    SuccessfulSellerRegistrationResponse registerSeller(String sellerName, String email, String contact, String password);
+    SuccessfulSellerRegisterResponse registerSeller(String sellerName, String email, String contact, String password);
 }

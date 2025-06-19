@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.yechan.config.IntegrationTest;
 import org.yechan.dto.request.SellerRegisterRequest;
+import org.yechan.dto.response.SuccessfulSellerRegistrationResponse;
 import org.yechan.fixture.TestFixture;
 import org.yechan.repository.JpaSellerRepository;
 
@@ -56,35 +57,35 @@ public class POST_specs {
             @Autowired JpaSellerRepository repository
     ) {
         // Arrange
-        var hostname = generateUsername();
+        var sellerName = generateUsername();
         var email = generateEmail();
         var contact = generatePhone();
         var password = generatePassword();
         var request = new SellerRegisterRequest(
-                hostname,
+                sellerName,
                 email,
                 password, contact
         );
 
         // Act
-        fixture.post(
+        var apiResponse = fixture.post(
                         "/api/v1/sellers/sign-up",
                         request,
                         null
                 )
-                .exchange(Void.class)
+                .exchange(SuccessfulSellerRegistrationResponse.class)
                 .onSuccess(
                         // Assert
                         response -> {
                             assertThat(response.getStatus()).isEqualTo("SUCCESS");
                         }
-                );
+                )
+                .getApiResponse();
 
         // Assert
-        var seller = repository.findByEmail(email).orElseThrow();
-        assertThat(seller.getName()).isEqualTo(hostname);
-        assertThat(seller.getEmail()).isEqualTo(email);
-        assertThat(seller.getContact()).isEqualTo(contact);
+        var actual = apiResponse.getData();
+        assertThat(actual.sellerName()).isEqualTo(sellerName);
+        assertThat(actual.email()).isEqualTo(email);
     }
 
     static SellerRegisterRequest[] blankFieldSellerRegisterRequests() {

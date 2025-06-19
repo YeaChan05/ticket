@@ -16,7 +16,7 @@ import org.yechan.config.IntegrationTest;
 import org.yechan.dto.TokenHolder;
 import org.yechan.dto.request.IssueTokenRequest;
 import org.yechan.dto.request.UserRegisterRequest;
-import org.yechan.dto.response.RegisterSuccessResponse;
+import org.yechan.dto.response.SuccessfulUserRegisterResponse;
 import org.yechan.fixture.TestFixture;
 
 @IntegrationTest
@@ -352,6 +352,6 @@ public class POST_specs {
                         new UserRegisterRequest(name, email, password, phone),
                         null
                 )
-                .exchange(RegisterSuccessResponse.class);
+                .exchange(SuccessfulUserRegisterResponse.class);
     }
 }

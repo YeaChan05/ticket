@@ -15,7 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.yechan.config.IntegrationTest;
 import org.yechan.dto.request.UserRegisterRequest;
-import org.yechan.dto.response.RegisterSuccessResponse;
+import org.yechan.dto.response.SuccessfulUserRegisterResponse;
 import org.yechan.fixture.TestFixture;
 import org.yechan.repository.JpaUserRepository;
 
@@ -44,7 +44,7 @@ public class POST_specs {
                         request,
                         null
                 )
-                .exchange(RegisterSuccessResponse.class)
+                .exchange(SuccessfulUserRegisterResponse.class)
                 .onSuccess(
                         response -> {
                             // Assert
@@ -75,7 +75,7 @@ public class POST_specs {
                         request,
                         null
                 )
-                .exchange(RegisterSuccessResponse.class).onSuccess(
+                .exchange(SuccessfulUserRegisterResponse.class).onSuccess(
                         response -> {
                             // Assert
                             assertThat(response.getStatus()).isEqualTo("SUCCESS");
@@ -108,7 +108,7 @@ public class POST_specs {
                         request,
                         null
                 )
-                .exchange(RegisterSuccessResponse.class)
+                .exchange(SuccessfulUserRegisterResponse.class)
                 .onSuccess(
                         response -> {
                             var user = repository.findByEmail(email).orElseThrow();
@@ -140,7 +140,7 @@ public class POST_specs {
                         request,
                         null
                 )
-                .exchange(RegisterSuccessResponse.class).onSuccess(
+                .exchange(SuccessfulUserRegisterResponse.class).onSuccess(
                         response -> {
                             // Assert
                             var user = repository.findByEmail(email).orElseThrow();
@@ -176,7 +176,7 @@ public class POST_specs {
                         request,
                         null
                 )
-                .exchange(RegisterSuccessResponse.class).onError(
+                .exchange(SuccessfulUserRegisterResponse.class).onError(
                         response -> {
                             // Assert
                             assertThat(response.getStatus()).isEqualTo("CONSTRAINT_VIOLATION");
@@ -208,7 +208,7 @@ public class POST_specs {
                         registeredRequest,
                         null
                 )
-                .exchange(RegisterSuccessResponse.class);
+                .exchange(SuccessfulUserRegisterResponse.class);
 
         // Act
         fixture.post(
@@ -216,7 +216,7 @@ public class POST_specs {
                         request,
                         null
                 )
-                .exchange(RegisterSuccessResponse.class).onError(
+                .exchange(SuccessfulUserRegisterResponse.class).onError(
                         response -> {
                             // Assert
                             assertThat(response.getStatus()).isEqualTo("USER-006");
@@ -247,7 +247,7 @@ public class POST_specs {
                         registeredRequest,
                         null
                 )
-                .exchange(RegisterSuccessResponse.class);
+                .exchange(SuccessfulUserRegisterResponse.class);
 
         // Act
         fixture.post(
@@ -255,7 +255,7 @@ public class POST_specs {
                         request,
                         null
                 )
-                .exchange(RegisterSuccessResponse.class).onError(
+                .exchange(SuccessfulUserRegisterResponse.class).onError(
                         response -> {
                             // Assert
                             assertThat(response.getStatus()).isEqualTo("USER-002");
@@ -303,7 +303,7 @@ public class POST_specs {
                         request,
                         null
                 )
-                .exchange(RegisterSuccessResponse.class).onError(
+                .exchange(SuccessfulUserRegisterResponse.class).onError(
                         response -> {
                             // Assert
                             assertThat(response.getStatus()).isEqualTo("CONSTRAINT_VIOLATION");
@@ -337,7 +337,7 @@ public class POST_specs {
                         registeredRequest,
                         null
                 )
-                .exchange(RegisterSuccessResponse.class);
+                .exchange(SuccessfulUserRegisterResponse.class);
 
         // Act
         fixture.post(
@@ -345,7 +345,7 @@ public class POST_specs {
                         request,
                         null
                 )
-                .exchange(RegisterSuccessResponse.class).onError(
+                .exchange(SuccessfulUserRegisterResponse.class).onError(
                         response -> {
                             // Assert
                             assertThat(response.getStatus()).isEqualTo("USER-005");
@@ -365,7 +365,7 @@ public class POST_specs {
                         request,
                         null
                 )
-                .exchange(RegisterSuccessResponse.class)
+                .exchange(SuccessfulUserRegisterResponse.class)
                 .onError(
                         response -> {
                             // Assert
@@ -394,7 +394,7 @@ public class POST_specs {
                         request,
                         null
                 )
-                .exchange(RegisterSuccessResponse.class).onSuccess(
+                .exchange(SuccessfulUserRegisterResponse.class).onSuccess(
                         response -> {
                             // Assert
                             assertThat(response.getStatus()).isEqualTo("SUCCESS");
@@ -424,7 +424,7 @@ public class POST_specs {
                         request,
                         null
                 )
-                .exchange(RegisterSuccessResponse.class).onError(
+                .exchange(SuccessfulUserRegisterResponse.class).onError(
                         response -> {
                             // Assert
                             assertThat(response.getStatus()).isEqualTo("CONSTRAINT_VIOLATION");

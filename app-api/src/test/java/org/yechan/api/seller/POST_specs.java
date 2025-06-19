@@ -120,5 +120,32 @@ public class POST_specs {
                 );
     }
 
+    @ParameterizedTest
+    @MethodSource("org.yechan.testdata.EmailGenerator#invalidEmailRequests")
+    void 이메일이_RFC_5322_형식을_만족하지_않은_경우_CONSTRAINT_VIOLATION이_응답된다(
+            String email, // Arrange
+            @Autowired TestFixture fixture
+    ) {
+        // Arrange
+        var request = new SellerRegisterRequest(
+                generateUsername(),
+                email,
+                generatePassword(),
+                generatePhone()
+        );
 
+        // Act
+        fixture.post(
+                        "/api/v1/sellers/sign-up",
+                        request,
+                        null
+                )
+                .exchange(Void.class)
+                .onError(
+                        // Assert
+                        error -> {
+                            assertThat(error.getStatus()).isEqualTo("CONSTRAINT_VIOLATION");
+                        }
+                );
+    }
 }

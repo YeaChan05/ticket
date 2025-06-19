@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.yechan.config.IntegrationTest;
 import org.yechan.dto.request.SellerRegisterRequest;
 import org.yechan.fixture.TestFixture;
@@ -299,6 +300,36 @@ public class POST_specs {
                         // Assert
                         error -> {
                             assertThat(error.getStatus()).isEqualTo("CONSTRAINT_VIOLATION");
+                        }
+                );
+    }
+
+    @Test
+    void 비밀번호는_안전하게_암호화되어_데이터베이스에_저장된다(
+            @Autowired TestFixture fixture,
+            @Autowired JpaSellerRepository repository,
+            @Autowired PasswordEncoder passwordEncoder
+    ) {
+        // Arrange
+        var password = generatePassword();
+        var request = new SellerRegisterRequest(
+                generateUsername(),
+                generateEmail(),
+                password,
+                generatePhone()
+        );
+
+        // Act
+        fixture.post(
+                        "/api/v1/sellers/sign-up",
+                        request,
+                        null
+                )
+                .exchange(Void.class)
+                .onSuccess(
+                        // Assert
+                        response -> {
+                            assertThat(passwordEncoder.matches(password, repository.findById(1L).orElseThrow().getPassword())).isTrue();
                         }
                 );
     }

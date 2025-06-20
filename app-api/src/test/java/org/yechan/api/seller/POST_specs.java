@@ -314,14 +314,12 @@ public class POST_specs {
                 .onSuccess(
                         // Assert
                         response -> {
-                            repository.findAll()
+                            var savedSeller = repository.findAll()
                                     .stream()
                                     .filter(seller -> seller.getEmail().equals(email))
                                     .findAny()
-                                    .ifPresent(seller
-                                            -> assertThat(passwordEncoder.matches(password, seller.getPassword()))
-                                            .isTrue());
-
+                                    .orElseThrow();
+                            assertThat(passwordEncoder.matches(password, savedSeller.getPassword())).isTrue();
                         }
                 );
     }

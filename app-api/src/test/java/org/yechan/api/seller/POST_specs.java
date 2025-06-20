@@ -26,12 +26,12 @@ public class POST_specs {
             @Autowired TestFixture fixture
     ) {
         // Arrange
-        var hostname = generateUsername();
+        var sellerName = generateUsername();
         var email = generateEmail();
         var phone = generatePhone();
         var password = generatePassword();
         var request = new SellerRegisterRequest(
-                hostname,
+                sellerName,
                 email,
                 password, phone
         );
@@ -187,16 +187,16 @@ public class POST_specs {
             @Autowired TestFixture fixture
     ) {
         // Arrange
-        var hostName = generateUsername();
+        var sellerName = generateUsername();
         var request1 = new SellerRegisterRequest(
-                hostName,
+                sellerName,
                 generateEmail(),
                 generatePassword(),
                 generatePhone()
         );
 
         var request2 = new SellerRegisterRequest(
-                hostName,
+                sellerName,
                 generateEmail(),
                 generatePassword(),
                 generatePhone()

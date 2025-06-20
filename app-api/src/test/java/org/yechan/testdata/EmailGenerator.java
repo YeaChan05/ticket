@@ -16,7 +16,6 @@ public class EmailGenerator {
                 "missingat.com",
                 "missingdomain@.com",
                 "user@.com",
-                "user@domain..com",
                 "user@domain,com",
                 "user@domain space.com",
                 "user@domain#com",

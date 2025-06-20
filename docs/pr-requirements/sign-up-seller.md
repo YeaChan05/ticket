@@ -98,7 +98,7 @@
 - 본문
   ```json
     {
-        "hostname": "string",
+        "sellerName": "string",
         "email": "string",
         "password": "string",
         "contact": "string"
@@ -109,7 +109,7 @@
   curl -i -X POST '/api/v1/sellers/sign-up' \
   -H 'Content-Type: application/json' \
   -d '{
-    "hostname": "홍길동",
+    "sellerName": "홍길동",
     "email": "test@.test.com",
     "password": "tesT!1234",
     "contact": "010-1234-5678"
@@ -122,7 +122,7 @@
   {
     "status": "Success",
     "data": {
-      "hostname": "홍길동",
+      "sellerName": "홍길동",
       "email": "test@.test.com"
     },
   "timestamp": "2025-01-01T00:00:00Z"

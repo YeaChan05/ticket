@@ -90,7 +90,7 @@
 
 요청
 - 메서드: POST
-- 경로: /seller/sign-up
+- 경로: /api/v1/sellers/sign-up
 - 헤더
   ```
   Content-Type: application/json

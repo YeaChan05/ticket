@@ -110,7 +110,7 @@
   -H 'Content-Type: application/json' \
   -d '{
     "sellerName": "홍길동",
-    "email": "test@.test.com",
+    "email": "test@example.com",
     "password": "tesT!1234",
     "contact": "010-1234-5678"
   }'
@@ -123,7 +123,7 @@
     "status": "Success",
     "data": {
       "sellerName": "홍길동",
-      "email": "test@.test.com"
+      "email": "test@example.com"
     },
   "timestamp": "2025-01-01T00:00:00Z"
   }

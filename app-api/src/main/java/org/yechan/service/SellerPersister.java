@@ -15,7 +15,7 @@ public class SellerPersister {
     private final PasswordEncoder encoder;
 
     public void registerVerifiedSeller(String sellerName, String email, String contact, String password) {
-        Seller seller =Seller.builder()
+        Seller seller = Seller.builder()
                 .password(encoder.encode(password))
                 .email(email)
                 .contact(contact)

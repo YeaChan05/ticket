@@ -106,7 +106,7 @@
   ```
 - curl 명령 예시
   ```bash
-  curl -i -X METHOD 'path' \
+  curl -i -X POST '/api/v1/sellers/sign-up' \
   -H 'Content-Type: application/json' \
   -d '{
     "hostname": "홍길동",

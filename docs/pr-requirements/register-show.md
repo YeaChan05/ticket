@@ -124,11 +124,22 @@
   -d '{
     "title": "뮤지컬 오페라의 유령",
     "description": "세계적인 뮤지컬 오페라의 유령",
+    "category": "뮤지컬",
     "thumbnail": "https://example.com/thumbnail.jpg",
-    "startDate": "2025-06-20T00:00:00Z",
-    "endDate": "2025-06-30T00:00:00Z",
-    "venue": "공연장 ID",
-    "ticketPrice": [
+    "ticketingStartDate": "2025-06-20T00:00:00Z",
+    "ticketingEndDate": "2025-06-30T00:00:00Z",
+    "hallId": "공연장 ID",
+    "showScheduleRegisterRequests":[
+      {
+        "startDateTime": "2025-07-01T19:00:00Z",
+        "endDateTime": "2025-07-01T21:00:00Z"
+      },
+      {
+        "startDateTime": "2025-07-02T19:00:00Z",
+        "endDateTime": "2025-07-02T21:00:00Z"
+      }
+    ],
+    "ticketGradeRequest": [
       {
         "grade": "VIP",
         "price": 100000,
@@ -167,12 +178,14 @@
 - [ ] 성공적인 공연 정보 등록 후 redirectUrl이 반환되어야 한다
 - [ ] 공연 정보 등록 후, 등록된 공연 정보가 데이터베이스에 저장되어야 한다
 - [ ] 공연 제목이 중복된 경우 SHOW-001 오류가 발생해야 한다
-- [ ] 공연 날짜 및 시간이 유효하지 않은 경우 SHOW-002 오류가 발생해야 한다
+- [ ] 티켓팅 날짜 및 시간이 유효하지 않은 경우 SHOW-002 오류가 발생해야 한다
 - [ ] 티켓 가격이 0원 이하인 경우 SHOW-003 오류가 발생해야 한다
 - [ ] 등급별 티켓 수량이 0 이하인 경우 SHOW-004 오류가 발생해야 한다
 - [ ] 티켓 총 수량이 공연장 수용 가능 인원을 초과하는 경우 SHOW-005 오류가 발생해야 한다
 - [ ] 존재하지 않는 공연 장소를 입력한 경우 SHOW-006 오류가 발생해야 한다
 - [ ] 입력값이 누락된 경우 CONSTRAINT_VIOLATION 오류가 발생해야 한다
+- [ ] 일정정보가 누락된 경우 CONSTRAINT_VIOLATION 오류가 발생해야 한다
+- [ ] 등급정보가 누락된 경우 CONSTRAINT_VIOLATION 오류가 발생해야 한다
 
 ### 6. 주요 고려사항 및 위험 요소
 

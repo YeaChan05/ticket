@@ -1,8 +1,8 @@
 package org.yechan.api.port;
 
 import org.yechan.dto.request.UserRegisterRequest;
-import org.yechan.dto.response.RegisterSuccessResponse;
+import org.yechan.dto.response.SuccessfulUserRegisterResponse;
 
 public interface UserRegisterUseCase {
-    RegisterSuccessResponse registerUser(UserRegisterRequest userRegisterRequest);
+    SuccessfulUserRegisterResponse registerUser(UserRegisterRequest userRegisterRequest);
 }

@@ -18,7 +18,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.yechan.dto.request.UserRegisterRequest;
-import org.yechan.dto.response.RegisterSuccessResponse;
+import org.yechan.dto.response.SuccessfulUserRegisterResponse;
 import org.yechan.error.UserErrorCode;
 import org.yechan.error.exception.UserException;
 
@@ -51,7 +51,7 @@ class UserRegistererTest {
         doNothing().when(userValidator).validatePhoneNumberUniqueness(anyString());
         lenient().when(passwordEncoder.encode(password)).thenReturn("ENCODED_" + password);
 
-        RegisterSuccessResponse response = userRegisterer.registerUser(user);
+        SuccessfulUserRegisterResponse response = userRegisterer.registerUser(user);
 
         // Assert
         assertThat(response).isNotNull();

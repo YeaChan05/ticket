@@ -16,12 +16,12 @@ import org.yechan.config.IntegrationTest;
 import org.yechan.dto.TokenHolder;
 import org.yechan.dto.request.IssueTokenRequest;
 import org.yechan.dto.request.UserRegisterRequest;
-import org.yechan.dto.response.RegisterSuccessResponse;
+import org.yechan.dto.response.SuccessfulUserRegisterResponse;
 import org.yechan.fixture.TestFixture;
 
 @IntegrationTest
 @DisplayName("POST /api/v1/auth/token")
-public class POST_spec {
+public class POST_specs {
     private static final String PASSWORD = "securep!21Assword";
 
     private static String decodeBase64Url(String base64UrlString) {
@@ -155,9 +155,8 @@ public class POST_spec {
             @Autowired TestFixture fixture
     ) {
         // Arrange
-        var password = PASSWORD;
         var email = generateEmail();
-        generateUser(fixture, generateUsername(), email, password, generatePhone());
+        generateUser(fixture, generateUsername(), email, PASSWORD, generatePhone());
         var wrongPassword = "wrongPassword!23";
         IssueTokenRequest request = new IssueTokenRequest(
                 email,
@@ -181,28 +180,17 @@ public class POST_spec {
                 );
     }
 
-    @ParameterizedTest
-    @MethodSource("org.yechan.api.issueToken.POST_spec#invalidEmailProvider")
-    @DisplayName("로그인 파라미터가 잘못된 형식이면 CONSTRAINT_VIOLATION 예외가 발생한다")
-    void 로그인_파라미터가_잘못된_형식이면_CONSTRAINT_VIOLATION_예외가_발생한다(
-            IssueTokenRequest request,
-            @Autowired TestFixture fixture
-    ) {
-        // Act
-        fixture.post(
-                        "/api/v1/auth/token",
-                        request,
-                        null
-                )
-                .exchange(TokenHolder.class)
-                .onError(
-                        response -> {
-                            // Assert
-                            assertThat(response).isNotNull();
-                            assertThat(response.getStatus()).isEqualTo("CONSTRAINT_VIOLATION");
-                        }
-                );
-
+    private static IssueTokenRequest[] invalidIssueTokenRequests() {
+        return new IssueTokenRequest[]{
+                new IssueTokenRequest("invalid-email", "password123!"),
+                new IssueTokenRequest("user@.com", "password123!"),
+                new IssueTokenRequest("user@domain", "password123!"),
+                new IssueTokenRequest("user@domain..com", "password123!"),
+                new IssueTokenRequest("", "password123!"),
+                new IssueTokenRequest(null, "password123!"),
+                new IssueTokenRequest("valid@test.com", ""),
+                new IssueTokenRequest("valid@test.com", null)
+        };
     }
 
     @Test
@@ -255,17 +243,28 @@ public class POST_spec {
 
     }
 
-    private static IssueTokenRequest[] invalidEmailProvider() {
-        return new IssueTokenRequest[]{
-                new IssueTokenRequest("invalid-email", "password123!"),
-                new IssueTokenRequest("user@.com", "password123!"),
-                new IssueTokenRequest("user@domain", "password123!"),
-                new IssueTokenRequest("user@domain..com", "password123!"),
-                new IssueTokenRequest("", "password123!"),
-                new IssueTokenRequest(null, "password123!"),
-                new IssueTokenRequest("valid@test.com", ""),
-                new IssueTokenRequest("valid@test.com", null)
-        };
+    @ParameterizedTest
+    @MethodSource("org.yechan.api.issueToken.POST_specs#invalidIssueTokenRequests")
+    @DisplayName("로그인 파라미터가 잘못된 형식이면 CONSTRAINT_VIOLATION 예외가 발생한다")
+    void 로그인_파라미터가_잘못된_형식이면_CONSTRAINT_VIOLATION_예외가_발생한다(
+            IssueTokenRequest request,
+            @Autowired TestFixture fixture
+    ) {
+        // Act
+        fixture.post(
+                        "/api/v1/auth/token",
+                        request,
+                        null
+                )
+                .exchange(TokenHolder.class)
+                .onError(
+                        response -> {
+                            // Assert
+                            assertThat(response).isNotNull();
+                            assertThat(response.getStatus()).isEqualTo("CONSTRAINT_VIOLATION");
+                        }
+                );
+
     }
 
     @Test
@@ -352,6 +351,6 @@ public class POST_spec {
                         new UserRegisterRequest(name, email, password, phone),
                         null
                 )
-                .exchange(RegisterSuccessResponse.class);
+                .exchange(SuccessfulUserRegisterResponse.class);
     }
 }

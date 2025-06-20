@@ -1,6 +1,6 @@
 package org.yechan.dto.response;
 
-public record RegisterSuccessResponse(
+public record SuccessfulUserRegisterResponse(
         String username,
         String email
 ) {

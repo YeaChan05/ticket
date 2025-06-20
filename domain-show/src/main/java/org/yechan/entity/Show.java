@@ -32,7 +32,7 @@ public class Show extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "host_id")
-    private Host host;
+    private Seller seller;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "hall_id")

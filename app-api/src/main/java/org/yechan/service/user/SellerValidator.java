@@ -1,4 +1,4 @@
-package org.yechan.service;
+package org.yechan.service.user;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;

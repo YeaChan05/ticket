@@ -1,8 +1,8 @@
-package org.yechan.service;
+package org.yechan.service.user;
 
-import static org.yechan.service.TokenIssuer.ClaimKey.EMAIL;
-import static org.yechan.service.TokenIssuer.ClaimKey.ROLE;
-import static org.yechan.service.TokenIssuer.ClaimKey.USERNAME;
+import static org.yechan.service.user.TokenIssuer.ClaimKey.EMAIL;
+import static org.yechan.service.user.TokenIssuer.ClaimKey.ROLE;
+import static org.yechan.service.user.TokenIssuer.ClaimKey.USERNAME;
 
 import java.util.Map;
 import lombok.Getter;

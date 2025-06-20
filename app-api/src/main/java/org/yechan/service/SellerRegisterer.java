@@ -8,7 +8,7 @@ import org.yechan.dto.response.SuccessfulSellerRegisterResponse;
 
 @Service
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
+@Transactional
 public class SellerRegisterer implements SellerRegisterUseCase {
     private final SellerPersister sellerPersister;
     private final SellerValidator sellerValidator;

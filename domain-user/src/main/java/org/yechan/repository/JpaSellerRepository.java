@@ -1,5 +1,6 @@
 package org.yechan.repository;
 
+import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -14,4 +15,6 @@ public interface JpaSellerRepository extends JpaRepository<Seller, Long> {
 
     @Query("SELECT COUNT(1) > 0 FROM Seller s WHERE s.name = :sellerName")
     boolean existBySellerName(@Param(value = "sellerName") String sellerName);
+
+    Optional<Seller> findByEmail(String email);
 }

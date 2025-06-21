@@ -1,5 +1,6 @@
 package org.yechan.repository;
 
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import org.yechan.entity.Seller;
@@ -23,5 +24,9 @@ public class SellerRepository {
 
     public void insertSeller(Seller seller) {
         jpaSellerRepository.save(seller);
+    }
+
+    public Optional<Seller> findByEmail(String email) {
+        return jpaSellerRepository.findByEmail(email);
     }
 }

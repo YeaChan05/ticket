@@ -1,8 +1,8 @@
 package org.yechan.service;
 
-import static org.yechan.service.TokenIssuer.ClaimKey.EMAIL;
-import static org.yechan.service.TokenIssuer.ClaimKey.ROLE;
-import static org.yechan.service.TokenIssuer.ClaimKey.USERNAME;
+import static org.yechan.service.UserTokenIssuer.ClaimKey.EMAIL;
+import static org.yechan.service.UserTokenIssuer.ClaimKey.ROLE;
+import static org.yechan.service.UserTokenIssuer.ClaimKey.USERNAME;
 
 import java.util.Map;
 import lombok.Getter;
@@ -18,10 +18,10 @@ import org.yechan.error.UserErrorCode;
 import org.yechan.error.exception.UserException;
 import org.yechan.repository.UserRepository;
 
-@Service
+@Service("userTokenIssuer")
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
-public class TokenIssuer implements IssueTokenUseCase {
+public class UserTokenIssuer implements IssueTokenUseCase {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final TokenProvider tokenProvider;

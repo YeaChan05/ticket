@@ -1,6 +1,5 @@
 package org.yechan.fixture;
 
-import static java.util.Objects.requireNonNull;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 import java.util.HashMap;
@@ -57,10 +56,8 @@ public class RequestExecutor {
             UriComponentsBuilder ucb = UriComponentsBuilder.fromUriString(url);
             queryParams.forEach(ucb::queryParam);
             finalUrl = ucb.build().toUriString();
-            builder = RequestEntity.method(method, finalUrl, requireNonNull(queryParams));
-        } else {
-            builder = RequestEntity.method(method, finalUrl);
         }
+        builder = RequestEntity.method(method, finalUrl);
         builder.header("Content-Type", APPLICATION_JSON_VALUE);
         if (token != null && !token.isBlank()) {
             builder.header("Authorization", "Bearer " + token);

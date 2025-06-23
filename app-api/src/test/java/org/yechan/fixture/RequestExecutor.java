@@ -34,9 +34,8 @@ public class RequestExecutor {
     public RequestExecutor queryParam(String key, Object value) {
         if (queryParams == null) {
             this.queryParams = new HashMap<>();
-            this.queryParams.put(key, value);
         }
-        queryParams.put(key, value);
+         queryParams.put(key, value);
         return this;
     }
 

@@ -379,7 +379,7 @@ public class POST_specs {
     }
 
     @Test
-    void 발급된_토큰의_payload에는_ROLE_SELLER가_포함된다(
+    void 판매자가_발급한_토큰의_payload에는_ROLE_SELLER가_포함된다(
             @Autowired TestFixture fixture
     ) {
         // Arrange

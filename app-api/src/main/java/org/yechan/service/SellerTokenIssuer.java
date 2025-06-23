@@ -21,6 +21,7 @@ import org.yechan.repository.SellerRepository;
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class SellerTokenIssuer implements IssueTokenUseCase {
+    private static final String SELLER = "SELLER";
     private final SellerRepository sellerRepository;
     private final PasswordEncoder passwordEncoder;
     private final TokenProvider tokenProvider;
@@ -31,7 +32,7 @@ public class SellerTokenIssuer implements IssueTokenUseCase {
                 .orElseThrow(() -> new SellerException("판매자를 찾을 수 없습니다.", SellerErrorCode.SELLER_NOT_FOUND));
         verifyPassword(seller.getPassword(), request.password());
         var claims = Map.of(
-                ROLE.getKey(), "SELLER",
+                ROLE.getKey(), SELLER,
                 EMAIL.getKey(), seller.getEmail(),
                 USERNAME.getKey(), seller.getName()
         );

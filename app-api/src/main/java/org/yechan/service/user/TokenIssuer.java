@@ -1,11 +1,10 @@
 package org.yechan.service.user;
 
-import static org.yechan.service.user.TokenIssuer.ClaimKey.EMAIL;
-import static org.yechan.service.user.TokenIssuer.ClaimKey.ROLE;
-import static org.yechan.service.user.TokenIssuer.ClaimKey.USERNAME;
+import static org.yechan.config.ClaimKey.EMAIL;
+import static org.yechan.config.ClaimKey.ROLE;
+import static org.yechan.config.ClaimKey.USERNAME;
 
 import java.util.Map;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -42,19 +41,6 @@ public class TokenIssuer implements IssueTokenUseCase {
     private void verifyPassword(final String password, final String requestedPassword) {
         if (!passwordEncoder.matches(requestedPassword, password)) {
             throw new UserException("비밀번호가 일치하지 않습니다.", UserErrorCode.PASSWORD_MISMATCH);
-        }
-    }
-
-    @Getter
-    enum ClaimKey {
-        ROLE("role"),
-        EMAIL("email"),
-        USERNAME("username");
-
-        private final String key;
-
-        ClaimKey(String key) {
-            this.key = key;
         }
     }
 }

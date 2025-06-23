@@ -124,6 +124,7 @@
 - [x] 토큰의 payload에 email 정보와 username이 포함된다
 - [x] 여러 번 로그인 시도해도 항상 새로운 토큰이 발급된다
 - [x] 토큰 타입이 없는 경우 CONSTRAINT_VIOLATION 예외가 발생한다
+- [x] 판매자 로그인 시도 시 등록된 email과 password로 요청하면 토큰이 반환된다
 
 ### 6. 주요 고려사항 및 위험 요소
 

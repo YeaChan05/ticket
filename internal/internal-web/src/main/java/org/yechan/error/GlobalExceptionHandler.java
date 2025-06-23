@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -31,6 +32,15 @@ public class GlobalExceptionHandler {
         String message = Optional.ofNullable(e.getBindingResult().getFieldError())
                 .map(FieldError::getDefaultMessage)
                 .orElse("잘못된 요청입니다.");
+        errorCode.setMessage(message);
+        logException(e, errorCode);
+        return errorCode;
+    }
+
+    @ExceptionHandler(MissingServletRequestParameterException.class)
+    protected ErrorCode handleMissingServletRequestParameterException(MissingServletRequestParameterException e) {
+        GlobalErrorCode errorCode = GlobalErrorCode.INVALID_REQUEST;
+        String message = String.format("필수 요청 파라미터 '%s'가 누락되었습니다.", e.getParameterName());
         errorCode.setMessage(message);
         logException(e, errorCode);
         return errorCode;

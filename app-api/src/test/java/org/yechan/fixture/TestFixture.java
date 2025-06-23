@@ -3,7 +3,6 @@ package org.yechan.fixture;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import groovy.util.logging.Slf4j;
 import jakarta.annotation.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,7 +13,6 @@ import org.springframework.http.HttpMethod;
 import org.yechan.config.response.ApiResponse;
 import org.yechan.config.response.ErrorResponse;
 
-@Slf4j
 public record TestFixture(
         TestRestTemplate client,
         ObjectMapper objectMapper

@@ -12,7 +12,7 @@ import org.yechan.service.TokenIssuerType;
 
 @RestController
 @RequestMapping("/api/v1/auth")
-public record IssueUserTokenController() {
+public record IssueTokenController() {
     @PostMapping("/token")
     public TokenHolder issueToken(
             @Valid @RequestBody IssueTokenRequest request,

@@ -1,33 +1,32 @@
 package org.yechan.api.issueToken;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.yechan.TestUtils.decodeBase64Url;
 import static org.yechan.testdata.EmailGenerator.generateEmail;
+import static org.yechan.testdata.PasswordGenerator.generatePassword;
 import static org.yechan.testdata.PhoneNumberGenerator.generatePhone;
 import static org.yechan.testdata.UsernameGenerator.generateUsername;
 
-import java.util.Base64;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.yechan.TestUtils;
 import org.yechan.config.IntegrationTest;
 import org.yechan.dto.TokenHolder;
 import org.yechan.dto.request.IssueTokenRequest;
+import org.yechan.dto.request.SellerRegisterRequest;
 import org.yechan.dto.request.UserRegisterRequest;
+import org.yechan.dto.response.SuccessfulSellerRegisterResponse;
 import org.yechan.dto.response.SuccessfulUserRegisterResponse;
 import org.yechan.fixture.TestFixture;
+import org.yechan.service.TokenIssuerType;
 
 @IntegrationTest
 @DisplayName("POST /api/v1/auth/token")
 public class POST_specs {
     private static final String PASSWORD = "securep!21Assword";
-
-    private static String decodeBase64Url(String base64UrlString) {
-        byte[] decodedBytes = Base64.getUrlDecoder().decode(base64UrlString);
-        return new String(decodedBytes, UTF_8);
-    }
 
     @Test
     void 로그인_시도_시_등록된_email과_password로_요청하면_200_응답이_반환된다(
@@ -52,6 +51,7 @@ public class POST_specs {
                         request,
                         null
                 )
+                .queryParam("issuerType", TokenIssuerType.USER)
                 .exchange(TokenHolder.class)
                 .onSuccess(
                         response -> {
@@ -85,6 +85,7 @@ public class POST_specs {
                         request,
                         null
                 )
+                .queryParam("issuerType", TokenIssuerType.USER)
                 .exchange(TokenHolder.class)
                 .onSuccess(
                         response -> {
@@ -109,6 +110,7 @@ public class POST_specs {
                         new IssueTokenRequest(email, null),// 비밀번호가 누락된 경우
                         null
                 )
+                .queryParam("issuerType", TokenIssuerType.USER)
                 .exchange(TokenHolder.class)
                 .onError(
                         response -> {
@@ -140,6 +142,7 @@ public class POST_specs {
                         request,
                         null
                 )
+                .queryParam("issuerType", TokenIssuerType.USER)
                 .exchange(TokenHolder.class)
                 .onError(response -> {
                     // Assert
@@ -169,6 +172,7 @@ public class POST_specs {
                         request,
                         null
                 )
+                .queryParam("issuerType", TokenIssuerType.USER)
                 .exchange(TokenHolder.class)
                 .onError(
                         response -> {
@@ -214,6 +218,7 @@ public class POST_specs {
                         request,
                         null
                 )
+                .queryParam("issuerType", TokenIssuerType.USER)
                 .exchange(TokenHolder.class)
                 .onSuccess(
                         response -> {
@@ -288,6 +293,7 @@ public class POST_specs {
                         request,
                         null
                 )
+                .queryParam("issuerType", TokenIssuerType.USER)
                 .exchange(TokenHolder.class)
                 .onSuccess(
                         response -> {
@@ -325,6 +331,7 @@ public class POST_specs {
                         request,
                         null
                 )
+                .queryParam("issuerType", TokenIssuerType.USER)
                 .exchange(TokenHolder.class)
                 .getApiResponse();
         var apiResponse2 = fixture.post(
@@ -332,6 +339,7 @@ public class POST_specs {
                         request,
                         null
                 )
+                .queryParam("issuerType", TokenIssuerType.USER)
                 .exchange(TokenHolder.class)
                 .getApiResponse();
 
@@ -339,6 +347,93 @@ public class POST_specs {
         var token1 = apiResponse1.getData().accessToken();
         var token2 = apiResponse2.getData().accessToken();
         assertThat(token1).isNotEqualTo(token2);
+    }
+
+    @Test
+    void 판매자_로그인_시도_시_등록된_email과_password로_요청하면_토큰이_반환된다(
+            @Autowired TestFixture fixture
+    ) {
+        // Arrange
+        var name = generateUsername();
+        var email = generateEmail();
+        var password = generatePassword();
+        var contact = generatePhone();
+        generateSeller(fixture, name, email, password, contact);
+
+        IssueTokenRequest request = new IssueTokenRequest(email, password);
+
+        // Act
+        fixture.post(
+                        "/api/v1/auth/token",
+                        request,
+                        null
+                )
+                .queryParam("issuerType", TokenIssuerType.SELLER)
+                .exchange(TokenHolder.class)
+                .onSuccess(response -> {
+                    // Assert
+                    var body = response.getData();
+                    assertThat(body).isNotNull();
+                    assertThat(body.accessToken()).isNotBlank();
+                });
+    }
+
+    @Test
+    void 발급된_토큰의_payload에는_ROLE_SELLER가_포함된다(
+            @Autowired TestFixture fixture
+    ) {
+        // Arrange
+        var name = generateUsername();
+        var email = generateEmail();
+        var password = generatePassword();
+        var contact = generatePhone();
+        generateSeller(fixture, name, email, password, contact);
+        IssueTokenRequest request = new IssueTokenRequest(email, password);
+
+        // Act
+        fixture.post(
+                        "/api/v1/auth/token",
+                        request,
+                        null
+                )
+                .queryParam("issuerType", TokenIssuerType.SELLER)
+                .exchange(TokenHolder.class)
+                .onSuccess(response -> {
+                    // Assert
+                    var token = response.getData().accessToken();
+                    var parts = token.split("\\.");
+                    var payload = TestUtils.decodeBase64Url(parts[1]);
+                    assertThat(payload).contains("\"role\":\"SELLER\"");
+                    assertThat(payload).contains("\"email\":\"" + email + "\"");
+                    assertThat(payload).contains("\"username\":\"" + name + "\"");
+                });
+    }
+
+    @Test
+    void 토큰_타입이_없는_경우_CONSTRAINT_VIOLATION_예외가_발생한다(
+            @Autowired TestFixture fixture
+    ) {
+        // Arrange
+        var password = generatePassword();
+        var email = generateEmail();
+        var username = generateUsername();
+        var phone = generatePhone();
+        generateUser(fixture, username, email, password, phone);
+
+        // Act
+        fixture.post(
+                        "/api/v1/auth/token",
+                        new IssueTokenRequest(email, password),
+                        null
+                )
+                .queryParam("issuerType", null)
+                .exchange(TokenHolder.class)
+                .onError(response -> {
+                    // Assert
+                    assertThat(response).isNotNull();
+                    assertThat(response.getStatus()).isEqualTo("CONSTRAINT_VIOLATION");
+                    assertThat(response.getMessage()).isEqualTo("필수 요청 파라미터 'issuerType'가 누락되었습니다.");
+                });
     }
 
     private void generateUser(TestFixture fixture,
@@ -352,5 +447,18 @@ public class POST_specs {
                         null
                 )
                 .exchange(SuccessfulUserRegisterResponse.class);
+    }
+
+    private void generateSeller(TestFixture fixture,
+                                String name,
+                                String email,
+                                String password,
+                                String contact) {
+        fixture.post(
+                        "/api/v1/sellers/sign-up",
+                        new SellerRegisterRequest(name, email, password, contact),
+                        null
+                )
+                .exchange(SuccessfulSellerRegisterResponse.class);
     }
 }

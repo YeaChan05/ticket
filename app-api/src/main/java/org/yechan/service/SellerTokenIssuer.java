@@ -6,7 +6,6 @@ import static org.yechan.service.UserTokenIssuer.ClaimKey.USERNAME;
 
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.yechan.api.port.IssueTokenUseCase;
@@ -23,14 +22,19 @@ import org.yechan.repository.SellerRepository;
 public class SellerTokenIssuer implements IssueTokenUseCase {
     private static final String SELLER = "SELLER";
     private final SellerRepository sellerRepository;
-    private final PasswordEncoder passwordEncoder;
     private final TokenProvider tokenProvider;
+    private final PasswordVerifier passwordVerifier;
 
     @Override
     public TokenHolder issueToken(final IssueTokenRequest request) {
         var seller = sellerRepository.findByEmail(request.email())
                 .orElseThrow(() -> new SellerException("판매자를 찾을 수 없습니다.", SellerErrorCode.SELLER_NOT_FOUND));
-        verifyPassword(seller.getPassword(), request.password());
+
+        passwordVerifier.verify(
+                request.password(), seller.getPassword(),
+                () -> new SellerException("비밀번호가 일치하지 않습니다.", SellerErrorCode.PASSWORD_MISMATCH)
+        );
+
         var claims = Map.of(
                 ROLE.getKey(), SELLER,
                 EMAIL.getKey(), seller.getEmail(),
@@ -39,9 +43,4 @@ public class SellerTokenIssuer implements IssueTokenUseCase {
         return tokenProvider.createAccessToken(String.valueOf(seller.getId()), claims);
     }
 
-    private void verifyPassword(final String password, final String requestedPassword) {
-        if (!passwordEncoder.matches(requestedPassword, password)) {
-            throw new SellerException("비밀번호가 일치하지 않습니다.", SellerErrorCode.PASSWORD_MISMATCH);
-        }
-    }
 }

@@ -1,4 +1,4 @@
-package org.yechan.config;
+package org.yechan.config.security;
 
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 

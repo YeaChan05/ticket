@@ -1,4 +1,4 @@
-package org.yechan.config;
+package org.yechan.config.security;
 
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;

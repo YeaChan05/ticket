@@ -1,8 +1,8 @@
 package org.yechan.service.user;
 
-import static org.yechan.config.ClaimKey.EMAIL;
-import static org.yechan.config.ClaimKey.ROLE;
-import static org.yechan.config.ClaimKey.USERNAME;
+import static org.yechan.config.security.ClaimKey.EMAIL;
+import static org.yechan.config.security.ClaimKey.ROLE;
+import static org.yechan.config.security.ClaimKey.USERNAME;
 
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
@@ -10,7 +10,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.yechan.api.port.IssueTokenUseCase;
-import org.yechan.config.TokenProvider;
+import org.yechan.config.security.TokenProvider;
 import org.yechan.dto.TokenHolder;
 import org.yechan.dto.request.IssueTokenRequest;
 import org.yechan.error.UserErrorCode;

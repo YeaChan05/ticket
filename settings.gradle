@@ -15,7 +15,6 @@ include 'internal'
 include 'internal:internal-web'
 include 'internal:internal-client'
 include 'internal:internal-log'
-include 'internal:internal-security'
 include 'internal:internal-mysql'
 
 // 외부 연동 모듈

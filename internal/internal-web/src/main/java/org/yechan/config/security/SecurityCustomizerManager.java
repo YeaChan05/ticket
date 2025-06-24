@@ -1,4 +1,4 @@
-package org.yechan.config;
+package org.yechan.config.security;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;

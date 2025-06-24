@@ -1,4 +1,4 @@
-package org.yechan.config;
+package org.yechan.config.security;
 
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;

@@ -48,7 +48,7 @@ public class TokenProvider {
         return new TokenHolder(accessToken);
     }
 
-    public boolean validateToken(String token) {
+    public boolean isValidToken(String token) {
         try {
             Jwts.parserBuilder()
                     .setSigningKey(key)

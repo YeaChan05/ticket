@@ -4,7 +4,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.annotation.Nullable;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.core.ResolvableType;
@@ -12,27 +13,26 @@ import org.springframework.http.HttpMethod;
 import org.yechan.config.response.ApiResponse;
 import org.yechan.config.response.ErrorResponse;
 
-@Slf4j
 public record TestFixture(
         TestRestTemplate client,
         ObjectMapper objectMapper
 ) {
 
+    private static final Logger log = LoggerFactory.getLogger(TestFixture.class);
+
     public RequestExecutor get(
             String url,
-            @Nullable String token,
-            Object... uriVariables
+            @Nullable String token
     ) {
-        return new RequestExecutor(this, HttpMethod.GET, url, null,token, uriVariables);
+        return new RequestExecutor(this, HttpMethod.GET, url, null, token);
     }
 
     public RequestExecutor post(
             String url,
             Object requestBody,
-            @Nullable String token,
-            Object... uriVariables
+            @Nullable String token
     ) {
-        return new RequestExecutor(this, HttpMethod.POST, url, requestBody,token, uriVariables);
+        return new RequestExecutor(this, HttpMethod.POST, url, requestBody, token);
     }
 
     <T> TestResult<T> parseResponseBody(
@@ -48,10 +48,11 @@ public record TestFixture(
 
     ErrorResponse parseToErrorResponse(String responseBody) {
         try {
-            log.info("Actual response is :{}",responseBody);
             return objectMapper.readValue(responseBody, ErrorResponse.class);
         } catch (JsonProcessingException ex) {
-            throw new RuntimeException("Failed to parse response body into any known type (ApiResponse or ErrorResponse)", ex);
+            log.error("response {}", responseBody );
+            throw new RuntimeException(
+                    "Failed to parse response body into any known type (ApiResponse or ErrorResponse)", ex);
         }
     }
 

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.annotation.Nullable;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.core.ResolvableType;
@@ -11,6 +12,7 @@ import org.springframework.http.HttpMethod;
 import org.yechan.config.response.ApiResponse;
 import org.yechan.config.response.ErrorResponse;
 
+@Slf4j
 public record TestFixture(
         TestRestTemplate client,
         ObjectMapper objectMapper
@@ -46,6 +48,7 @@ public record TestFixture(
 
     ErrorResponse parseToErrorResponse(String responseBody) {
         try {
+            log.info("Actual response is :{}",responseBody);
             return objectMapper.readValue(responseBody, ErrorResponse.class);
         } catch (JsonProcessingException ex) {
             throw new RuntimeException("Failed to parse response body into any known type (ApiResponse or ErrorResponse)", ex);

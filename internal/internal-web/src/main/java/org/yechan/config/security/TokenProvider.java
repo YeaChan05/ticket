@@ -56,15 +56,15 @@ public class TokenProvider {
                     .parseClaimsJws(token);
             return true;
         } catch (ExpiredJwtException e) {
-            throw new GlobalException("JWT token has expired", GlobalErrorCode.INVALID_REQUEST);
+            throw new GlobalException("Token expired", GlobalErrorCode.TOKEN_EXPIRED);
         } catch (SignatureException e) {
-            throw new RuntimeException("Invalid JWT signature", e);
+            throw new GlobalException("Invalid signature", GlobalErrorCode.INVALID_SIGNATURE);
         } catch (MalformedJwtException e) {
-            throw new RuntimeException("Invalid JWT token", e);
+            throw new GlobalException("Malformed token", GlobalErrorCode.MALFORMED_TOKEN);
         } catch (UnsupportedJwtException e) {
-            throw new RuntimeException("Unsupported JWT token", e);
+            throw new GlobalException("Unsupported token", GlobalErrorCode.UNSUPPORTED_TOKEN);
         } catch (IllegalArgumentException e) {
-            throw new RuntimeException("JWT claims string is empty", e);
+            throw new GlobalException("Token is empty or null", GlobalErrorCode.EMPTY_TOKEN);
         }
     }
 

@@ -5,6 +5,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -20,14 +21,15 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
+import org.springframework.web.filter.OncePerRequestFilter;
 
 
 @Configuration
-@ConditionalOnProperty(name = "security.extensible-enabled", havingValue = "true")
 @RequiredArgsConstructor
 class SecurityCustomizerManager {
 
-    private final SecurityConfigurationProperties properties;
 
     @Bean
     public SecurityFilterChain filterChain(
@@ -39,7 +41,10 @@ class SecurityCustomizerManager {
             Customizer<HttpBasicConfigurer<HttpSecurity>> httpBasicCustomizer,
             Customizer<FormLoginConfigurer<HttpSecurity>> formLoginCustomizer,
             Customizer<ExceptionHandlingConfigurer<HttpSecurity>> exceptionHandlingCustomizer,
-            Customizer<LogoutConfigurer<HttpSecurity>> logoutCustomizer
+            Customizer<LogoutConfigurer<HttpSecurity>> logoutCustomizer,
+            CustomAccessDeniedHandler accessDeniedHandler,
+            CustomAuthenticationEntryPoint authenticationEntryPoint,
+            OncePerRequestFilter authenticationFilter
     ) throws Exception {
         return http
                 .csrf(csrfCustomizer)
@@ -50,19 +55,30 @@ class SecurityCustomizerManager {
                 .formLogin(formLoginCustomizer)
                 .exceptionHandling(exceptionHandlingCustomizer)
                 .logout(logoutCustomizer)
+                .exceptionHandling(exceptionHandling -> exceptionHandling
+                        .accessDeniedHandler(accessDeniedHandler)
+                        .authenticationEntryPoint(authenticationEntryPoint))
+                .addFilterBefore(authenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
 
     @Bean
     @ConditionalOnMissingBean(name = "authorizationCustomizer")
-    public Customizer<AuthorizeHttpRequestsConfigurer<HttpSecurity>.AuthorizationManagerRequestMatcherRegistry> authorizationCustomizer() {
+    @ConditionalOnProperty(name = "security.extensible-enabled", havingValue = "true")
+    public Customizer<AuthorizeHttpRequestsConfigurer<HttpSecurity>.AuthorizationManagerRequestMatcherRegistry> authorizationCustomizer(
+            SecurityConfigurationProperties properties
+    ) {
         return auth -> {
             properties.publicEndpoints().forEach(endpoint ->
                     auth.requestMatchers(endpoint).permitAll()
             );
 
             properties.userEndpoints().forEach(endpoint ->
-                    auth.requestMatchers(endpoint).authenticated()
+                    auth.requestMatchers(endpoint).hasRole("USER")
+            );
+
+            properties.sellerEndpoints().forEach(endpoint ->
+                    auth.requestMatchers(endpoint).hasRole("SELLER")
             );
 
             auth.anyRequest().denyAll();
@@ -71,7 +87,10 @@ class SecurityCustomizerManager {
 
     @Bean
     @ConditionalOnMissingBean(name = "csrfCustomizer")
-    public Customizer<CsrfConfigurer<HttpSecurity>> csrfCustomizer() {
+    @ConditionalOnProperty(name = "security.extensible-enabled", havingValue = "true")
+    public Customizer<CsrfConfigurer<HttpSecurity>> csrfCustomizer(
+            SecurityConfigurationProperties properties
+    ) {
         return properties.csrfEnabled() ?
                 Customizer.withDefaults() :
                 AbstractHttpConfigurer::disable;
@@ -79,7 +98,10 @@ class SecurityCustomizerManager {
 
     @Bean
     @ConditionalOnMissingBean(name = "corsCustomizer")
-    public Customizer<CorsConfigurer<HttpSecurity>> corsCustomizer() {
+    @ConditionalOnProperty(name = "security.extensible-enabled", havingValue = "true")
+    public Customizer<CorsConfigurer<HttpSecurity>> corsCustomizer(
+            SecurityConfigurationProperties properties
+    ) {
         return properties.corsEnabled() ?
                 Customizer.withDefaults() :
                 AbstractHttpConfigurer::disable;
@@ -122,5 +144,11 @@ class SecurityCustomizerManager {
     @ConditionalOnMissingBean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
+    public OncePerRequestFilter authenticationFilter(AuthenticationManager authenticationManager) {
+        return new BasicAuthenticationFilter(authenticationManager);
     }
 }

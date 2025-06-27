@@ -11,6 +11,10 @@ security:
   public-endpoints:
     - "/api/v1/users/sign-up"
     - "/api/v1/sellers/sign-up"
+    - "/actuator/**"
+  seller-endpoints:
+    - "/api/v1/sellers/**"
+    - "/api/v1/shows/**"
   jwt:
     secret: Rm9ySldUR2VuZXJhdGlvbkFuZEl0U2hvdWxkQmVWZXJ5TG9uZ0FuZFJhbmRvbTEyMyFAI0A=
     access-expiration: 3600

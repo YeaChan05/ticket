@@ -13,9 +13,16 @@ import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.filter.OncePerRequestFilter;
+import org.yechan.config.security.JwtAuthenticationFilter;
 
 @Configuration
 public class CustomSecurityCustomizers {
+
+    @Bean
+    public OncePerRequestFilter authenticationFilter(JwtAuthenticationFilter jwtAuthenticationFilter) {
+        return jwtAuthenticationFilter;
+    }
 
     /**
      * 개발 환경용 CORS 설정 - 모든 Origin 허용

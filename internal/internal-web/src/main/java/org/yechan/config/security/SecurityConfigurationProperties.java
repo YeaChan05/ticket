@@ -16,6 +16,9 @@ public record SecurityConfigurationProperties(
         @DefaultValue
         List<String> userEndpoints,
 
+        @DefaultValue
+        List<String> sellerEndpoints,
+
         @DefaultValue("false")
         boolean extensibleEnabled,
 

@@ -50,10 +50,15 @@ public class TokenProvider {
 
     public boolean isValidToken(String token) {
         try {
-            Jwts.parserBuilder()
+            var jws = Jwts.parserBuilder()
                     .setSigningKey(key)
                     .build()
                     .parseClaimsJws(token);
+            var algorithm = jws.getHeader().getAlgorithm();
+
+            if (!SignatureAlgorithm.HS256.getValue().equals(algorithm)) {
+                throw new GlobalException("Unsupported signature algorithm", GlobalErrorCode.UNSUPPORTED_SIGNATURE_ALGORITHM);
+            }
             return true;
         } catch (ExpiredJwtException e) {
             throw new GlobalException("Token expired", GlobalErrorCode.TOKEN_EXPIRED);
@@ -76,6 +81,8 @@ public class TokenProvider {
                 .getBody();
         var roleKey = ClaimKey.ROLE.getKey();
         var authorities = Arrays.stream(claims.get(roleKey).toString().split(","))
+                .map(String::trim)
+                .map(r -> r.startsWith("ROLE_") ? r : "ROLE_" + r)
                 .map(SimpleGrantedAuthority::new)
                 .toList();
 

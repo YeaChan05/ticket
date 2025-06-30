@@ -1,6 +1,7 @@
 package org.yechan.dto.request;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
@@ -13,20 +14,20 @@ public record ShowRegisterRequest(
 
         String description,
 
-        @NotBlank(message = "장르는 필수 입력값입니다.")
+        @NotNull(message = "장르는 필수 입력값입니다.")
         Category category,
 
         @NotBlank(message = "썸네일 URL은 필수 입력값입니다.")
         @URL
         String thumbnailUrl,
 
-        @NotBlank(message = "티켓팅 시작일은 필수 입력값입니다.")
+        @NotNull(message = "티켓팅 시작일은 필수 입력값입니다.")
         LocalDateTime ticketingStartDate,
 
-        @NotBlank(message = "티켓팅 종료일은 필수 입력값입니다.")
+        @NotNull(message = "티켓팅 종료일은 필수 입력값입니다.")
         LocalDateTime ticketingEndDate,
 
-        @NotBlank(message = "공연 시작일은 필수 입력값입니다.")
+        @NotNull(message = "공연 시작일은 필수 입력값입니다.")
         UUID hallId,
 
         List<ShowScheduleRegisterRequest> showScheduleRegisterRequests,

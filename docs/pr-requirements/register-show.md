@@ -88,7 +88,7 @@
 
 요청
 - 메서드: POST
-- 경로: `/api/v1/show`
+- 경로: `/api/v1/shows`
 - 헤더
   ```
   Content-Type: application/json
@@ -119,7 +119,7 @@
   ```
 - curl 명령 예시
   ```bash
-  curl -i -X POST '/api/v1/show' \
+  curl -i -X POST '/api/v1/shows' \
   -H 'Content-Type: application/json' \
   -d '{
     "title": "뮤지컬 오페라의 유령",
@@ -161,7 +161,7 @@
       "status": "Success",
       "data": {
         "applyTime": "2025-01-01T00:00:00Z",
-        "redirectUrl": "http://localhost:808/api/v1/show/f47ac10b-58cc-4372-a567-0e02b2c3d479"
+        "redirectUrl": "http://localhost:808/api/v1/shows/f47ac10b-58cc-4372-a567-0e02b2c3d479"
         },
       "timestamp": "2025-01-01T00:00:00Z"
     }

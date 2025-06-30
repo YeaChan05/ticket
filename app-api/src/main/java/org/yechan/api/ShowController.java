@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.yechan.dto.request.ShowRegisterRequest;
 import org.yechan.dto.response.ShowRegisterResponse;
 
-@RequestMapping("/api/v1/show")
+@RequestMapping("/api/v1/shows")
 @RestController
 public record ShowController() {
 

@@ -10,12 +10,16 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+import java.time.LocalDateTime;
+import java.util.UUID;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+@Table(name = "shows")
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -30,13 +34,19 @@ public class Show extends BaseEntity {
     @Column(name = "title", nullable = false, length = 100)
     private String title;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "host_id")
-    private Seller seller;
+    @Column(name = "description", nullable = false, length = 1000)
+    private String description;
+
+    @Column(name = "shows_key", nullable = false, unique = true)
+    @Builder.Default
+    private UUID key = UUID.randomUUID();
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "hall_id")
-    private Hall hall;
+    @JoinColumn(name = "seller_id")
+    private Seller seller;
+
+    @Column(name = "hall_id", nullable = false)
+    private UUID hallId;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "category", nullable = false,columnDefinition = "VARCHAR(20)")
@@ -48,6 +58,11 @@ public class Show extends BaseEntity {
     @Column(name = "contact_phone")
     private String contactPhone;
 
+    @Column(name = "ticketing_start_date")
+    private LocalDateTime ticketingStartDate;
+
+    @Column(name = "ticketing_end_date")
+    private LocalDateTime ticketingEndDate;
 
     @Getter
     @AllArgsConstructor

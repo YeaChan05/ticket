@@ -25,9 +25,9 @@ import org.yechan.testdata.ShowInfoGenerator;
 @DisplayName("POST /api/v1/shows")
 public class POST_specs {
 
-    private static ShowRegisterRequest generateShowRegisterRequest(List<String> grades, int plusDay) {
+    private static ShowRegisterRequest generateShowRegisterRequest(List<String> grades, int plusDay, String title) {
         return new ShowRegisterRequest(
-                generateTitle(),
+                title,
                 generateDescription(),
                 pickAnyCategory(),
                 generateUrl(),
@@ -50,7 +50,7 @@ public class POST_specs {
     ) {
         // Arrange
         var grades = List.of("VIP", "RVIP");
-        var request = generateShowRegisterRequest(grades, (int) (Math.random() * 30));
+        var request = generateShowRegisterRequest(grades, (int) (Math.random() * 30), generateTitle());
 
         // Act
         var token = fixture.generateToken(Seller.class);
@@ -74,7 +74,7 @@ public class POST_specs {
     ) {
         // Arrange
         var grades = List.of("VIP", "RVIP");
-        var request = generateShowRegisterRequest(grades, (int) (Math.random() * 30));
+        var request = generateShowRegisterRequest(grades, (int) (Math.random() * 30), generateTitle());
 
         // Act
         var token = fixture.generateToken(Seller.class);
@@ -102,7 +102,7 @@ public class POST_specs {
     ) {
         // Arrange
         var grades = List.of("VIP", "RVIP");
-        var request = generateShowRegisterRequest(grades, (int) (Math.random() * 30));
+        var request = generateShowRegisterRequest(grades, (int) (Math.random() * 30), generateTitle());
 
         // Act
         var token = fixture.generateToken(Seller.class);
@@ -115,8 +115,9 @@ public class POST_specs {
                 .onSuccess(
                         // Assert
                         response -> {
-                            assertThat(showRepository.findAll())
-                                    .first()
+                            assertThat(showRepository.findAll().stream()
+                                    .filter(show -> show
+                                    .getTitle().equals(request.title())).findAny().get())
                                     .satisfies(
                                             show -> assertThat(show.getCategory()).isEqualTo(request.category()),
                                             show -> assertThat(show.getTitle()).isEqualTo(request.title()),
@@ -124,5 +125,36 @@ public class POST_specs {
                                             show -> assertThat(show.getHallId()).isEqualTo(request.hallId())
                                     );
                         });
+    }
+
+    @Test
+    @DisplayName("공연 제목이 중복된 경우 SHOW-001 오류가 발생해야 한다")
+    void 공연_제목이_중복된_경우_SHOW_001_오류가_발생해야_한다(
+            @Autowired TestFixture fixture
+    ) {
+        // Arrange
+        var grades = List.of("VIP", "RVIP");
+        var registeredTitle = generateTitle();
+        var request = generateShowRegisterRequest(grades, (int) (Math.random() * 30), registeredTitle);
+        var token = fixture.generateToken(Seller.class);
+
+        // Act
+        fixture.post(
+                        "/api/v1/shows",
+                        request,
+                        token
+                )
+                .exchange(ShowRegisterResponse.class);
+
+        fixture.post(
+                        "/api/v1/shows",
+                        generateShowRegisterRequest(grades, (int) (Math.random() * 30), registeredTitle),
+                        token
+                )
+                .exchange(ShowRegisterResponse.class)
+                .onError(
+                        // Assert
+                        errorResponse -> assertThat(errorResponse.getStatus()).isEqualTo("SHOW-001")
+                );
     }
 }

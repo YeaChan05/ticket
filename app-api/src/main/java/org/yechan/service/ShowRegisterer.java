@@ -1,6 +1,9 @@
 package org.yechan.service;
 
+import static java.util.Objects.requireNonNull;
+
 import java.time.LocalDateTime;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -11,6 +14,8 @@ import org.yechan.dto.request.ShowRegisterRequest;
 import org.yechan.dto.response.ShowRegisterResponse;
 import org.yechan.entity.Seller;
 import org.yechan.entity.Show;
+import org.yechan.error.ShowErrorCode;
+import org.yechan.error.exception.ShowException;
 import org.yechan.repository.ShowRepository;
 
 
@@ -24,10 +29,18 @@ public class ShowRegisterer implements ShowRegisterUseCase {
     public ShowRegisterResponse register(ShowRegisterRequest request, Seller seller) {
         var uuid = request.hallId();
         Show show = ShowEntityConverter.CONVERTER.convert(request, seller, uuid);
-        var showKey = showRepository.insert(show);
+
+        if (showRepository.existByTitle(show.getTitle())) {
+            throw new ShowException("duplicate show title", ShowErrorCode.DUPLICATE_SHOW_TITLE);
+        }
+        if (showRepository.existByKey(show.getKey())) {
+            throw new ShowException("duplicate show key", ShowErrorCode.DUPLICATE_SHOW_KEY);
+        }
+        UUID showKey = showRepository.insert(show);
+
         var uri = ServletUriComponentsBuilder.fromCurrentContextPath()
                 .path("/api/v1/shows/{key}")
-                .buildAndExpand(showKey.toString())
+                .buildAndExpand(requireNonNull(showKey).toString())
                 .toUriString();
 
         return new ShowRegisterResponse(LocalDateTime.now(), uri);

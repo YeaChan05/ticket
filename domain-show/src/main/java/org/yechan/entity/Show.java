@@ -11,6 +11,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 import java.time.LocalDateTime;
 import java.util.UUID;
 import lombok.AccessLevel;
@@ -19,7 +20,12 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@Table(name = "shows")
+@Table(name = "shows",
+        uniqueConstraints = {
+                @UniqueConstraint(name = "uk_shows_key", columnNames = "shows_key"),
+                @UniqueConstraint(name = "uk_shows_title", columnNames = "title")
+        }
+)
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -49,7 +55,7 @@ public class Show extends BaseEntity {
     private UUID hallId;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "category", nullable = false,columnDefinition = "VARCHAR(20)")
+    @Column(name = "category", nullable = false, columnDefinition = "VARCHAR(20)")
     private Category category;
 
     @Column(name = "thumbnail_url")

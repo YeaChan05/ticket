@@ -36,6 +36,9 @@ public class ShowRegisterer implements ShowRegisterUseCase {
         if (showRepository.existByKey(show.getKey())) {
             throw new ShowException("duplicate show key", ShowErrorCode.DUPLICATE_SHOW_KEY);
         }
+        if(request.ticketingStartDate().isAfter(request.ticketingEndDate())){
+            throw new ShowException("ticketing start date cannot be after end date", ShowErrorCode.INVALID_TICKET_DATE);
+        }
         UUID showKey = showRepository.insert(show);
 
         var uri = ServletUriComponentsBuilder.fromCurrentContextPath()

@@ -30,6 +30,9 @@ public record ShowRegisterRequest(
         @NotNull(message = "공연 시작일은 필수 입력값입니다.")
         UUID hallId,
 
+        @NotNull(message = "티켓 수량은 필수 입력값입니다.")
+        Integer ticketCount,
+
         List<ShowScheduleRegisterRequest> showScheduleRegisterRequests,
 
         List<TicketGradeRequest> ticketGradeRequests

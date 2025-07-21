@@ -16,6 +16,7 @@ import org.yechan.entity.Seller;
 import org.yechan.entity.Show;
 import org.yechan.error.ShowErrorCode;
 import org.yechan.error.exception.ShowException;
+import org.yechan.repository.HallRepository;
 import org.yechan.repository.ShowRepository;
 
 
@@ -23,6 +24,7 @@ import org.yechan.repository.ShowRepository;
 @RequiredArgsConstructor
 public class ShowRegisterer implements ShowRegisterUseCase {
     private final ShowRepository showRepository;
+    private final HallRepository hallRepository;
 
     @Override
     @Transactional
@@ -36,9 +38,22 @@ public class ShowRegisterer implements ShowRegisterUseCase {
         if (showRepository.existByKey(show.getKey())) {
             throw new ShowException("duplicate show key", ShowErrorCode.DUPLICATE_SHOW_KEY);
         }
-        if(request.ticketingStartDate().isAfter(request.ticketingEndDate())){
+        if (request.ticketingStartDate().isAfter(request.ticketingEndDate())) {
             throw new ShowException("ticketing start date cannot be after end date", ShowErrorCode.INVALID_TICKET_DATE);
         }
+
+        hallRepository.getHallByKey(uuid)
+                .ifPresentOrElse(
+                        hall -> {
+                            if (hall.getCapacity() < request.ticketCount()) {
+                                throw new ShowException("hall capacity is not enough",
+                                        ShowErrorCode.EXCEED_MAX_TICKET_COUNT);
+                            }
+                        },
+                        () -> {
+                            throw new ShowException("hall not found", ShowErrorCode.HALL_NOT_FOUND);
+                        }
+                );
         UUID showKey = showRepository.insert(show);
 
         var uri = ServletUriComponentsBuilder.fromCurrentContextPath()

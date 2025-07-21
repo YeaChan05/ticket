@@ -7,7 +7,7 @@ import org.yechan.dto.request.ShowScheduleRegisterRequest;
 import org.yechan.dto.request.TicketGradeRequest;
 
 public class ShowInfoGenerator {
-    public static UUID generateHallId() {
+    public static UUID generateHallKey() {
         return UUID.randomUUID();
     }
 

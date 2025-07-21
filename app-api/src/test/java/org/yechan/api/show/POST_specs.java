@@ -25,13 +25,33 @@ import org.yechan.testdata.ShowInfoGenerator;
 @DisplayName("POST /api/v1/shows")
 public class POST_specs {
 
+    private static ShowRegisterRequest generateShowRegisterRequest(List<String> grades, int plusDay, String title,
+                                                                   int eventDuration) {
+        return new ShowRegisterRequest(
+                title,
+                generateDescription(),
+                pickAnyCategory(),
+                generateUrl(),
+                LocalDateTime.now(),
+                LocalDateTime.now().plusDays(eventDuration),
+                generateHallId(),
+                List.of(
+                        generateSchedule(plusDay),
+                        generateSchedule(plusDay + 3)
+                ),
+                grades.stream()
+                        .map(ShowInfoGenerator::generateTicketGrade)
+                        .toList()
+        );
+    }
+
     @Test
     void 정상적인_공연_정보_등록은_성공적으로_이루어져야_한다(
             @Autowired TestFixture fixture
     ) {
         // Arrange
         var grades = List.of("VIP", "RVIP");
-        var request = generateShowRegisterRequest(grades, (int) (Math.random() * 30), generateTitle());
+        var request = generateShowRegisterRequest(grades, (int) (Math.random() * 30), generateTitle(), 1);
 
         // Act
         var token = fixture.generateToken(Seller.class);
@@ -55,7 +75,7 @@ public class POST_specs {
     ) {
         // Arrange
         var grades = List.of("VIP", "RVIP");
-        var request = generateShowRegisterRequest(grades, (int) (Math.random() * 30), generateTitle());
+        var request = generateShowRegisterRequest(grades, (int) (Math.random() * 30), generateTitle(), 1);
 
         // Act
         var token = fixture.generateToken(Seller.class);
@@ -75,25 +95,6 @@ public class POST_specs {
                 );
     }
 
-    private static ShowRegisterRequest generateShowRegisterRequest(List<String> grades, int plusDay, String title) {
-        return new ShowRegisterRequest(
-                title,
-                generateDescription(),
-                pickAnyCategory(),
-                generateUrl(),
-                LocalDateTime.now(),
-                LocalDateTime.now().plusDays(1),
-                generateHallId(),
-                List.of(
-                        generateSchedule(plusDay),
-                        generateSchedule(plusDay + 3)
-                ),
-                grades.stream()
-                        .map(ShowInfoGenerator::generateTicketGrade)
-                        .toList()
-        );
-    }
-
     @Test
     @DisplayName("공연 제목이 중복된 경우 SHOW-001 오류가 발생해야 한다")
     void 공연_제목이_중복된_경우_SHOW_001_오류가_발생해야_한다(
@@ -102,7 +103,7 @@ public class POST_specs {
         // Arrange
         var grades = List.of("VIP", "RVIP");
         var registeredTitle = generateTitle();
-        var request = generateShowRegisterRequest(grades, (int) (Math.random() * 30), registeredTitle);
+        var request = generateShowRegisterRequest(grades, (int) (Math.random() * 30), registeredTitle, 1);
         var token = fixture.generateToken(Seller.class);
 
         // Act
@@ -115,7 +116,7 @@ public class POST_specs {
 
         fixture.post(
                         "/api/v1/shows",
-                        generateShowRegisterRequest(grades, (int) (Math.random() * 30), registeredTitle),
+                        generateShowRegisterRequest(grades, (int) (Math.random() * 30), registeredTitle, 1),
                         token
                 )
                 .exchange(ShowRegisterResponse.class)
@@ -133,7 +134,7 @@ public class POST_specs {
     ) {
         // Arrange
         var grades = List.of("VIP", "RVIP");
-        var request = generateShowRegisterRequest(grades, (int) (Math.random() * 30), generateTitle());
+        var request = generateShowRegisterRequest(grades, (int) (Math.random() * 30), generateTitle(), 1);
 
         // Act
         var token = fixture.generateToken(Seller.class);
@@ -168,8 +169,8 @@ public class POST_specs {
         var grades = List.of("VIP", "RVIP");
         var firstTitle = generateTitle();
         var secondTitle = generateTitle();
-        var firstRequest = generateShowRegisterRequest(grades, (int) (Math.random() * 30), firstTitle);
-        var secondRequest = generateShowRegisterRequest(grades, (int) (Math.random() * 30), secondTitle);
+        var firstRequest = generateShowRegisterRequest(grades, (int) (Math.random() * 30), firstTitle, 1);
+        var secondRequest = generateShowRegisterRequest(grades, (int) (Math.random() * 30), secondTitle, 1);
         var token = fixture.generateToken(Seller.class);
 
         // Act
@@ -196,5 +197,28 @@ public class POST_specs {
 
         // Assert
         assertThat(firstResponse.getKey()).isNotEqualTo(secondResponse.getKey());
+    }
+
+    @Test
+    @DisplayName("티켓팅 날짜 및 시간이 유효하지 않은 경우 SHOW-003 오류가 발생해야 한다")
+    void 티켓팅_날짜_및_시간이_유효하지_않은_경우_SHOW_003_오류가_발생해야_한다(
+            @Autowired TestFixture fixture
+    ) {
+        // Arrange
+        var grades = List.of("VIP", "RVIP");
+        var request = generateShowRegisterRequest(grades, 2, generateTitle(), -1);
+        var token = fixture.generateToken(Seller.class);
+
+        // Act
+        fixture.post(
+                        "/api/v1/shows",
+                        request,
+                        token
+                )
+                .exchange(ShowRegisterResponse.class)
+                .onError(
+                        // Assert
+                        errorResponse -> assertThat(errorResponse.getStatus()).isEqualTo("SHOW-003")
+                );
     }
 }

@@ -3,21 +3,24 @@ package org.yechan.api.show;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.yechan.testdata.CategoryGenerator.pickAnyCategory;
 import static org.yechan.testdata.ShowInfoGenerator.generateDescription;
-import static org.yechan.testdata.ShowInfoGenerator.generateHallId;
+import static org.yechan.testdata.ShowInfoGenerator.generateHallKey;
 import static org.yechan.testdata.ShowInfoGenerator.generateSchedule;
 import static org.yechan.testdata.ShowInfoGenerator.generateTitle;
 import static org.yechan.testdata.ShowInfoGenerator.generateUrl;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.yechan.config.IntegrationTest;
 import org.yechan.dto.request.ShowRegisterRequest;
 import org.yechan.dto.response.ShowRegisterResponse;
+import org.yechan.entity.Hall;
 import org.yechan.entity.Seller;
 import org.yechan.fixture.TestFixture;
+import org.yechan.repository.JpaHallRepository;
 import org.yechan.repository.JpaShowRepository;
 import org.yechan.testdata.ShowInfoGenerator;
 
@@ -26,7 +29,7 @@ import org.yechan.testdata.ShowInfoGenerator;
 public class POST_specs {
 
     private static ShowRegisterRequest generateShowRegisterRequest(List<String> grades, int plusDay, String title,
-                                                                   int eventDuration) {
+                                                                   int eventDuration, int ticketCount, UUID hallKey) {
         return new ShowRegisterRequest(
                 title,
                 generateDescription(),
@@ -34,7 +37,8 @@ public class POST_specs {
                 generateUrl(),
                 LocalDateTime.now(),
                 LocalDateTime.now().plusDays(eventDuration),
-                generateHallId(),
+                hallKey,
+                ticketCount,
                 List.of(
                         generateSchedule(plusDay),
                         generateSchedule(plusDay + 3)
@@ -51,7 +55,8 @@ public class POST_specs {
     ) {
         // Arrange
         var grades = List.of("VIP", "RVIP");
-        var request = generateShowRegisterRequest(grades, (int) (Math.random() * 30), generateTitle(), 1);
+        var request = generateShowRegisterRequest(grades, (int) (Math.random() * 30), generateTitle(), 1, 100,
+                generateHallKey());
 
         // Act
         var token = fixture.generateToken(Seller.class);
@@ -75,7 +80,8 @@ public class POST_specs {
     ) {
         // Arrange
         var grades = List.of("VIP", "RVIP");
-        var request = generateShowRegisterRequest(grades, (int) (Math.random() * 30), generateTitle(), 1);
+        var request = generateShowRegisterRequest(grades, (int) (Math.random() * 30), generateTitle(), 1, 100,
+                generateHallKey());
 
         // Act
         var token = fixture.generateToken(Seller.class);
@@ -103,7 +109,8 @@ public class POST_specs {
         // Arrange
         var grades = List.of("VIP", "RVIP");
         var registeredTitle = generateTitle();
-        var request = generateShowRegisterRequest(grades, (int) (Math.random() * 30), registeredTitle, 1);
+        var request = generateShowRegisterRequest(grades, (int) (Math.random() * 30), registeredTitle, 1, 100,
+                generateHallKey());
         var token = fixture.generateToken(Seller.class);
 
         // Act
@@ -116,7 +123,8 @@ public class POST_specs {
 
         fixture.post(
                         "/api/v1/shows",
-                        generateShowRegisterRequest(grades, (int) (Math.random() * 30), registeredTitle, 1),
+                        generateShowRegisterRequest(grades, (int) (Math.random() * 30), registeredTitle, 1, 100,
+                                generateHallKey()),
                         token
                 )
                 .exchange(ShowRegisterResponse.class)
@@ -134,7 +142,8 @@ public class POST_specs {
     ) {
         // Arrange
         var grades = List.of("VIP", "RVIP");
-        var request = generateShowRegisterRequest(grades, (int) (Math.random() * 30), generateTitle(), 1);
+        var request = generateShowRegisterRequest(grades, (int) (Math.random() * 30), generateTitle(), 1, 100,
+                generateHallKey());
 
         // Act
         var token = fixture.generateToken(Seller.class);
@@ -169,8 +178,10 @@ public class POST_specs {
         var grades = List.of("VIP", "RVIP");
         var firstTitle = generateTitle();
         var secondTitle = generateTitle();
-        var firstRequest = generateShowRegisterRequest(grades, (int) (Math.random() * 30), firstTitle, 1);
-        var secondRequest = generateShowRegisterRequest(grades, (int) (Math.random() * 30), secondTitle, 1);
+        var firstRequest = generateShowRegisterRequest(grades, (int) (Math.random() * 30), firstTitle, 1, 100,
+                generateHallKey());
+        var secondRequest = generateShowRegisterRequest(grades, (int) (Math.random() * 30), secondTitle, 1, 100,
+                generateHallKey());
         var token = fixture.generateToken(Seller.class);
 
         // Act
@@ -206,7 +217,7 @@ public class POST_specs {
     ) {
         // Arrange
         var grades = List.of("VIP", "RVIP");
-        var request = generateShowRegisterRequest(grades, 2, generateTitle(), -1);
+        var request = generateShowRegisterRequest(grades, 2, generateTitle(), -1, 100, generateHallKey());
         var token = fixture.generateToken(Seller.class);
 
         // Act
@@ -219,6 +230,42 @@ public class POST_specs {
                 .onError(
                         // Assert
                         errorResponse -> assertThat(errorResponse.getStatus()).isEqualTo("SHOW-003")
+                );
+    }
+
+    @Test
+    @DisplayName("티켓 총 수량이 공연장 수용 가능 인원을 초과하는 경우 SHOW-004 오류가 발생해야 한다")
+    void 티켓_총_수량이_공연장_수용_가능_인원을_초과하는_경우_SHOW_004_오류가_발생해야_한다(
+            @Autowired TestFixture fixture,
+            @Autowired JpaHallRepository hallRepository
+    ) {
+        // Arrange
+        var grades = List.of("VIP", "RVIP");
+        var ticketCount = 100;
+        var hallCapacity = 50;
+        var hallKey = UUID.randomUUID();
+        var request = generateShowRegisterRequest(grades, 2, generateTitle(), 1, ticketCount, hallKey);
+        hallRepository.save(
+                Hall.builder()
+                        .name("Test Hall")
+                        .address("123 Main St")
+                        .hallKey(hallKey)
+                        .contactPhone("010-1234-5678")
+                        .capacity(hallCapacity)
+                        .build()
+        );
+        var token = fixture.generateToken(Seller.class);
+
+        // Act
+        fixture.post(
+                        "/api/v1/shows",
+                        request,
+                        token
+                )
+                .exchange(ShowRegisterResponse.class)
+                .onError(
+                        // Assert
+                        errorResponse -> assertThat(errorResponse.getStatus()).isEqualTo("SHOW-004")
                 );
     }
 }

@@ -291,4 +291,40 @@ public class POST_specs {
                         errorResponse -> assertThat(errorResponse.getStatus()).isEqualTo("CONSTRAINT_VIOLATION")
                 );
     }
+
+    @Test
+    @DisplayName("일정정보가 누락된 경우 CONSTRAINT_VIOLATION 오류가 발생해야 한다")
+    void 일정정보가_누락된_경우_CONSTRAINT_VIOLATION_오류가_발생해야_한다(
+            @Autowired TestFixture fixture
+    ) {
+        // Arrange
+        var grades = List.of("VIP", "RVIP");
+        var request = new ShowRegisterRequest(
+                generateTitle(),
+                generateDescription(),
+                pickAnyCategory(),
+                generateUrl(),
+                LocalDateTime.now(),
+                LocalDateTime.now().plusDays(1),
+                generateHallKey(),
+                100,
+                List.of(), // 일정 정보 누락
+                grades.stream()
+                        .map(ShowInfoGenerator::generateTicketGrade)
+                        .toList()
+        );
+        var token = fixture.generateToken(Seller.class);
+
+        // Act
+        fixture.post(
+                        "/api/v1/shows",
+                        request,
+                        token
+                )
+                .exchange(ShowRegisterResponse.class)
+                .onError(
+                        // Assert
+                        errorResponse -> assertThat(errorResponse.getStatus()).isEqualTo("CONSTRAINT_VIOLATION")
+                );
+    }
 }

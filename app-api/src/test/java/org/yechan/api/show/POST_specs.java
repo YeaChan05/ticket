@@ -37,9 +37,9 @@ public class POST_specs {
     ) {
         // Arrange
         var grades = List.of("VIP", "RVIP");
-        var request = generateShowRegisterRequest(grades, (int) (Math.random() * 30), generateTitle(), 1, 100,
+        var request = generateShowRegisterRequest(grades, (int) (Math.random() * 30), generateTitle(), 1,
                 generateHallKey());
-        saveHall(hallRepository, request.hallId(), 100);
+        saveHall(hallRepository, request.hallId(), request.ticketCount());
 
         // Act
         var token = fixture.generateToken(Seller.class);
@@ -65,9 +65,9 @@ public class POST_specs {
         // Arrange
         var grades = List.of("VIP", "RVIP");
         var hallKey = generateHallKey();
-        var request = generateShowRegisterRequest(grades, (int) (Math.random() * 30), generateTitle(), 1, 100,
+        var request = generateShowRegisterRequest(grades, (int) (Math.random() * 30), generateTitle(), 1,
                 hallKey);
-        saveHall(hallRepository, hallKey, 100);
+        saveHall(hallRepository, hallKey, request.ticketCount());
 
         // Act
         var token = fixture.generateToken(Seller.class);
@@ -97,8 +97,8 @@ public class POST_specs {
         var grades = List.of("VIP", "RVIP");
         var registeredTitle = generateTitle();
         var hallKey = generateHallKey();
-        var request = generateShowRegisterRequest(grades, (int) (Math.random() * 30), registeredTitle, 1, 100, hallKey);
-        saveHall(hallRepository, hallKey, 100);
+        var request = generateShowRegisterRequest(grades, (int) (Math.random() * 30), registeredTitle, 1, hallKey);
+        saveHall(hallRepository, hallKey, request.ticketCount());
         var token = fixture.generateToken(Seller.class);
 
         // Act
@@ -111,7 +111,7 @@ public class POST_specs {
 
         fixture.post(
                         "/api/v1/shows",
-                        generateShowRegisterRequest(grades, (int) (Math.random() * 30), registeredTitle, 1, 100,
+                        generateShowRegisterRequest(grades, (int) (Math.random() * 30), registeredTitle, 1,
                                 generateHallKey()),
                         token
                 )
@@ -131,9 +131,9 @@ public class POST_specs {
     ) {
         // Arrange
         var grades = List.of("VIP", "RVIP");
-        var request = generateShowRegisterRequest(grades, (int) (Math.random() * 30), generateTitle(), 1, 100,
+        var request = generateShowRegisterRequest(grades, (int) (Math.random() * 30), generateTitle(), 1,
                 generateHallKey());
-        saveHall(hallRepository, request.hallId(), 100);
+        saveHall(hallRepository, request.hallId(), request.ticketCount());
 
         // Act
         var token = fixture.generateToken(Seller.class);
@@ -166,9 +166,9 @@ public class POST_specs {
     ) {
         // Arrange
         var grades = List.of("VIP", "RVIP");
-        var request = generateShowRegisterRequest(grades, 2, generateTitle(), -1, 100, generateHallKey());
+        var request = generateShowRegisterRequest(grades, 2, generateTitle(), -1, generateHallKey());
         var token = fixture.generateToken(Seller.class);
-        saveHall(hallRepository, request.hallId(), 100);
+        saveHall(hallRepository, request.hallId(), request.ticketCount());
         // Act
         fixture.post(
                         "/api/v1/shows",
@@ -193,7 +193,7 @@ public class POST_specs {
         var ticketCount = 100;
         var hallCapacity = 50;
         var hallKey = UUID.randomUUID();
-        var request = generateShowRegisterRequest(grades, 2, generateTitle(), 1, ticketCount, hallKey);
+        var request = generateShowRegisterRequest(grades, 2, generateTitle(), 1, hallKey);
         saveHall(hallRepository, hallKey, hallCapacity);
         var token = fixture.generateToken(Seller.class);
 
@@ -220,14 +220,14 @@ public class POST_specs {
         var grades = List.of("VIP", "RVIP");
         var hallKey = UUID.randomUUID();
         var invalidHallKey = UUID.randomUUID();
-        var request = generateShowRegisterRequest(grades, 2, generateTitle(), 1, 100, hallKey);
-        saveHall(hallRepository, hallKey, 100);
+        var request = generateShowRegisterRequest(grades, 2, generateTitle(), 1, hallKey);
+        saveHall(hallRepository, hallKey, request.ticketCount());
 
         var token = fixture.generateToken(Seller.class);
         // Act
         fixture.post(
                         "/api/v1/shows",
-                        generateShowRegisterRequest(grades, 2, generateTitle(), 1, 100, invalidHallKey),
+                        generateShowRegisterRequest(grades, 2, generateTitle(), 1, invalidHallKey),
                         token
                 )
                 .exchange(ShowRegisterResponse.class)
@@ -250,7 +250,10 @@ public class POST_specs {
     }
 
     private static ShowRegisterRequest generateShowRegisterRequest(List<String> grades, int plusDay, String title,
-                                                                   int eventDuration, int ticketCount, UUID hallKey) {
+                                                                   int eventDuration, UUID hallKey) {
+        var gradeRequests = grades.stream()
+                .map(ShowInfoGenerator::generateTicketGrade)
+                .toList();
         return new ShowRegisterRequest(
                 title,
                 generateDescription(),
@@ -259,14 +262,12 @@ public class POST_specs {
                 LocalDateTime.now(),
                 LocalDateTime.now().plusDays(eventDuration),
                 hallKey,
-                ticketCount,
+                gradeRequests.stream().mapToInt(TicketGradeRequest::quantity).sum(),
                 List.of(
                         generateSchedule(plusDay),
                         generateSchedule(plusDay + 3)
                 ),
-                grades.stream()
-                        .map(ShowInfoGenerator::generateTicketGrade)
-                        .toList()
+                gradeRequests
         );
     }
 
@@ -277,7 +278,7 @@ public class POST_specs {
     ) {
         // Arrange
         var grades = List.of("VIP", "RVIP");
-        var request = generateShowRegisterRequest(grades, (int) (Math.random() * 30), "", 1, 100, generateHallKey());
+        var request = generateShowRegisterRequest(grades, (int) (Math.random() * 30), "", 1, generateHallKey());
 
         var token = fixture.generateToken(Seller.class);
 
@@ -459,7 +460,7 @@ public class POST_specs {
                         new TicketGradeRequest("RVIP", BigDecimal.valueOf(150), 30) // RVIP 등급 30개
                 )
         );
-        saveHall(hallRepository, request.hallId(), 100);
+        saveHall(hallRepository, request.hallId(), request.ticketCount());
 
         var token = fixture.generateToken(Seller.class);
         // Act

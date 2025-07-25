@@ -52,7 +52,6 @@ public class ShowRegisterer implements ShowRegisterUseCase {
                             throw new ShowException("hall not found", ShowErrorCode.HALL_NOT_FOUND);
                         }
                 );
-        //TODO 2025 07 25 15:15:27 : 등급별 티켓 총합 검증
         var summedTicketQuantities = request.ticketGradeRequests().stream().mapToInt(TicketGradeRequest::quantity).sum();
         if (summedTicketQuantities != request.ticketCount()) {
             throw new ShowException("ticket count does not match with ticket grades", ShowErrorCode.TICKET_COUNT_MISMATCH);

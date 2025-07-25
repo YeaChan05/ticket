@@ -181,11 +181,11 @@
 - [x] 티켓팅 날짜 및 시간이 유효하지 않은 경우 SHOW-002 오류가 발생해야 한다
 - [x] 티켓 총 수량이 공연장 수용 가능 인원을 초과하는 경우 SHOW-003 오류가 발생해야 한다
 - [x] 존재하지 않는 공연 장소를 입력한 경우 SHOW-004 오류가 발생해야 한다
-- [ ] 제목이 누락된 경우 CONSTRAINT_VIOLATION 오류가 발생해야 한다
-- [ ] 일정정보가 누락된 경우 CONSTRAINT_VIOLATION 오류가 발생해야 한다
-- [ ] 등급정보가 누락된 경우 CONSTRAINT_VIOLATION 오류가 발생해야 한다
-- [ ] 티켓 가격이 0원 이하인 경우 CONSTRAINT_VIOLATION 오류가 발생해야 한다
-- [ ] 등급별 티켓 수량이 0 이하인 경우 CONSTRAINT_VIOLATION 오류가 발생해야 한다
+- [x] 제목이 누락된 경우 CONSTRAINT_VIOLATION 오류가 발생해야 한다
+- [x] 일정정보가 누락된 경우 CONSTRAINT_VIOLATION 오류가 발생해야 한다
+- [x] 등급정보가 누락된 경우 CONSTRAINT_VIOLATION 오류가 발생해야 한다
+- [x] 티켓 가격이 100원 이하인 경우 CONSTRAINT_VIOLATION 오류가 발생해야 한다
+- [x] 등급별 티켓 수량이 0 이하인 경우 CONSTRAINT_VIOLATION 오류가 발생해야 한다
 
 ### 6. 주요 고려사항 및 위험 요소
 

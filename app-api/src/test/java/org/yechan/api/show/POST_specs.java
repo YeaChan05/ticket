@@ -8,6 +8,7 @@ import static org.yechan.testdata.ShowInfoGenerator.generateSchedule;
 import static org.yechan.testdata.ShowInfoGenerator.generateTitle;
 import static org.yechan.testdata.ShowInfoGenerator.generateUrl;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
@@ -16,6 +17,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.yechan.config.IntegrationTest;
 import org.yechan.dto.request.ShowRegisterRequest;
+import org.yechan.dto.request.TicketGradeRequest;
 import org.yechan.dto.response.ShowRegisterResponse;
 import org.yechan.entity.Hall;
 import org.yechan.entity.Seller;
@@ -363,4 +365,39 @@ public class POST_specs {
                 );
     }
 
+    @Test
+    @DisplayName("티켓 가격이 100원 이하인 경우 CONSTRAINT_VIOLATION 오류가 발생해야 한다")
+    void 티켓_가격이_100원_이하인_경우_CONSTRAINT_VIOLATION_오류가_발생해야_한다(
+            @Autowired TestFixture fixture
+    ) {
+        // Arrange
+        var grades = List.of("VIP", "RVIP");
+        var request = new ShowRegisterRequest(
+                generateTitle(),
+                generateDescription(),
+                pickAnyCategory(),
+                generateUrl(),
+                LocalDateTime.now(),
+                LocalDateTime.now().plusDays(1),
+                generateHallKey(),
+                100,
+                List.of(generateSchedule(0)),
+                grades.stream()
+                        .map(grade -> new TicketGradeRequest(grade, BigDecimal.ZERO, 10)) // 가격이 0원인 티켓 등급
+                        .toList()
+        );
+
+        var token = fixture.generateToken(Seller.class);
+        // Act
+        fixture.post(
+                        "/api/v1/shows",
+                        request,
+                        token
+                )
+                .exchange(ShowRegisterResponse.class)
+                .onError(
+                        // Assert
+                        errorResponse -> assertThat(errorResponse.getStatus()).isEqualTo("CONSTRAINT_VIOLATION")
+                );
+    }
 }

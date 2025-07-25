@@ -28,14 +28,49 @@ import org.yechan.testdata.ShowInfoGenerator;
 @DisplayName("POST /api/v1/shows")
 public class POST_specs {
 
+    private static Hall saveHall(JpaHallRepository hallRepository, UUID request, int capacity) {
+        return hallRepository.save(
+                Hall.builder()
+                        .name("Test Hall")
+                        .address("123 Main St")
+                        .hallKey(request)
+                        .contactPhone("010-1234-5678")
+                        .capacity(capacity)
+                        .build()
+        );
+    }
+
+    private static ShowRegisterRequest generateShowRegisterRequest(List<String> grades, int plusDay, String title,
+                                                                   int eventDuration, int ticketCount, UUID hallKey) {
+        return new ShowRegisterRequest(
+                title,
+                generateDescription(),
+                pickAnyCategory(),
+                generateUrl(),
+                LocalDateTime.now(),
+                LocalDateTime.now().plusDays(eventDuration),
+                hallKey,
+                ticketCount,
+                List.of(
+                        generateSchedule(plusDay),
+                        generateSchedule(plusDay + 3)
+                ),
+                grades.stream()
+                        .map(ShowInfoGenerator::generateTicketGrade)
+                        .toList()
+        );
+    }
+
     @Test
     void 정상적인_공연_정보_등록은_성공적으로_이루어져야_한다(
-            @Autowired TestFixture fixture
+            @Autowired TestFixture fixture,
+            @Autowired JpaHallRepository hallRepository
     ) {
         // Arrange
         var grades = List.of("VIP", "RVIP");
         var request = generateShowRegisterRequest(grades, (int) (Math.random() * 30), generateTitle(), 1, 100,
                 generateHallKey());
+        saveHall(hallRepository, request.hallId(), 100);
 
         // Act
         var token = fixture.generateToken(Seller.class);
@@ -55,12 +90,15 @@ public class POST_specs {
 
     @Test
     void 성공적인_공연_정보_등록_후_redirectUrl이_반환되어야_한다(
-            @Autowired TestFixture fixture
+            @Autowired TestFixture fixture,
+            @Autowired JpaHallRepository hallRepository
     ) {
         // Arrange
         var grades = List.of("VIP", "RVIP");
+        var hallKey = generateHallKey();
         var request = generateShowRegisterRequest(grades, (int) (Math.random() * 30), generateTitle(), 1, 100,
-                generateHallKey());
+                hallKey);
+        saveHall(hallRepository, hallKey, 100);
 
         // Act
         var token = fixture.generateToken(Seller.class);
@@ -83,13 +121,15 @@ public class POST_specs {
     @Test
     @DisplayName("공연 제목이 중복된 경우 SHOW-001 오류가 발생해야 한다")
     void 공연_제목이_중복된_경우_SHOW_001_오류가_발생해야_한다(
-            @Autowired TestFixture fixture
+            @Autowired TestFixture fixture,
+            @Autowired JpaHallRepository hallRepository
     ) {
         // Arrange
         var grades = List.of("VIP", "RVIP");
         var registeredTitle = generateTitle();
-        var request = generateShowRegisterRequest(grades, (int) (Math.random() * 30), registeredTitle, 1, 100,
-                generateHallKey());
+        var hallKey = generateHallKey();
+        var request = generateShowRegisterRequest(grades, (int) (Math.random() * 30), registeredTitle, 1, 100, hallKey);
+        saveHall(hallRepository, hallKey, 100);
         var token = fixture.generateToken(Seller.class);
 
         // Act
@@ -117,12 +157,14 @@ public class POST_specs {
     @DisplayName("공연 정보 등록 후, 등록된 공연 정보가 데이터베이스에 저장되어야 한다")
     void 공연_정보_등록_후_등록된_공연_정보가_데이터베이스에_저장되어야_한다(
             @Autowired TestFixture fixture,
-            @Autowired JpaShowRepository showRepository
+            @Autowired JpaShowRepository showRepository,
+            @Autowired JpaHallRepository hallRepository
     ) {
         // Arrange
         var grades = List.of("VIP", "RVIP");
         var request = generateShowRegisterRequest(grades, (int) (Math.random() * 30), generateTitle(), 1, 100,
                 generateHallKey());
+        saveHall(hallRepository, request.hallId(), 100);
 
         // Act
         var token = fixture.generateToken(Seller.class);
@@ -148,55 +190,42 @@ public class POST_specs {
     }
 
     @Test
-    @DisplayName("중복된 key로 등록 시도 시 SHOW-002 오류가 발생해야 한다")
-    void 중복된_key로_등록_시도_시_SHOW_002_오류가_발생해야_한다(
+    @DisplayName("티켓팅 날짜 및 시간이 유효하지 않은 경우 SHOW-002 오류가 발생해야 한다")
+    void 티켓팅_날짜_및_시간이_유효하지_않은_경우_SHOW_002_오류가_발생해야_한다(
             @Autowired TestFixture fixture,
-            @Autowired JpaShowRepository showRepository
-    ) {
-        // Arrange
-        var grades = List.of("VIP", "RVIP");
-        var firstTitle = generateTitle();
-        var secondTitle = generateTitle();
-        var firstRequest = generateShowRegisterRequest(grades, (int) (Math.random() * 30), firstTitle, 1, 100,
-                generateHallKey());
-        var secondRequest = generateShowRegisterRequest(grades, (int) (Math.random() * 30), secondTitle, 1, 100,
-                generateHallKey());
-        var token = fixture.generateToken(Seller.class);
-
-        // Act
-        fixture.post(
-                "/api/v1/shows",
-                firstRequest,
-                token
-        ).exchange(ShowRegisterResponse.class);
-
-        var firstResponse = showRepository.findAll().stream()
-                .filter(show -> show.getTitle().equals(firstTitle))
-                .findFirst()
-                .orElseThrow();
-        fixture.post(
-                "/api/v1/shows",
-                secondRequest,
-                token
-        ).exchange(ShowRegisterResponse.class);
-
-        var secondResponse = showRepository.findAll().stream()
-                .filter(show -> show.getTitle().equals(secondTitle))
-                .findFirst()
-                .orElseThrow();
-
-        // Assert
-        assertThat(firstResponse.getKey()).isNotEqualTo(secondResponse.getKey());
-    }
-
-    @Test
-    @DisplayName("티켓팅 날짜 및 시간이 유효하지 않은 경우 SHOW-003 오류가 발생해야 한다")
-    void 티켓팅_날짜_및_시간이_유효하지_않은_경우_SHOW_003_오류가_발생해야_한다(
-            @Autowired TestFixture fixture
+            @Autowired JpaHallRepository hallRepository
     ) {
         // Arrange
         var grades = List.of("VIP", "RVIP");
         var request = generateShowRegisterRequest(grades, 2, generateTitle(), -1, 100, generateHallKey());
+        var token = fixture.generateToken(Seller.class);
+        saveHall(hallRepository, request.hallId(), 100);
+        // Act
+        fixture.post(
+                        "/api/v1/shows",
+                        request,
+                        token
+                )
+                .exchange(ShowRegisterResponse.class)
+                .onError(
+                        // Assert
+                        errorResponse -> assertThat(errorResponse.getStatus()).isEqualTo("SHOW-002")
+                );
+    }
+
+    @Test
+    @DisplayName("티켓 총 수량이 공연장 수용 가능 인원을 초과하는 경우 SHOW-003 오류가 발생해야 한다")
+    void 티켓_총_수량이_공연장_수용_가능_인원을_초과하는_경우_SHOW_003_오류가_발생해야_한다(
+            @Autowired TestFixture fixture,
+            @Autowired JpaHallRepository hallRepository
+    ) {
+        // Arrange
+        var grades = List.of("VIP", "RVIP");
+        var ticketCount = 100;
+        var hallCapacity = 50;
+        var hallKey = UUID.randomUUID();
+        var request = generateShowRegisterRequest(grades, 2, generateTitle(), 1, ticketCount, hallKey);
+        saveHall(hallRepository, hallKey, hallCapacity);
         var token = fixture.generateToken(Seller.class);
 
         // Act
@@ -212,66 +241,9 @@ public class POST_specs {
                 );
     }
 
-    private static ShowRegisterRequest generateShowRegisterRequest(List<String> grades, int plusDay, String title,
-                                                                   int eventDuration, int ticketCount, UUID hallKey) {
-        return new ShowRegisterRequest(
-                title,
-                generateDescription(),
-                pickAnyCategory(),
-                generateUrl(),
-                LocalDateTime.now(),
-                LocalDateTime.now().plusDays(eventDuration),
-                hallKey,
-                ticketCount,
-                List.of(
-                        generateSchedule(plusDay),
-                        generateSchedule(plusDay + 3)
-                ),
-                grades.stream()
-                        .map(ShowInfoGenerator::generateTicketGrade)
-                        .toList()
-        );
-    }
-
     @Test
-    @DisplayName("티켓 총 수량이 공연장 수용 가능 인원을 초과하는 경우 SHOW-004 오류가 발생해야 한다")
-    void 티켓_총_수량이_공연장_수용_가능_인원을_초과하는_경우_SHOW_004_오류가_발생해야_한다(
-            @Autowired TestFixture fixture,
-            @Autowired JpaHallRepository hallRepository
-    ) {
-        // Arrange
-        var grades = List.of("VIP", "RVIP");
-        var ticketCount = 100;
-        var hallCapacity = 50;
-        var hallKey = UUID.randomUUID();
-        var request = generateShowRegisterRequest(grades, 2, generateTitle(), 1, ticketCount, hallKey);
-        hallRepository.save(
-                Hall.builder()
-                        .name("Test Hall")
-                        .address("123 Main St")
-                        .hallKey(hallKey)
-                        .contactPhone("010-1234-5678")
-                        .capacity(hallCapacity)
-                        .build()
-        );
-        var token = fixture.generateToken(Seller.class);
-
-        // Act
-        fixture.post(
-                        "/api/v1/shows",
-                        request,
-                        token
-                )
-                .exchange(ShowRegisterResponse.class)
-                .onError(
-                        // Assert
-                        errorResponse -> assertThat(errorResponse.getStatus()).isEqualTo("SHOW-004")
-                );
-    }
-
-    @Test
-    @DisplayName("존재하지 않는 공연 장소를 입력한 경우 SHOW-005 오류가 발생해야 한다")
-    void 존재하지_않는_공연_장소를_입력한_경우_SHOW_005_오류가_발생해야_한다(
+    @DisplayName("존재하지 않는 공연 장소를 입력한 경우 SHOW-004 오류가 발생해야 한다")
+    void 존재하지_않는_공연_장소를_입력한_경우_SHOW_004_오류가_발생해야_한다(
             @Autowired TestFixture fixture,
             @Autowired JpaHallRepository hallRepository
     ) {
@@ -280,15 +252,7 @@ public class POST_specs {
         var hallKey = UUID.randomUUID();
         var invalidHallKey = UUID.randomUUID();
         var request = generateShowRegisterRequest(grades, 2, generateTitle(), 1, 100, hallKey);
-        hallRepository.save(
-                Hall.builder()
-                        .name("Test Hall")
-                        .address("123 Main St")
-                        .hallKey(hallKey)
-                        .contactPhone("010-1234-5678")
-                        .capacity(100)
-                        .build()
-        );
+        saveHall(hallRepository, hallKey, 100);
 
         var token = fixture.generateToken(Seller.class);
         // Act
@@ -300,7 +264,7 @@ public class POST_specs {
                 .exchange(ShowRegisterResponse.class)
                 .onError(
                         // Assert
-                        errorResponse -> assertThat(errorResponse.getStatus()).isEqualTo("SHOW-005")
+                        errorResponse -> assertThat(errorResponse.getStatus()).isEqualTo("SHOW-004")
                 );
     }
 }

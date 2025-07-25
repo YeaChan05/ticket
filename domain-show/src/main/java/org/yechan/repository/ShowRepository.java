@@ -19,8 +19,4 @@ public class ShowRepository {
     public boolean existByTitle(String title) {
         return jpaShowRepository.existsByTitle(title);
     }
-
-    public boolean existByKey(UUID key) {
-        return jpaShowRepository.existsByKey(key);
-    }
 }

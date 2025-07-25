@@ -437,4 +437,42 @@ public class POST_specs {
                 );
     }
 
+    @Test
+    @DisplayName("티켓 수량과 등급별 티켓 수량이 일치하지 않는 경우 SHOW-005 오류가 발생해야 한다")
+    void 티켓_수량과_등급별_티켓_수량이_일치하지_않는_경우_SHOW_005_오류가_발생해야_한다(
+            @Autowired TestFixture fixture,
+            @Autowired JpaHallRepository hallRepository
+    ) {
+        // Arrange
+        var request = new ShowRegisterRequest(
+                generateTitle(),
+                generateDescription(),
+                pickAnyCategory(),
+                generateUrl(),
+                LocalDateTime.now(),
+                LocalDateTime.now().plusDays(1),
+                generateHallKey(),
+                100, // 티켓 총 수량
+                List.of(generateSchedule(0)),
+                List.of(
+                        new TicketGradeRequest("VIP", BigDecimal.valueOf(100), 50), // VIP 등급 50개
+                        new TicketGradeRequest("RVIP", BigDecimal.valueOf(150), 30) // RVIP 등급 30개
+                )
+        );
+        saveHall(hallRepository, request.hallId(), 100);
+
+        var token = fixture.generateToken(Seller.class);
+        // Act
+        fixture.post(
+                        "/api/v1/shows",
+                        request,
+                        token
+                )
+                .exchange(ShowRegisterResponse.class)
+                .onError(
+                        // Assert
+                        errorResponse -> assertThat(errorResponse.getStatus()).isEqualTo("SHOW-005")
+                );
+    }
+
 }

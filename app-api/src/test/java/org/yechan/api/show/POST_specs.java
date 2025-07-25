@@ -79,11 +79,9 @@ public class POST_specs {
                 .exchange(ShowRegisterResponse.class)
                 .onSuccess(
                         // Assert
-                        response -> {
-                            assertThat(response.getData().redirectUrl())
-                                    .isNotNull()
-                                    .contains("/api/v1/shows/");
-                        }
+                        response -> assertThat(response.getData().redirectUrl())
+                                .isNotNull()
+                                .contains("/api/v1/shows/")
                 );
     }
 
@@ -148,7 +146,7 @@ public class POST_specs {
                         response -> {
                             assertThat(showRepository.findAll().stream()
                                     .filter(show -> show
-                                            .getTitle().equals(request.title())).findAny().get())
+                                            .getTitle().equals(request.title())).findAny().orElseThrow())
                                     .satisfies(
                                             show -> assertThat(show.getCategory()).isEqualTo(request.category()),
                                             show -> assertThat(show.getTitle()).isEqualTo(request.title()),
@@ -190,11 +188,9 @@ public class POST_specs {
     ) {
         // Arrange
         var grades = List.of("VIP", "RVIP");
-        var ticketCount = 100;
-        var hallCapacity = 50;
         var hallKey = UUID.randomUUID();
         var request = generateShowRegisterRequest(grades, 2, generateTitle(), 1, hallKey);
-        saveHall(hallRepository, hallKey, hallCapacity);
+        saveHall(hallRepository, hallKey, request.ticketCount());
         var token = fixture.generateToken(Seller.class);
 
         // Act
@@ -337,7 +333,6 @@ public class POST_specs {
             @Autowired TestFixture fixture
     ) {
         // Arrange
-        var grades = List.of("VIP", "RVIP");
         var request = new ShowRegisterRequest(
                 generateTitle(),
                 generateDescription(),

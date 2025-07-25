@@ -10,7 +10,7 @@ public record TicketGradeRequest(
         String grade,
 
         @NotNull(message = "티켓 가격은 필수 입력값입니다.")
-        @Min(value = 0, message = "티켓 가격은 0 이상이어야 합니다.")
+        @Min(value = 100, message = "티켓 가격은 100 이상이어야 합니다.")
         BigDecimal price,
 
         @NotNull(message = "티켓 수량은 필수 입력값입니다.")

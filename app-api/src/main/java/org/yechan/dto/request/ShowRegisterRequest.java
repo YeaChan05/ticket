@@ -1,5 +1,6 @@
 package org.yechan.dto.request;
 
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
@@ -37,9 +38,11 @@ public record ShowRegisterRequest(
         Integer ticketCount,
 
         @NotEmpty(message = "공연 일정은 최소 하나 이상이어야 합니다.")
+        @Valid
         List<ShowScheduleRegisterRequest> showScheduleRegisterRequests,
 
         @NotEmpty(message = "티켓 등급은 최소 하나 이상이어야 합니다.")
+        @Valid
         List<TicketGradeRequest> ticketGradeRequests
 ) {
 }

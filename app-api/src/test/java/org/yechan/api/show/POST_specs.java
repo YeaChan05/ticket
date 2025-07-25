@@ -189,8 +189,24 @@ public class POST_specs {
         // Arrange
         var grades = List.of("VIP", "RVIP");
         var hallKey = UUID.randomUUID();
-        var request = generateShowRegisterRequest(grades, 2, generateTitle(), 1, hallKey);
-        saveHall(hallRepository, hallKey, request.ticketCount());
+        var gradeRequests = grades.stream()
+                .map(ShowInfoGenerator::generateTicketGrade)
+                .toList();
+        var ticketCount = gradeRequests.stream().mapToInt(TicketGradeRequest::quantity).sum();
+        int hallCapacity = ticketCount - 1;
+        var request = new ShowRegisterRequest(
+                generateTitle(),
+                generateDescription(),
+                pickAnyCategory(),
+                generateUrl(),
+                LocalDateTime.now(),
+                LocalDateTime.now().plusDays(1),
+                hallKey,
+                ticketCount,
+                List.of(generateSchedule(0)),
+                gradeRequests
+        );
+        saveHall(hallRepository, hallKey, hallCapacity);
         var token = fixture.generateToken(Seller.class);
 
         // Act

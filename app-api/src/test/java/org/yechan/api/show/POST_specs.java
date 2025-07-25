@@ -28,39 +28,6 @@ import org.yechan.testdata.ShowInfoGenerator;
 @DisplayName("POST /api/v1/shows")
 public class POST_specs {
 
-    private static Hall saveHall(JpaHallRepository hallRepository, UUID request, int capacity) {
-        return hallRepository.save(
-                Hall.builder()
-                        .name("Test Hall")
-                        .address("123 Main St")
-                        .hallKey(request)
-                        .contactPhone("010-1234-5678")
-                        .capacity(capacity)
-                        .build()
-        );
-    }
-
-    private static ShowRegisterRequest generateShowRegisterRequest(List<String> grades, int plusDay, String title,
-                                                                   int eventDuration, int ticketCount, UUID hallKey) {
-        return new ShowRegisterRequest(
-                title,
-                generateDescription(),
-                pickAnyCategory(),
-                generateUrl(),
-                LocalDateTime.now(),
-                LocalDateTime.now().plusDays(eventDuration),
-                hallKey,
-                ticketCount,
-                List.of(
-                        generateSchedule(plusDay),
-                        generateSchedule(plusDay + 3)
-                ),
-                grades.stream()
-                        .map(ShowInfoGenerator::generateTicketGrade)
-                        .toList()
-        );
-    }
-
     @Test
     void 정상적인_공연_정보_등록은_성공적으로_이루어져야_한다(
             @Autowired TestFixture fixture,
@@ -265,6 +232,63 @@ public class POST_specs {
                 .onError(
                         // Assert
                         errorResponse -> assertThat(errorResponse.getStatus()).isEqualTo("SHOW-004")
+                );
+    }
+
+    private static Hall saveHall(JpaHallRepository hallRepository, UUID request, int capacity) {
+        return hallRepository.save(
+                Hall.builder()
+                        .name("Test Hall")
+                        .address("123 Main St")
+                        .hallKey(request)
+                        .contactPhone("010-1234-5678")
+                        .capacity(capacity)
+                        .build()
+        );
+    }
+
+    private static ShowRegisterRequest generateShowRegisterRequest(List<String> grades, int plusDay, String title,
+                                                                   int eventDuration, int ticketCount, UUID hallKey) {
+        return new ShowRegisterRequest(
+                title,
+                generateDescription(),
+                pickAnyCategory(),
+                generateUrl(),
+                LocalDateTime.now(),
+                LocalDateTime.now().plusDays(eventDuration),
+                hallKey,
+                ticketCount,
+                List.of(
+                        generateSchedule(plusDay),
+                        generateSchedule(plusDay + 3)
+                ),
+                grades.stream()
+                        .map(ShowInfoGenerator::generateTicketGrade)
+                        .toList()
+        );
+    }
+
+    @Test
+    @DisplayName("제목이 누락된 경우 CONSTRAINT_VIOLATION 오류가 발생해야 한다")
+    void 제목이_누락된_경우_CONSTRAINT_VIOLATION_오류가_발생해야_한다(
+            @Autowired TestFixture fixture
+    ) {
+        // Arrange
+        var grades = List.of("VIP", "RVIP");
+        var request = generateShowRegisterRequest(grades, (int) (Math.random() * 30), "", 1, 100, generateHallKey());
+
+        var token = fixture.generateToken(Seller.class);
+
+        // Act
+        fixture.post(
+                        "/api/v1/shows",
+                        request,
+                        token
+                )
+                .exchange(ShowRegisterResponse.class)
+                .onError(
+                        // Assert
+                        errorResponse -> assertThat(errorResponse.getStatus()).isEqualTo("CONSTRAINT_VIOLATION")
                 );
     }
 }

@@ -124,11 +124,12 @@
   -d '{
     "title": "뮤지컬 오페라의 유령",
     "description": "세계적인 뮤지컬 오페라의 유령",
-    "category": "뮤지컬",
+    "category": "MUSICAL",
     "thumbnail": "https://example.com/thumbnail.jpg",
     "ticketingStartDate": "2025-06-20T00:00:00Z",
     "ticketingEndDate": "2025-06-30T00:00:00Z",
     "hallId": "공연장 ID",
+    "ticketCount": 150,
     "showScheduleRegisterRequests":[
       {
         "startDateTime": "2025-07-01T19:00:00Z",
@@ -139,7 +140,7 @@
         "endDateTime": "2025-07-02T21:00:00Z"
       }
     ],
-    "ticketGradeRequest": [
+    "ticketGradeRequests": [
       {
         "grade": "VIP",
         "price": 100000,

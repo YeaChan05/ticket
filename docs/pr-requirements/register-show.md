@@ -102,7 +102,7 @@
     "thumbnail": "썸네일 이미지 URL",
     "startDate": "티켓팅 시작 시간",
     "endDate": "티켓팅 종료 시간",
-    "venue": "공연 장소 ID",
+    "hallId": "공연 장소 ID",
     "ticketPrice": [
       {
         "grade": "VIP",

@@ -54,9 +54,11 @@ public record TestFixture(
         ApiResponse<TokenHolder> apiResponse;
         if (userType.equals(User.class) || userType.equals(Seller.class)) {
             var issuerType = userType.equals(User.class) ? USER : SELLER;
+
+            var issueTokenRequest = issuerType == USER ? generateUser() : generateSeller();
             apiResponse = post(
                     PATH,
-                    generateSeller(),
+                    issueTokenRequest,
                     null
             )
                     .queryParam("issuerType", issuerType)
@@ -100,6 +102,28 @@ public record TestFixture(
         var password = generatePassword();
         post(
                 "/api/v1/sellers/sign-up",
+                new SellerRegisterRequest(
+                        generateUsername(),
+                        email,
+                        password,
+                        generatePhone()
+                ),
+                null
+        )
+                .exchange(SuccessfulSellerRegisterResponse.class)
+                .getApiResponse();
+
+        return new IssueTokenRequest(
+                email,
+                password
+        );
+    }
+
+    public IssueTokenRequest generateUser() {
+        var email = generateEmail();
+        var password = generatePassword();
+        post(
+                "/api/v1/users/sign-up",
                 new SellerRegisterRequest(
                         generateUsername(),
                         email,

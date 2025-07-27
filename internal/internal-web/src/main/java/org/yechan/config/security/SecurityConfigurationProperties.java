@@ -35,13 +35,8 @@ public record SecurityConfigurationProperties(
     public SecurityConfigurationProperties {
         validateDuplicateEndpoints(publicEndpoints);
         validateDuplicateEndpoints(userEndpoints);
-        validateDuplicateEndpoints(sellerEndpoints);
         validateEndpoints(publicEndpoints, userEndpoints);
         validateEndpoints(userEndpoints, publicEndpoints);
-        validateEndpoints(publicEndpoints, sellerEndpoints);
-        validateEndpoints(userEndpoints, sellerEndpoints);
-        validateEndpoints(sellerEndpoints, publicEndpoints);
-        validateEndpoints(sellerEndpoints, userEndpoints);
     }
 
     private void validateDuplicateEndpoints(final List<String> paths) {

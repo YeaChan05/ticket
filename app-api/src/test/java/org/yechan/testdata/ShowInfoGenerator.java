@@ -3,6 +3,7 @@ package org.yechan.testdata;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.UUID;
+import java.util.concurrent.ThreadLocalRandom;
 import org.yechan.dto.request.ShowScheduleRegisterRequest;
 import org.yechan.dto.request.TicketGradeRequest;
 
@@ -24,9 +25,10 @@ public class ShowInfoGenerator {
     }
 
     public static ShowScheduleRegisterRequest generateSchedule(int plusDay) {
+        var hours = 1 + ThreadLocalRandom.current().nextInt(5);
         return new ShowScheduleRegisterRequest(
                 LocalDateTime.now().plusDays(plusDay),
-                LocalDateTime.now().plusDays(plusDay).plusHours(2)
+                LocalDateTime.now().plusDays(plusDay).plusHours(hours)
         );
     }
 

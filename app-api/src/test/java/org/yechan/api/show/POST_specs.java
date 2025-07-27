@@ -130,8 +130,8 @@ public class POST_specs {
     ) {
         // Arrange
         var grades = List.of("VIP", "RVIP");
-        var request = generateShowRegisterRequest(grades, (int) (Math.random() * 30), generateTitle(), 1,
-                generateHallKey());
+        var hallKey = generateHallKey();
+        var request = generateShowRegisterRequest(grades, (int) (Math.random() * 30), generateTitle(), 1, hallKey);
         saveHall(hallRepository, request.hallId(), request.ticketCount());
 
         // Act
@@ -508,11 +508,11 @@ public class POST_specs {
                 100,
                 List.of(new ShowScheduleRegisterRequest(       // ⬅️ 일부러 역전시킴
                         LocalDateTime.now().plusDays(10),      // startDateTime (늦음)
-                        LocalDateTime.now().plusDays( 9)       // endDateTime   (이름)
+                        LocalDateTime.now().plusDays(9)       // endDateTime   (이름)
                 )),
                 grades.stream()
-                      .map(g -> new TicketGradeRequest(g, BigDecimal.valueOf(100), 10))
-                      .toList()
+                        .map(g -> new TicketGradeRequest(g, BigDecimal.valueOf(100), 10))
+                        .toList()
         );
 
         var token = fixture.generateToken(Seller.class);

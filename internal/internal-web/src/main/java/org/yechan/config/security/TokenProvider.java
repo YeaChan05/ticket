@@ -86,6 +86,6 @@ public class TokenProvider {
                 .map(SimpleGrantedAuthority::new)
                 .toList();
 
-        return new UsernamePasswordAuthenticationToken(claims.get("email"), null, authorities);
+        return new UsernamePasswordAuthenticationToken(claims.get(ClaimKey.EMAIL.getKey()), null, authorities);
     }
 }

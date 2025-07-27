@@ -249,40 +249,6 @@ public class POST_specs {
                 );
     }
 
-    private static void saveHall(JpaHallRepository hallRepository, UUID request, int capacity) {
-        hallRepository.save(
-                Hall.builder()
-                        .name("Test Hall")
-                        .address("123 Main St")
-                        .hallKey(request)
-                        .contactPhone("010-1234-5678")
-                        .capacity(capacity)
-                        .build()
-        );
-    }
-
-    private static ShowRegisterRequest generateShowRegisterRequest(List<String> grades, int plusDay, String title,
-                                                                   int eventDuration, UUID hallKey) {
-        var gradeRequests = grades.stream()
-                .map(ShowInfoGenerator::generateTicketGrade)
-                .toList();
-        return new ShowRegisterRequest(
-                title,
-                generateDescription(),
-                pickAnyCategory(),
-                generateUrl(),
-                LocalDateTime.now(),
-                LocalDateTime.now().plusDays(eventDuration),
-                hallKey,
-                gradeRequests.stream().mapToInt(TicketGradeRequest::quantity).sum(),
-                List.of(
-                        generateSchedule(plusDay),
-                        generateSchedule(plusDay + 3)
-                ),
-                gradeRequests
-        );
-    }
-
     @Test
     @DisplayName("제목이 누락된 경우 CONSTRAINT_VIOLATION 오류가 발생해야 한다")
     void 제목이_누락된_경우_CONSTRAINT_VIOLATION_오류가_발생해야_한다(
@@ -526,5 +492,39 @@ public class POST_specs {
                         // Assert
                         errorResponse -> assertThat(errorResponse.getStatus()).isEqualTo("CONSTRAINT_VIOLATION")
                 );
+    }
+
+    private static void saveHall(JpaHallRepository hallRepository, UUID request, int capacity) {
+        hallRepository.save(
+                Hall.builder()
+                        .name("Test Hall")
+                        .address("123 Main St")
+                        .hallKey(request)
+                        .contactPhone("010-1234-5678")
+                        .capacity(capacity)
+                        .build()
+        );
+    }
+
+    private static ShowRegisterRequest generateShowRegisterRequest(List<String> grades, int plusDay, String title,
+                                                                   int eventDuration, UUID hallKey) {
+        var gradeRequests = grades.stream()
+                .map(ShowInfoGenerator::generateTicketGrade)
+                .toList();
+        return new ShowRegisterRequest(
+                title,
+                generateDescription(),
+                pickAnyCategory(),
+                generateUrl(),
+                LocalDateTime.now(),
+                LocalDateTime.now().plusDays(eventDuration),
+                hallKey,
+                gradeRequests.stream().mapToInt(TicketGradeRequest::quantity).sum(),
+                List.of(
+                        generateSchedule(plusDay),
+                        generateSchedule(plusDay + 3)
+                ),
+                gradeRequests
+        );
     }
 }

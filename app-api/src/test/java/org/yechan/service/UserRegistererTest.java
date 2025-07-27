@@ -21,6 +21,9 @@ import org.yechan.dto.request.UserRegisterRequest;
 import org.yechan.dto.response.SuccessfulUserRegisterResponse;
 import org.yechan.error.UserErrorCode;
 import org.yechan.error.exception.UserException;
+import org.yechan.service.user.UserPersister;
+import org.yechan.service.user.UserRegisterer;
+import org.yechan.service.user.UserValidator;
 
 @ExtendWith(MockitoExtension.class)
 class UserRegistererTest {

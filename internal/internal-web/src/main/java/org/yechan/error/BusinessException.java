@@ -1,11 +1,7 @@
 package org.yechan.error;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-
-@Getter
-@AllArgsConstructor
-public class BusinessException extends RuntimeException {
-    private final String message;
-    private final ErrorCode errorCode;
+public class BusinessException extends AbstractApplicationException {
+    public BusinessException(String message, ErrorCode errorCode) {
+        super(message, errorCode);
+    }
 }

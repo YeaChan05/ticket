@@ -9,6 +9,7 @@ import org.yechan.api.port.IssueTokenUseCase;
 import org.yechan.config.ApplicationContextProvider;
 import org.yechan.dto.TokenHolder;
 import org.yechan.dto.request.IssueTokenRequest;
+import org.yechan.service.user.UserTokenIssuer;
 
 @RequiredArgsConstructor
 public enum TokenIssuerType {

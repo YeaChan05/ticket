@@ -30,7 +30,7 @@ public class TestResult<T> {
             consumer.accept(success);
             return this;
         } else {
-            throw new AssertionError("API call was expected to succeed, but it failed. Error: " + error.toString());
+            throw new AssertionError("API call was expected to succeed, but it failed. Error: " + error.getMessage());
         }
     }
 

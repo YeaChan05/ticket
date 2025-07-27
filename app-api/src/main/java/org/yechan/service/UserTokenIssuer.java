@@ -1,21 +1,21 @@
-package org.yechan.service;
+package org.yechan.service.user;
 
-import static org.yechan.service.UserTokenIssuer.ClaimKey.EMAIL;
-import static org.yechan.service.UserTokenIssuer.ClaimKey.ROLE;
-import static org.yechan.service.UserTokenIssuer.ClaimKey.USERNAME;
+import static org.yechan.config.security.ClaimKey.EMAIL;
+import static org.yechan.config.security.ClaimKey.ROLE;
+import static org.yechan.config.security.ClaimKey.USERNAME;
 
 import java.util.Map;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.yechan.api.port.IssueTokenUseCase;
-import org.yechan.config.TokenProvider;
+import org.yechan.config.security.TokenProvider;
 import org.yechan.dto.TokenHolder;
 import org.yechan.dto.request.IssueTokenRequest;
 import org.yechan.error.UserErrorCode;
 import org.yechan.error.exception.UserException;
 import org.yechan.repository.UserRepository;
+import org.yechan.service.PasswordVerifier;
 
 @Service("userTokenIssuer")
 @Transactional(readOnly = true)
@@ -39,18 +39,5 @@ public class UserTokenIssuer implements IssueTokenUseCase {
                 USERNAME.getKey(), user.getName()
         );
         return tokenProvider.createAccessToken(String.valueOf(user.getId()), claims);
-    }
-
-    @Getter
-    enum ClaimKey {
-        ROLE("role"),
-        EMAIL("email"),
-        USERNAME("username");
-
-        private final String key;
-
-        ClaimKey(String key) {
-            this.key = key;
-        }
     }
 }

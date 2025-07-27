@@ -11,14 +11,15 @@ dependencies {
     implementation project(':domain-order')
     implementation project(':external')
     implementation project(':internal:internal-log')
-    implementation project(':internal:internal-security')
     implementation project(':internal:internal-web')
     implementation project(':internal:internal-client')
     implementation project(':internal:internal-mysql')
     implementation 'org.springframework.boot:spring-boot-starter'
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
+    implementation 'org.mapstruct:mapstruct:1.6.1'
     developmentOnly 'org.springframework.boot:spring-boot-docker-compose'
     testImplementation 'com.fasterxml.jackson.core:jackson-databind'
+    annotationProcessor 'org.mapstruct:mapstruct-processor:1.6.1'
 }
 
 test {

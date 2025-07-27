@@ -5,7 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
-import org.yechan.config.resolver.AuthUserArgumentResolver;
+import org.yechan.dto.annotation.AuthUserArgumentResolver;
 
 /**
  * Spring MVC 설정 클래스

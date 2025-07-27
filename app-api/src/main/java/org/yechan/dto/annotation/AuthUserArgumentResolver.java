@@ -1,7 +1,7 @@
-package org.yechan.config.resolver;
+package org.yechan.dto.annotation;
 
 import static java.util.Objects.requireNonNull;
-import static org.yechan.api.port.AuthUser.UserType.SELLER;
+import static org.yechan.dto.annotation.AuthUser.UserType.SELLER;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.MethodParameter;
@@ -13,7 +13,6 @@ import org.springframework.web.bind.support.WebDataBinderFactory;
 import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.ModelAndViewContainer;
-import org.yechan.api.port.AuthUser;
 import org.yechan.error.SellerErrorCode;
 import org.yechan.error.UserErrorCode;
 import org.yechan.error.exception.SellerException;

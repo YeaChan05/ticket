@@ -1,4 +1,4 @@
-package org.yechan.api.port;
+package org.yechan.dto.annotation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

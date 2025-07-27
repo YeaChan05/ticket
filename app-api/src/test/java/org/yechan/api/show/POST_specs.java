@@ -231,10 +231,9 @@ public class POST_specs {
     ) {
         // Arrange
         var grades = List.of("VIP", "RVIP");
-        var hallKey = UUID.randomUUID();
         var invalidHallKey = UUID.randomUUID();
-        var request = generateShowRegisterRequest(grades, 2, generateTitle(), 1, hallKey);
-        saveHall(hallRepository, hallKey, request.ticketCount());
+        var request = generateShowRegisterRequest(grades, 2, generateTitle(), 1, generateHallKey());
+        saveHall(hallRepository, request.hallId(), request.ticketCount());
 
         var token = fixture.generateToken(Seller.class);
         // Act
@@ -250,8 +249,8 @@ public class POST_specs {
                 );
     }
 
-    private static Hall saveHall(JpaHallRepository hallRepository, UUID request, int capacity) {
-        return hallRepository.save(
+    private static void saveHall(JpaHallRepository hallRepository, UUID request, int capacity) {
+        hallRepository.save(
                 Hall.builder()
                         .name("Test Hall")
                         .address("123 Main St")

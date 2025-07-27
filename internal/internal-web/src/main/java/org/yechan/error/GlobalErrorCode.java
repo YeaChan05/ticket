@@ -12,7 +12,7 @@ public enum GlobalErrorCode implements ErrorCode {
     MALFORMED_TOKEN("MALFORMED_TOKEN", "잘못된 토큰 형식입니다."),
     UNSUPPORTED_TOKEN("UNSUPPORTED_TOKEN", "지원하지 않는 토큰입니다."),
     EMPTY_TOKEN("EMPTY_TOKEN", "토큰이 비어 있습니다."),
-    UNSUPPORTED_SIGNATURE_ALGORITHM("UNSUPPORTED_SIGNATURE_ALGORITHM","지원되지 않는 서명 알고리즘입니다." );
+    UNSUPPORTED_SIGNATURE_ALGORITHM("UNSUPPORTED_SIGNATURE_ALGORITHM", "지원되지 않는 서명 알고리즘입니다.");
 
     private final String code;
     private final String message;

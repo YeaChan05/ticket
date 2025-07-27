@@ -30,7 +30,7 @@ public record ShowRegisterRequest(
         @NotNull(message = "티켓팅 종료일은 필수 입력값입니다.")
         LocalDateTime ticketingEndDate,
 
-        @NotNull(message = "공연 시작일은 필수 입력값입니다.")
+        @NotNull(message = "공연장 ID는 필수 입력값입니다.")
         UUID hallId,
 
         @NotNull(message = "티켓 수량은 필수 입력값입니다.")

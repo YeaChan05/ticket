@@ -17,6 +17,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.yechan.config.IntegrationTest;
 import org.yechan.dto.request.ShowRegisterRequest;
+import org.yechan.dto.request.ShowScheduleRegisterRequest;
 import org.yechan.dto.request.TicketGradeRequest;
 import org.yechan.dto.response.ShowRegisterResponse;
 import org.yechan.entity.Hall;
@@ -487,4 +488,44 @@ public class POST_specs {
                 );
     }
 
+    @Test
+    @DisplayName("모든 티켓 등급 등록 요청은 startDateTime이 endDateTime 이후인 경우 CONSTRAINT_VIOLATION 오류가 발생해야 한다")
+    void 모든_티켓_등급_등록_요청은_startDateTime이_endDateTime_이후인_경우_CONSTRAINT_VIOLATION_오류가_발생해야_한다(
+            @Autowired TestFixture fixture,
+            @Autowired JpaHallRepository hallRepository
+    ) {
+        // Arrange
+        var grades = List.of("VIP", "RVIP");
+        var hallKey = generateHallKey();
+        var request = new ShowRegisterRequest(
+                generateTitle(),
+                generateDescription(),
+                pickAnyCategory(),
+                generateUrl(),
+                LocalDateTime.now(),
+                LocalDateTime.now().plusDays(1),
+                hallKey,
+                100,
+                List.of(new ShowScheduleRegisterRequest(       // ⬅️ 일부러 역전시킴
+                        LocalDateTime.now().plusDays(10),      // startDateTime (늦음)
+                        LocalDateTime.now().plusDays( 9)       // endDateTime   (이름)
+                )),
+                grades.stream()
+                      .map(g -> new TicketGradeRequest(g, BigDecimal.valueOf(100), 10))
+                      .toList()
+        );
+
+        var token = fixture.generateToken(Seller.class);
+        // Act
+        fixture.post(
+                        "/api/v1/shows",
+                        request,
+                        token
+                )
+                .exchange(ShowRegisterResponse.class)
+                .onError(
+                        // Assert
+                        errorResponse -> assertThat(errorResponse.getStatus()).isEqualTo("CONSTRAINT_VIOLATION")
+                );
+    }
 }

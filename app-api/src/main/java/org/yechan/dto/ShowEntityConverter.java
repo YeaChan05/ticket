@@ -14,9 +14,6 @@ public interface ShowEntityConverter {
 
     @Mapping(target = "seller", source = "seller")
     @Mapping(target = "id", ignore = true)
-//    @Mapping(target = "createdAt", ignore = true)
-//    @Mapping(target = "updatedAt", ignore = true)\
-    // hall, phone
     @Mapping(target = "contactPhone", source = "seller.contact")
     Show convert(ShowRegisterRequest request, Seller seller, UUID hall);
 }

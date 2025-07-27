@@ -56,6 +56,6 @@ public class AuthUserArgumentResolver implements HandlerMethodArgumentResolver {
         if (authentication instanceof UsernamePasswordAuthenticationToken token) {
             return token.getPrincipal().toString();
         }
-        throw new UserException("<UNK> <UNK> <UNK> <UNK>.", UserErrorCode.USER_NOT_FOUND);
+        throw new UserException("지원하지 않는 인증 타입입니다.", UserErrorCode.USER_NOT_FOUND);
     }
 }

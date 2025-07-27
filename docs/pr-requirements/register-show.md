@@ -188,6 +188,7 @@
 - [x] 등급정보가 누락된 경우 CONSTRAINT_VIOLATION 오류가 발생해야 한다
 - [x] 티켓 가격이 100원 이하인 경우 CONSTRAINT_VIOLATION 오류가 발생해야 한다
 - [x] 등급별 티켓 수량이 0 이하인 경우 CONSTRAINT_VIOLATION 오류가 발생해야 한다
+- [x] 모든 티켓 등급 등록 요청은 startDateTime이 endDateTime 이후인 경우 CONSTRAINT_VIOLATION 오류가 발생해야 한다
 
 ### 6. 주요 고려사항 및 위험 요소
 

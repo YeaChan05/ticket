@@ -35,6 +35,7 @@ public record SecurityConfigurationProperties(
     public SecurityConfigurationProperties {
         validateDuplicateEndpoints(publicEndpoints);
         validateDuplicateEndpoints(userEndpoints);
+        validateDuplicateEndpoints(sellerEndpoints);
         validateEndpoints(publicEndpoints, userEndpoints);
         validateEndpoints(userEndpoints, publicEndpoints);
     }

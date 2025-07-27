@@ -16,7 +16,7 @@ public class ShowRepository {
         return savedShow.getKey();
     }
 
-    public boolean existByTitle(String title) {
+    public boolean existsByTitle(String title) {
         return jpaShowRepository.existsByTitle(title);
     }
 }

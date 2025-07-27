@@ -30,7 +30,7 @@ public class ShowValidator {
     }
 
     private void validateUniqueTitle(String title) {
-        if (showRepository.existByTitle(title)) {
+        if (showRepository.existsByTitle(title)) {
             throw new ShowException("duplicate show title", ShowErrorCode.DUPLICATE_SHOW_TITLE);
         }
     }
